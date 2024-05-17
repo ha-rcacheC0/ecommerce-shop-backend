@@ -114,24 +114,24 @@ model Product {
 
 model EffectStrings {
   id      String    @id @default(cuid())
-  name    Effects
+  name    Effects   @unique
   Product Product[]
 }
 
 model ColorStrings {
   id      String    @id @default(cuid())
-  name    Colors
+  name    Colors    @unique
   Product Product[]
 }
 
 model Categories {
   id      String    @id @default(cuid())
-  name    Category
+  name    Category  @unique
   Product Product[]
 }
 
 model Brands {
   id      String    @id @default(cuid())
-  name    Brand
+  name    Brand     @unique
   Product Product[]
 }

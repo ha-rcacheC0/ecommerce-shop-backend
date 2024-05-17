@@ -11,12 +11,13 @@ const port = normalizePort(process.env.PORT || "3000");
 app.use(express.json());
 app.use(cors());
 
+// Set up Routes as needed
+
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
 app.use("/home", indexRouter);
 
-console.log(process.env.PORT);
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {
     console.log(`Listening on localhost://${port} `);

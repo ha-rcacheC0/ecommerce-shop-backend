@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "ts-node src/app.ts",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^5.14.0",
