@@ -7,10 +7,12 @@ const products = [
     brand: "Sky Pioneer",
     package: [36, 1],
     price: 229.99,
-    effects: "strobes, crackles, sizzles, snaps, loud bangs, fan effects, willows,",
+    effects:
+      "strobes, crackles, sizzles, snaps, loud bangs,whistle, fan effects, willows,",
     colors: "green, red, blue, purple, pink, white",
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1001.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1001.png",
   },
   {
     id: 1023,
@@ -20,8 +22,9 @@ const products = [
     brand: "Wise Guy",
     package: [4, 1],
     price: 299.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1023.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1023.jpeg",
   },
   {
     id: 1041,
@@ -31,8 +34,9 @@ const products = [
     brand: "Winda",
     package: [1, 4],
     price: 239.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1041.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1041.png",
   },
   {
     id: 1046,
@@ -42,8 +46,9 @@ const products = [
     brand: "Miracle",
     package: [6, 1],
     price: 279.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1046.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1046.jpeg",
   },
   {
     id: 1053,
@@ -53,8 +58,9 @@ const products = [
     brand: "STARGET",
     package: [1, 10],
     price: 279.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1053.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1053.png",
   },
   {
     id: 1056,
@@ -64,8 +70,9 @@ const products = [
     brand: "Legend",
     package: [6, 1],
     price: 329.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1056.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1056.jpeg",
   },
   {
     id: 1058,
@@ -75,8 +82,9 @@ const products = [
     brand: "Legend",
     package: [6, 1],
     price: 249.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1058.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1058.jpeg",
   },
   {
     id: 1063,
@@ -86,8 +94,9 @@ const products = [
     brand: "Legend",
     package: [12, 1],
     price: 349.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1063.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1063.png",
   },
   {
     id: 1064,
@@ -97,8 +106,9 @@ const products = [
     brand: "Shogun",
     package: [2, 1],
     price: 289.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1064.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1064.png",
   },
   {
     id: 1065,
@@ -108,8 +118,9 @@ const products = [
     brand: "Shogun",
     package: [6, 1],
     price: 289.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1065.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1065.png",
   },
   {
     id: 1071,
@@ -119,8 +130,9 @@ const products = [
     brand: "StarGet",
     package: [1, 15],
     price: 399.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1071.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1071.png",
   },
   {
     id: 1076,
@@ -130,8 +142,9 @@ const products = [
     brand: "TopGun",
     package: [8, 1],
     price: 239.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1076.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1076.jpeg",
   },
   {
     id: 1078,
@@ -141,8 +154,9 @@ const products = [
     brand: "TopGun",
     package: [4, 1],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1078.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1078.jpeg",
   },
   {
     id: 1080,
@@ -152,8 +166,9 @@ const products = [
     brand: "StarGet",
     package: [2, 1],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1080.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1080.jpeg",
   },
   {
     id: 1081,
@@ -163,8 +178,9 @@ const products = [
     brand: "Shogun",
     package: [2, 1],
     price: 369.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1081.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1081.png",
   },
   {
     id: 1084,
@@ -174,8 +190,9 @@ const products = [
     brand: "Shogun",
     package: [8, 1],
     price: 289.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1084.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1084.png",
   },
   {
     id: 1104,
@@ -185,8 +202,9 @@ const products = [
     brand: "Shogun",
     package: [2, 1],
     price: 229.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1105,
@@ -196,8 +214,9 @@ const products = [
     brand: "Pyro Mooi",
     package: [4, 1],
     price: 279.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1105.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1105.png",
   },
   {
     id: 1107,
@@ -207,8 +226,9 @@ const products = [
     brand: "Hop Kee",
     package: [6, 1],
     price: 239.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1107.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1107.jpeg",
   },
   {
     id: 1109,
@@ -218,8 +238,9 @@ const products = [
     brand: "Brothers",
     package: [6, 1],
     price: 399.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1109.webp"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1109.webp",
   },
   {
     id: 1111,
@@ -229,8 +250,9 @@ const products = [
     brand: "Wise Guy",
     package: [4, 1],
     price: 329.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1113,
@@ -240,8 +262,9 @@ const products = [
     brand: "Wise Guy",
     package: [3, 1],
     price: 339.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1113.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1113.png",
   },
   {
     id: 1114,
@@ -251,8 +274,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [6, 1],
     price: 309.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1117,
@@ -262,8 +286,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [24, 1],
     price: 219.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1117.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1117.jpeg",
   },
   {
     id: 1118,
@@ -273,8 +298,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [9, 1],
     price: 249.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1121,
@@ -284,8 +310,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [2, 1],
     price: 219.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1122,
@@ -295,8 +322,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [12, 1],
     price: 329.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1122.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1122.png",
   },
   {
     id: 1125,
@@ -306,8 +334,9 @@ const products = [
     brand: "Wise Guy",
     package: [12, 1],
     price: 329.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1125.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1125.png",
   },
   {
     id: 1126,
@@ -317,8 +346,9 @@ const products = [
     brand: "Winda",
     package: [1, 1],
     price: 189.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1126.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1126.jpeg",
   },
   {
     id: 1128,
@@ -328,8 +358,9 @@ const products = [
     brand: "Red Lantern",
     package: [1, 1],
     price: 299.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1129,
@@ -339,8 +370,9 @@ const products = [
     brand: "Red Lantern",
     package: [4, 1],
     price: 269.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1129.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1129.jpeg",
   },
   {
     id: 1130,
@@ -350,8 +382,9 @@ const products = [
     brand: "Red Lantern",
     package: [2, 1],
     price: 319.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1130.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1130.jpeg",
   },
   {
     id: 1131,
@@ -361,8 +394,9 @@ const products = [
     brand: "Red Lantern",
     package: [4, 1],
     price: 429.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1131.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1131.jpeg",
   },
   {
     id: 1137,
@@ -372,8 +406,9 @@ const products = [
     brand: "Black Scorpion",
     package: [5, 1],
     price: 189.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1137.webp"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1137.webp",
   },
   {
     id: 1138,
@@ -383,8 +418,9 @@ const products = [
     brand: "Black Scorpion",
     package: [6, 1],
     price: 299.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1138.webp"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1138.webp",
   },
   {
     id: 1139,
@@ -394,8 +430,9 @@ const products = [
     brand: "Black Scorpion",
     package: [3, 1],
     price: 359.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1139.webp"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1139.webp",
   },
   {
     id: 1140,
@@ -405,8 +442,9 @@ const products = [
     brand: "MC Fireworks",
     package: [3, 1],
     price: 159.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1142,
@@ -416,8 +454,9 @@ const products = [
     brand: "Pyro Mooi",
     package: [1, 16],
     price: 569.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-1142.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-1142.jpeg",
   },
   {
     id: 1143,
@@ -427,8 +466,9 @@ const products = [
     brand: "Pyro Mooi",
     package: [8, 1],
     price: 119.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1144,
@@ -438,8 +478,9 @@ const products = [
     brand: "Happy Family",
     package: [2, 1],
     price: 199.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1145,
@@ -449,8 +490,9 @@ const products = [
     brand: "Dominator",
     package: [2, 24],
     price: 369.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1146,
@@ -460,8 +502,9 @@ const products = [
     brand: "Dominator",
     package: [4, 36],
     price: 339.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1147,
@@ -471,8 +514,9 @@ const products = [
     brand: "Dominator",
     package: [1, 1],
     price: 259.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 1148,
@@ -482,8 +526,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [1, 1],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 2004,
@@ -493,8 +538,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [40, 36],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 2008,
@@ -504,8 +550,9 @@ const products = [
     brand: "Wise Guy",
     package: [12, 80, 16],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2008.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2008.jpeg",
   },
   {
     id: 2010,
@@ -515,8 +562,9 @@ const products = [
     brand: "Wise Guy",
     package: [8, 10, 200],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2010.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2010.jpeg",
   },
   {
     id: 2011,
@@ -526,8 +574,9 @@ const products = [
     brand: "Wise Guy",
     package: [24, 40, 16],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2011.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2011.jpeg",
   },
   {
     id: 2066,
@@ -537,8 +586,9 @@ const products = [
     brand: "Winda",
     package: [100, 100],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2066.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2066.png",
   },
   {
     id: 2074,
@@ -548,8 +598,9 @@ const products = [
     brand: "Red Lantern",
     package: [4, 4000],
     price: 89.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2074.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2074.png",
   },
   {
     id: 2075,
@@ -559,8 +610,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [2, 8000],
     price: 89.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2075.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2075.jpeg",
   },
   {
     id: 2077,
@@ -570,8 +622,9 @@ const products = [
     brand: "Black Scorpion",
     package: [4, 10, 400],
     price: 99.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2077.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2077.jpeg",
   },
   {
     id: 2083,
@@ -581,8 +634,9 @@ const products = [
     brand: "Hop Kee",
     package: [12, 80, 16],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2083.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2083.png",
   },
   {
     id: 2085,
@@ -592,8 +646,9 @@ const products = [
     brand: "Sky Pioneer",
     package: [32, 40, 12],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-2085.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-2085.jpeg",
   },
   {
     id: 2094,
@@ -603,8 +658,9 @@ const products = [
     brand: "Red Lantern",
     package: [20, 800],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 2096,
@@ -614,8 +670,9 @@ const products = [
     brand: "Legend",
     package: [24, 40, 16],
     price: 119.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 2099,
@@ -625,8 +682,9 @@ const products = [
     brand: "Dominator",
     package: [100, 100],
     price: 119.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
   {
     id: 3000,
@@ -636,457 +694,548 @@ const products = [
     brand: "Sky Pioneer",
     package: [8, 12, 3],
     price: 139.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 3002,
+  {
+    id: 3002,
     title: "Black Snakes/Color Snakes",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Legend",
     package: [15, 48, 6],
     price: 159.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3002.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3002.jpeg",
   },
-  {  id: 3004,
+  {
+    id: 3004,
     title: "Color Smoke Balls (20/12/6)",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Miracle",
     package: [20, 12, 6],
     price: 159.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3004.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3004.jpeg",
   },
-  {  id: 3015,
+  {
+    id: 3015,
     title: "Pink Lady",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Hop Kee",
     package: [72, 2],
     price: 179.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3015.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3015.jpeg",
   },
-  {  id: 3034,
+  {
+    id: 3034,
     title: "Large Painted Giant Smoke Balls",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Black Scorpion",
     package: [2, 12],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3034.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3034.png",
   },
-  {  id: 3037,
+  {
+    id: 3037,
     title: "Smoke Grenade (Pull String)",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [6, 24],
     price: 149.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 3038,
+  {
+    id: 3038,
     title: "Mammoth White Smoke 5 Minutes",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [100, 1],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3038.webp"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3038.webp",
   },
-  {  id: 3038,
+  {
+    id: 3038,
     title: "Color Smoke Balls (Clay)",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [20, 6, 12],
     price: 219.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 3041,
+  {
+    id: 3041,
     title: "Snake Pit (Assorted Snakes)",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [24, 12],
     price: 159.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3041.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3041.jpeg",
   },
-  {  id: 3042,
+  {
+    id: 3042,
     title: "Black Smoke",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [6, 12],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3042.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3042.png",
   },
-  {  id: 3048,
+  {
+    id: 3048,
     title: "USA Patriot Smoke Red White Blue",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [50, 1],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3048.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3048.png",
   },
-  {  id: 3053,
+  {
+    id: 3053,
     title: "Mammoth Smoke White",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [36, 4],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 3058,
+  {
+    id: 3058,
     title: "Monstrous Smoke Balls",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [4, 12],
     price: 179.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 3061,
+  {
+    id: 3061,
     title: "Jumbo Neon Smoke Ball",
     stock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [72, 1],
     price: 229.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-3061.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-3061.jpeg",
   },
-  {  id: 4002,
+  {
+    id: 4002,
     title: "Champagne Party Poppers (12/24/6)",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [20, 12, 6],
     price: 189.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4009,
+  {
+    id: 4009,
     title: "Hen Laying Eggs",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [24, 24],
     price: 179.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4009.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4009.jpeg",
   },
-  {  id: 4013,
+  {
+    id: 4013,
     title: "Magnum Pistol Poppers",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [20, 36],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4014,
+  {
+    id: 4014,
     title: "Pop Snappers",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Wise Guy",
     package: [6, 50, 50],
     price: 69.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4016,
+  {
+    id: 4016,
     title: "Sky Lantern Assortment Colors",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Wise Guy",
     package: [6, 10],
     price: 199.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4016.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4016.png",
   },
-  {  id: 4024,
+  {
+    id: 4024,
     title: "Monster Pops",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Beihai PopPop",
     package: [10, 30, 20],
     price: 249.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4049,
+  {
+    id: 4049,
     title: "Pagoda",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [144, 1],
     price: 299.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4049.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4049.png",
   },
-  {  id: 4051,
+  {
+    id: 4051,
     title: "Poopie Doogal",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Topgun",
     package: [108, 2],
     price: 209.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4051.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4051.jpeg",
   },
-  {  id: 4056,
+  {
+    id: 4056,
     title: "Top Speed",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Topgun",
     package: [24, 1],
     price: 229.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4056.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4056.jpeg",
   },
-  {  id: 4059,
+  {
+    id: 4059,
     title: "Tanks Large",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Legend",
     package: [72, 2],
     price: 229.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4070,
+  {
+    id: 4070,
     title: "Dragon W/ Wings",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Boom Wow",
     package: [72, 2],
     price: 189.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4070.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4070.png",
   },
-  {  id: 4075,
+  {
+    id: 4075,
     title: "Chariot Of Fire",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [36, 1],
     price: 119.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4075.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4075.jpeg",
   },
-  {  id: 4081,
+  {
+    id: 4081,
     title: "Dinosaur's Return",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [108, 2],
     price: 189.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-4081.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-4081.jpeg",
   },
-  {  id: 4106,
+  {
+    id: 4106,
     title: "Ferris Wheel",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [24, 1],
     price: 249.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4109,
+  {
+    id: 4109,
     title: "Thunder King Snaps",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [6, 24, 20],
     price: 139.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4114,
+  {
+    id: 4114,
     title: "USA USA",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [16, 1],
     price: 139.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4115,
+  {
+    id: 4115,
     title: "Monster Truck",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [24, 1],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4118,
+  {
+    id: 4118,
     title: "Spaceship",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Legend",
     package: [4, 12],
     price: 169.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4120,
+  {
+    id: 4120,
     title: "Half Ton",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [24, 1],
     price: 149.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4121,
+  {
+    id: 4121,
     title: "Power Trip",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [24, 1],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4122,
+  {
+    id: 4122,
     title: "Spitfyre",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [16, 1],
     price: 179.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4124,
+  {
+    id: 4124,
     title: "Normandy Landing Craft",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [54, 1],
     price: 349.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4125,
+  {
+    id: 4125,
     title: "Ice Bird",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [36, 2],
     price: 249.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 4132,
+  {
+    id: 4132,
     title: "Ninja Disc",
     stock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [30, 2],
     price: 189.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 5000,
+  {
+    id: 5000,
     title: "Fountain 9 Inch HN-90",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [18, 4],
     price: 119.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-5000.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-5000.jpeg",
   },
-  {  id: 5001,
+  {
+    id: 5001,
     title: "Crack Cone Cane",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [18, 4],
     price: 159.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-5001.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-5001.jpeg",
   },
-  {  id: 5002,
+  {
+    id: 5002,
     title: "Cuckoo Fountain",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [24, 6],
     price: 139.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-5002.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-5002.jpeg",
   },
-  {  id: 5003,
+  {
+    id: 5003,
     title: "Killer Bees",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [24, 4],
     price: 109.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-5003.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-5003.jpeg",
   },
-  {  id: 5005,
+  {
+    id: 5005,
     title: "Pyro Garden",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Sky Pioneer",
     package: [24, 4],
     price: 179.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-5005.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-5005.jpeg",
   },
-  {  id: 5014,
+  {
+    id: 5014,
     title: "God Of Fire",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Black Scorpion",
     package: [10, 2],
     price: 179.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-5014.png"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-5014.png",
   },
-  {  id: 5018,
+  {
+    id: 5018,
     title: "HN-89 Fountain/Happy Silver Flower",
     stock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Sky Pioneer",
     package: [18, 4],
     price: 99.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: ""
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "",
   },
-  {  id: 6006,
+  {
+    id: 6006,
     title: "Sliders",
     stock: true,
     category: "Ground Items",
     brand: "Wise Guy",
     package: [6, 50, 10],
     price: 129.99,
-    description: "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-    image: "/product-imgs/pro-id-6006.jpeg"
+    description:
+      "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
+    image: "/product-imgs/pro-id-6006.jpeg",
   },
-]
+];
