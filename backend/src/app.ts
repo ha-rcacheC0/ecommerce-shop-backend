@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { indexRouter } from "./routes/index";
+import { productRouter } from "./routes/product";
 import { configDotenv } from "dotenv";
 
 configDotenv();
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 app.use("/home", indexRouter);
+app.use("/products", productRouter);
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {
