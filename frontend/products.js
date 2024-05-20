@@ -2,13 +2,13 @@ const products = [
   {
     id: 1001,
     title: "Carnival Pack Assortment (S & S)",
-    stock: true,
-    category: "Assortment",
-    brand: "Sky Pioneer",
+    inStock: true,
+    category: assortment.id,
+    brand: skyPioneer.id,
     package: [36, 1],
     price: 229.99,
     effects:
-      "strobes, crackles, sizzles, snaps, loud bangs,whistle, fan effects, willows,",
+      "strobes, crackles, sizzles, snaps, loud bangs, whistle, fan effects, willows,",
     colors: "green, red, blue, purple, pink, white",
     description:
       "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
@@ -17,8 +17,8 @@ const products = [
   {
     id: 1023,
     title: "Wise Guy Assortment Box",
-    stock: true,
-    category: "Assortment",
+    inStock: true,
+    category: assortment.id,
     brand: "Wise Guy",
     package: [4, 1],
     price: 299.99,
@@ -29,7 +29,7 @@ const products = [
   {
     id: 1041,
     title: "Container Load Blue",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Winda",
     package: [1, 4],
@@ -41,7 +41,7 @@ const products = [
   {
     id: 1046,
     title: "Aces High",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Miracle",
     package: [6, 1],
@@ -53,7 +53,7 @@ const products = [
   {
     id: 1053,
     title: "Private Pirate",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "STARGET",
     package: [1, 10],
@@ -65,7 +65,7 @@ const products = [
   {
     id: 1056,
     title: "Gorgeous Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Legend",
     package: [6, 1],
@@ -77,7 +77,7 @@ const products = [
   {
     id: 1058,
     title: "Ecstatic Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Legend",
     package: [6, 1],
@@ -89,7 +89,7 @@ const products = [
   {
     id: 1063,
     title: "Moon Assortment (S & S)",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Legend",
     package: [12, 1],
@@ -101,7 +101,7 @@ const products = [
   {
     id: 1064,
     title: "Sky Thunder Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Shogun",
     package: [2, 1],
@@ -113,7 +113,7 @@ const products = [
   {
     id: 1065,
     title: "Fireworks Star Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Shogun",
     package: [6, 1],
@@ -125,7 +125,7 @@ const products = [
   {
     id: 1071,
     title: "Treasure Island",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "StarGet",
     package: [1, 15],
@@ -137,7 +137,7 @@ const products = [
   {
     id: 1076,
     title: "Alien Party (S & S)",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "TopGun",
     package: [8, 1],
@@ -149,7 +149,7 @@ const products = [
   {
     id: 1078,
     title: "Diamond Series Fountain Assortment (S & S)",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "TopGun",
     package: [4, 1],
@@ -161,7 +161,7 @@ const products = [
   {
     id: 1080,
     title: "Mammoth Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "StarGet",
     package: [2, 1],
@@ -173,7 +173,7 @@ const products = [
   {
     id: 1081,
     title: "Munition Store",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Shogun",
     package: [2, 1],
@@ -185,7 +185,7 @@ const products = [
   {
     id: 1084,
     title: "Fireworks Sun Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Shogun",
     package: [8, 1],
@@ -197,7 +197,7 @@ const products = [
   {
     id: 1104,
     title: "Aerial Party",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Shogun",
     package: [2, 1],
@@ -209,7 +209,7 @@ const products = [
   {
     id: 1105,
     title: "Whale Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Pyro Mooi",
     package: [4, 1],
@@ -221,7 +221,7 @@ const products = [
   {
     id: 1107,
     title: "Power Play Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Hop Kee",
     package: [6, 1],
@@ -233,7 +233,7 @@ const products = [
   {
     id: 1109,
     title: "Pinnacle Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Brothers",
     package: [6, 1],
@@ -245,7 +245,7 @@ const products = [
   {
     id: 1111,
     title: "American #1",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Wise Guy",
     package: [4, 1],
@@ -257,7 +257,7 @@ const products = [
   {
     id: 1113,
     title: "King of Pyro",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Wise Guy",
     package: [3, 1],
@@ -269,7 +269,7 @@ const products = [
   {
     id: 1114,
     title: "Battle for Freedom",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Sky Pioneer",
     package: [6, 1],
@@ -281,7 +281,7 @@ const products = [
   {
     id: 1117,
     title: "Kid Party (S & S)",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Sky Pioneer",
     package: [24, 1],
@@ -293,7 +293,7 @@ const products = [
   {
     id: 1118,
     title: "Let Freedom Ring(S & S)",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Sky Pioneer",
     package: [9, 1],
@@ -305,7 +305,7 @@ const products = [
   {
     id: 1121,
     title: "Blade Crush",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Sky Pioneer",
     package: [2, 1],
@@ -317,7 +317,7 @@ const products = [
   {
     id: 1122,
     title: "Independence Day 1776 (S & S)",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Sky Pioneer",
     package: [12, 1],
@@ -329,7 +329,7 @@ const products = [
   {
     id: 1125,
     title: "Kids Backpack",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Wise Guy",
     package: [12, 1],
@@ -341,7 +341,7 @@ const products = [
   {
     id: 1126,
     title: "Life Of The Party",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Winda",
     package: [1, 1],
@@ -353,7 +353,7 @@ const products = [
   {
     id: 1128,
     title: "Air Force",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Red Lantern",
     package: [1, 1],
@@ -365,7 +365,7 @@ const products = [
   {
     id: 1129,
     title: "American Proud",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Red Lantern",
     package: [4, 1],
@@ -377,7 +377,7 @@ const products = [
   {
     id: 1130,
     title: "All For One",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Red Lantern",
     package: [2, 1],
@@ -389,7 +389,7 @@ const products = [
   {
     id: 1131,
     title: "Hero Landing",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Red Lantern",
     package: [4, 1],
@@ -401,7 +401,7 @@ const products = [
   {
     id: 1137,
     title: "Lightning Storm",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Black Scorpion",
     package: [5, 1],
@@ -413,7 +413,7 @@ const products = [
   {
     id: 1138,
     title: "Need For Speed",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Black Scorpion",
     package: [6, 1],
@@ -425,7 +425,7 @@ const products = [
   {
     id: 1139,
     title: "Shark Zone",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Black Scorpion",
     package: [3, 1],
@@ -437,7 +437,7 @@ const products = [
   {
     id: 1140,
     title: "Fat Pack",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "MC Fireworks",
     package: [3, 1],
@@ -449,7 +449,7 @@ const products = [
   {
     id: 1142,
     title: "Big Buddha",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Pyro Mooi",
     package: [1, 16],
@@ -461,7 +461,7 @@ const products = [
   {
     id: 1143,
     title: "Haste Hawk Car Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Pyro Mooi",
     package: [8, 1],
@@ -473,7 +473,7 @@ const products = [
   {
     id: 1144,
     title: "Backyard Party",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Happy Family",
     package: [2, 1],
@@ -485,7 +485,7 @@ const products = [
   {
     id: 1145,
     title: "Ball Of Fun Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Dominator",
     package: [2, 24],
@@ -497,7 +497,7 @@ const products = [
   {
     id: 1146,
     title: "Boom Ball",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Dominator",
     package: [4, 36],
@@ -509,7 +509,7 @@ const products = [
   {
     id: 1147,
     title: "Monstrous Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Dominator",
     package: [1, 1],
@@ -521,7 +521,7 @@ const products = [
   {
     id: 1148,
     title: "Monstrous Assortment",
-    stock: true,
+    inStock: true,
     category: "Assortment",
     brand: "Sky Pioneer",
     package: [1, 1],
@@ -533,7 +533,7 @@ const products = [
   {
     id: 2004,
     title: "M-500 Brand",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Sky Pioneer",
     package: [40, 36],
@@ -545,7 +545,7 @@ const products = [
   {
     id: 2008,
     title: "Wise Guy Firecrackers 12/80/16",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Wise Guy",
     package: [12, 80, 16],
@@ -557,7 +557,7 @@ const products = [
   {
     id: 2010,
     title: "Wise Guy Firecrackers 8/10/200",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Wise Guy",
     package: [8, 10, 200],
@@ -569,7 +569,7 @@ const products = [
   {
     id: 2011,
     title: "Wise Guy Firecrackers 24/40/16",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Wise Guy",
     package: [24, 40, 16],
@@ -581,7 +581,7 @@ const products = [
   {
     id: 2066,
     title: "Muscle Pack",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Winda",
     package: [100, 100],
@@ -593,7 +593,7 @@ const products = [
   {
     id: 2074,
     title: "Lightning Firecracker 4/4000",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Red Lantern",
     package: [4, 4000],
@@ -605,7 +605,7 @@ const products = [
   {
     id: 2075,
     title: "Lightning Firecracker 2/8000",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Sky Pioneer",
     package: [2, 8000],
@@ -617,7 +617,7 @@ const products = [
   {
     id: 2077,
     title: "La Maxi Petarade Demon 400",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Black Scorpion",
     package: [4, 10, 400],
@@ -629,7 +629,7 @@ const products = [
   {
     id: 2083,
     title: "Firecrackers Boomers//Mighty Max 12/80/16",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Hop Kee",
     package: [12, 80, 16],
@@ -641,7 +641,7 @@ const products = [
   {
     id: 2085,
     title: "Thunder Bomb Firecrackers 32/40/12",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Sky Pioneer",
     package: [32, 40, 12],
@@ -653,7 +653,7 @@ const products = [
   {
     id: 2094,
     title: "Lightning Firecracker 800 Rolls",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Red Lantern",
     package: [20, 800],
@@ -665,7 +665,7 @@ const products = [
   {
     id: 2096,
     title: "Gorilla Firecracker",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Legend",
     package: [24, 40, 16],
@@ -677,7 +677,7 @@ const products = [
   {
     id: 2099,
     title: "Black Label 1 Inch",
-    stock: true,
+    inStock: true,
     category: "Firecrackers",
     brand: "Dominator",
     package: [100, 100],
@@ -689,7 +689,7 @@ const products = [
   {
     id: 3000,
     title: "Jumbo Smoke Balls (8/12/3)",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [8, 12, 3],
@@ -701,7 +701,7 @@ const products = [
   {
     id: 3002,
     title: "Black Snakes/Color Snakes",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Legend",
     package: [15, 48, 6],
@@ -713,7 +713,7 @@ const products = [
   {
     id: 3004,
     title: "Color Smoke Balls (20/12/6)",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Miracle",
     package: [20, 12, 6],
@@ -725,7 +725,7 @@ const products = [
   {
     id: 3015,
     title: "Pink Lady",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Hop Kee",
     package: [72, 2],
@@ -737,7 +737,7 @@ const products = [
   {
     id: 3034,
     title: "Large Painted Giant Smoke Balls",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Black Scorpion",
     package: [2, 12],
@@ -749,7 +749,7 @@ const products = [
   {
     id: 3037,
     title: "Smoke Grenade (Pull String)",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [6, 24],
@@ -761,7 +761,7 @@ const products = [
   {
     id: 3038,
     title: "Mammoth White Smoke 5 Minutes",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [100, 1],
@@ -773,7 +773,7 @@ const products = [
   {
     id: 3038,
     title: "Color Smoke Balls (Clay)",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [20, 6, 12],
@@ -785,7 +785,7 @@ const products = [
   {
     id: 3041,
     title: "Snake Pit (Assorted Snakes)",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [24, 12],
@@ -797,7 +797,7 @@ const products = [
   {
     id: 3042,
     title: "Black Smoke",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [6, 12],
@@ -809,7 +809,7 @@ const products = [
   {
     id: 3048,
     title: "USA Patriot Smoke Red White Blue",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [50, 1],
@@ -821,7 +821,7 @@ const products = [
   {
     id: 3053,
     title: "Mammoth Smoke White",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Sky Pioneer",
     package: [36, 4],
@@ -833,7 +833,7 @@ const products = [
   {
     id: 3058,
     title: "Monstrous Smoke Balls",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [4, 12],
@@ -845,7 +845,7 @@ const products = [
   {
     id: 3061,
     title: "Jumbo Neon Smoke Ball",
-    stock: true,
+    inStock: true,
     category: "Snake & Smoke Items",
     brand: "Topgun",
     package: [72, 1],
@@ -857,7 +857,7 @@ const products = [
   {
     id: 4002,
     title: "Champagne Party Poppers (12/24/6)",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [20, 12, 6],
@@ -869,7 +869,7 @@ const products = [
   {
     id: 4009,
     title: "Hen Laying Eggs",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [24, 24],
@@ -881,7 +881,7 @@ const products = [
   {
     id: 4013,
     title: "Magnum Pistol Poppers",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [20, 36],
@@ -893,7 +893,7 @@ const products = [
   {
     id: 4014,
     title: "Pop Snappers",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Wise Guy",
     package: [6, 50, 50],
@@ -905,7 +905,7 @@ const products = [
   {
     id: 4016,
     title: "Sky Lantern Assortment Colors",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Wise Guy",
     package: [6, 10],
@@ -917,7 +917,7 @@ const products = [
   {
     id: 4024,
     title: "Monster Pops",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Beihai PopPop",
     package: [10, 30, 20],
@@ -929,7 +929,7 @@ const products = [
   {
     id: 4049,
     title: "Pagoda",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [144, 1],
@@ -941,7 +941,7 @@ const products = [
   {
     id: 4051,
     title: "Poopie Doogal",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Topgun",
     package: [108, 2],
@@ -953,7 +953,7 @@ const products = [
   {
     id: 4056,
     title: "Top Speed",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Topgun",
     package: [24, 1],
@@ -965,7 +965,7 @@ const products = [
   {
     id: 4059,
     title: "Tanks Large",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Legend",
     package: [72, 2],
@@ -977,7 +977,7 @@ const products = [
   {
     id: 4070,
     title: "Dragon W/ Wings",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Boom Wow",
     package: [72, 2],
@@ -989,7 +989,7 @@ const products = [
   {
     id: 4075,
     title: "Chariot Of Fire",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [36, 1],
@@ -1001,7 +1001,7 @@ const products = [
   {
     id: 4081,
     title: "Dinosaur's Return",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [108, 2],
@@ -1013,7 +1013,7 @@ const products = [
   {
     id: 4106,
     title: "Ferris Wheel",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Sky Pioneer",
     package: [24, 1],
@@ -1025,7 +1025,7 @@ const products = [
   {
     id: 4109,
     title: "Thunder King Snaps",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [6, 24, 20],
@@ -1037,7 +1037,7 @@ const products = [
   {
     id: 4114,
     title: "USA USA",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [16, 1],
@@ -1049,7 +1049,7 @@ const products = [
   {
     id: 4115,
     title: "Monster Truck",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [24, 1],
@@ -1061,7 +1061,7 @@ const products = [
   {
     id: 4118,
     title: "Spaceship",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Legend",
     package: [4, 12],
@@ -1073,7 +1073,7 @@ const products = [
   {
     id: 4120,
     title: "Half Ton",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [24, 1],
@@ -1085,7 +1085,7 @@ const products = [
   {
     id: 4121,
     title: "Power Trip",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [24, 1],
@@ -1097,7 +1097,7 @@ const products = [
   {
     id: 4122,
     title: "Spitfyre",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [16, 1],
@@ -1109,7 +1109,7 @@ const products = [
   {
     id: 4124,
     title: "Normandy Landing Craft",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [54, 1],
@@ -1121,7 +1121,7 @@ const products = [
   {
     id: 4125,
     title: "Ice Bird",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Brothers",
     package: [36, 2],
@@ -1133,7 +1133,7 @@ const products = [
   {
     id: 4132,
     title: "Ninja Disc",
-    stock: true,
+    inStock: true,
     category: "Toys, Novelties & Strobes",
     brand: "Miracle",
     package: [30, 2],
@@ -1145,7 +1145,7 @@ const products = [
   {
     id: 5000,
     title: "Fountain 9 Inch HN-90",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [18, 4],
@@ -1157,7 +1157,7 @@ const products = [
   {
     id: 5001,
     title: "Crack Cone Cane",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [18, 4],
@@ -1169,7 +1169,7 @@ const products = [
   {
     id: 5002,
     title: "Cuckoo Fountain",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [24, 6],
@@ -1181,7 +1181,7 @@ const products = [
   {
     id: 5003,
     title: "Killer Bees",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Legend",
     package: [24, 4],
@@ -1193,7 +1193,7 @@ const products = [
   {
     id: 5005,
     title: "Pyro Garden",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Sky Pioneer",
     package: [24, 4],
@@ -1205,7 +1205,7 @@ const products = [
   {
     id: 5014,
     title: "God Of Fire",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Black Scorpion",
     package: [10, 2],
@@ -1217,7 +1217,7 @@ const products = [
   {
     id: 5018,
     title: "HN-89 Fountain/Happy Silver Flower",
-    stock: true,
+    inStock: true,
     category: "Cone Shape & Floral Shells",
     brand: "Sky Pioneer",
     package: [18, 4],
@@ -1229,7 +1229,7 @@ const products = [
   {
     id: 6006,
     title: "Sliders",
-    stock: true,
+    inStock: true,
     category: "Ground Items",
     brand: "Wise Guy",
     package: [6, 50, 10],
