@@ -34,27 +34,28 @@ We can mark anything as optional as needed to ensure we have the project done on
 
 - [x] **Create Express Server**
 
-  - [ ] Set up the basic Express server in `server.js`
-  - [ ] Configure middleware for parsing JSON and handling CORS
+  - [x] Set up the basic Express server in `server.js`
+  - [x] Configure middleware for parsing JSON and handling CORS
 
 - [ ] **Define Routes**
 
   - [ ] Set up routes for:
-    - [ ] products
+    - [x] products
     - [ ] users
-    - [ ] orders
   - [ ] Implement CRUD operations for each resource
+    - [x] products
+    - [ ] users
 
-- [ ] **Implement Controllers**
+* [ ] **Implement Controllers**
 
   - [ ] Create controller functions to handle requests and interact with the database using Prisma
 
-- [ ] **Set Up Authentication**
+* [ ] **Set Up Authentication**
 
   - [ ] Implement user registration and login routes
   - [ ] Use JWT for authentication and authorization
 
-- [ ] **Handle Error Handling**
+* [ ] **Handle Error Handling**
   - [ ] Implement centralized error handling middleware
 
 ## Frontend Setup (Vanilla JS)
