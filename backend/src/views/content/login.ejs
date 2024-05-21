@@ -1,0 +1,35 @@
+<div class="container">
+  <div>
+    <div>
+      <h1>Login</h1>
+      <% if(messages.length>0) {%>
+      <% if(messages == "User Registered Successfully") { %>
+      <div id="messagesArea" class="alert alert-success">
+        <% } else { %>
+        <div id="messagesArea" class="alert alert-danger">
+          <% } %>
+          <%= messages%>
+        </div>
+        <%}%>
+      
+      
+    
+      <form action="" method="post">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" name="username" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="mb-3">
+          Don't Have an Account? Register <a href="/register">Here</a>
+        </div>
+
+        <button id="login-btn" type="submit" class="btn btn-primary">Login <i class="fa-solid fa-lg fa-right-to-bracket"></i></button>
+      </form>
+    </div>
+  </div>
+</div>

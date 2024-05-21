@@ -19,6 +19,10 @@
 }
 */
 
+main {
+  padding: 8rem;
+}
+
 .navbar-toggler {
   position: absolute;
   right: var(--size-40);
@@ -131,7 +135,7 @@
   justify-content: flex-start;
 }
 
-.banner-left-heading h1  {
+.banner-left-heading h1 {
   font-size: clamp(var(--size-20), 8vw, var(--size-60));
   font-weight: 500;
   line-height: 1.08;
@@ -144,30 +148,30 @@
 }
 
 .banner-left-heading-description p {
-    color: var(--font-color-base);
-    font-size: var(--size-20);
-    letter-spacing: var(--size-0-2);
-    opacity: 0.8;
+  color: var(--font-color-base);
+  font-size: var(--size-20);
+  letter-spacing: var(--size-0-2);
+  opacity: 0.8;
 }
 
 .banner-links {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
 }
 
 .banner-link-left a {
-    background-color: var(--brand-color-blue);
-    padding: var(--size-16) var(--size-20);
-    color: var(--white);
-    border-radius: 50px;
-    font-size: var(--size-16);
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-weight: 400;
-    letter-spacing: var(--size-0-6);
+  background-color: var(--brand-color-blue);
+  padding: var(--size-16) var(--size-20);
+  color: var(--white);
+  border-radius: 50px;
+  font-size: var(--size-16);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 400;
+  letter-spacing: var(--size-0-6);
 }
 
 .banner-link-left a:hover {
@@ -204,11 +208,10 @@
 
 .banner-link-right p a:hover {
   text-decoration: underline;
-} 
+}
 
 .features-section {
   border: solid red;
-
 }
 
 .featured-products {
@@ -339,8 +342,8 @@
 }
 
 .learn-more-link p a:hover {
-text-decoration: underline;
-color: var(--brand-color-red);
+  text-decoration: underline;
+  color: var(--brand-color-red);
 }
 
 .section-heading {
@@ -443,11 +446,9 @@ color: var(--brand-color-red);
   cursor: pointer;
 }
 
-
 .learn-more-grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-
 }
 
 .abstract-photo {
@@ -615,7 +616,7 @@ hr.hr-1 {
 
 .pricing-image img {
   width: var(--size-60);
-  height: var(--size-60);    
+  height: var(--size-60);
 }
 
 .pricing-heading h1 {
@@ -641,7 +642,7 @@ span.sketch {
   background-color: rgb(52, 211, 164);
   border-radius: var(--size-50);
   padding: 0 var(--size-15);
-  margin-top:var(--size-10);
+  margin-top: var(--size-10);
   margin-left: var(--size-15);
   display: inline-block;
 }
@@ -768,7 +769,7 @@ div.form-text-area {
 }
 
 .form-check-yes p {
-  color: rgba( 85, 85, 85, 0.8);
+  color: rgba(85, 85, 85, 0.8);
 }
 
 .form-privacy-policy {
@@ -783,7 +784,11 @@ div.form-text-area {
   font-size: var(--size-16);
   color: var(--font-color-base);
   font-weight: 600;
-  background-image: linear-gradient(to right, var(--font-color-base) 33%, transparent 0%);
+  background-image: linear-gradient(
+    to right,
+    var(--font-color-base) 33%,
+    transparent 0%
+  );
   background-position: bottom;
   background-size: var(--size-10) var(--size-1);
   background-repeat: repeat-x;
@@ -791,7 +796,11 @@ div.form-text-area {
 
 .link-2 {
   color: var(--brand-color-blue);
-  background-image: linear-gradient(to right, var(--brand-color-blue) 33%, transparent 0%);
+  background-image: linear-gradient(
+    to right,
+    var(--brand-color-blue) 33%,
+    transparent 0%
+  );
   background-position: bottom;
   background-size: var(--size-10) var(--size-1);
   background-repeat: repeat-x;
@@ -930,13 +939,13 @@ div.form-text-area {
 
 .terms-list p {
   display: block;
-  color: rgba( 85, 85, 85, 0.8);
+  color: rgba(85, 85, 85, 0.8);
   font-size: var(--size-20);
   padding-top: 1px;
 }
 
 .terms-list a {
-  color: rgba( 85, 85, 85, 0.8);
+  color: rgba(85, 85, 85, 0.8);
   font-size: var(--size-20);
   display: block;
 }
@@ -1028,7 +1037,6 @@ div.form-text-area {
 }
 */
 
-
 /* Product Page Specific Styles */
 
 .banner-product-page {
@@ -1076,4 +1084,3 @@ div.form-text-area {
   border: solid;
   align-items: center;
 }
-
