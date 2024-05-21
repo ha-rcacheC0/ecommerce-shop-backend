@@ -1,11 +1,13 @@
 import express from "express";
 import cors from "cors";
 import { User } from "@prisma/client";
-import { adminRouter } from "./routes/admin";
-import { productRouter } from "./routes/product";
+import { adminRouter } from "./routes/admin.router";
+import { productRouter } from "./routes/product.router";
 import { configDotenv } from "dotenv";
 import path from "path";
 import { userRouter } from "./routes/user.router";
+import session from "express-session";
+import flash from "connect-flash";
 
 configDotenv();
 
@@ -17,6 +19,14 @@ declare global {
     }
   }
 }
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "SECRET_MISSING",
+    saveUninitialized: false,
+    resave: false,
+  })
+);
+app.use(flash());
 
 const port = normalizePort(process.env.PORT || "3000");
 app.use(express.json());
@@ -31,8 +41,8 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 app.use("/user", userRouter);
-app.use("/admin", adminRouter);
-app.use("/products", productRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/products", productRouter);
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {
