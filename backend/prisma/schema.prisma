@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Effects {
+  STROBES
+  CRACKLES
+  SIZZLES
+  SNAPS
+  LOUD_BANG
+  WHISTLE
+  FAN_EFFECTS
+  WILLOWS
+  SMOKE
+}
+
+enum Colors {
+  GREEN
+  RED
+  BLUE
+  ORANGE
+  YELLOW
+  PURPLE
+  PINK
+  WHITE
+}
+
+enum Category {
+  ASSORTMENT
+  FIRECRACKERS
+  SNAKE_SMOKE
+  TOY_NOVELTIES_STROBES
+  CONE_FLORAL
+  GROUND
+  FLYING_HELICOPTERS
+  REPEATERS_200_GRAM
+  REPEATERS_500_GRAM
+  TUBES
+  RELOADABLES
+  PARACHUTES
+  BOTTLE_ROCKETS
+  ROCKETS_MISSLES
+  SPARKLERS
+  PINWHEELS
+  ROMAN_CANDLES
+  FOUNTAINS
+  GENDER_REVEAL
+  SHELLS_MINES
+  FUSE
+  SUPPLIES_VISIBILITY
+  CONFETTI_SHOOTERS_AIR_COMPRESSED
+}
+
+enum Brand {
+  BOOM_WOW
+  SKY_SLAM
+  STARGET
+  SKY_PIONEER
+  T_SKY
+  MC_FIREWORKS
+  RED_LANTERN
+  MIRACLE
+  LEGEND
+  TOPGUN
+  WINDA
+  SIN_CITY
+  HAPPY_FAMILY
+  HOP_KEE
+  PYRO_DIABLO
+  GENERIC
+  RACCOON
+  PYRO_MOOI
+  KRIPTON_FIREWORKS
+  BUM_BUM
+  SHOGUN
+  WISE_GUY
+  BLACK_SCORPION
+  CRZ
+  CSS
+  BROTHERS
+  DOMINATOR
+  MUSCLE_PACK
+  SKIES_THE_LIMIT
+}
+
+model Product {
+  id           Int             @id
+  title        String
+  description  String?
+  image        String          @default("placeholder")
+  casePrice    Decimal
+  inStock      Boolean
+  package      Int[]
+  effects      EffectStrings[]
+  ColorStrings ColorStrings[]
+  Categories   Categories      @relation(fields: [categoriesId], references: [id])
+  categoriesId String
+  Brands       Brands          @relation(fields: [brandsId], references: [id])
+  brandsId     String
+
+  @@unique([id, categoriesId])
+}
+
+model EffectStrings {
+  id      String    @id @default(cuid())
+  name    Effects   @unique
+  Product Product[]
+}
+
+model ColorStrings {
+  id      String    @id @default(cuid())
+  name    Colors    @unique
+  Product Product[]
+}
+
+model Categories {
+  id      String    @id @default(cuid())
+  name    Category  @unique
+  Product Product[]
+}
+
+model Brands {
+  id      String    @id @default(cuid())
+  name    Brand     @unique
+  Product Product[]
+}
