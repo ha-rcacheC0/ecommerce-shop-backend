@@ -22,6 +22,15 @@ userRouter.get("/", (req: Request, res: Response) => {
   });
 });
 
+userRouter.get("/register", (req: Request, res: Response) => {
+  res.render("index", {
+    title: "Register",
+    page: "register",
+
+    messages: req.flash("loginMessage"),
+  });
+});
+
 userRouter.post(
   "/login",
   validateRequest({

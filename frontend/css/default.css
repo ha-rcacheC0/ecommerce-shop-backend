@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* 
 :root {
   --white: #fff;
   --black: #000;
@@ -202,4 +202,4 @@ img {
   .container {
     max-width: 1300px;
   }
-}
+} */

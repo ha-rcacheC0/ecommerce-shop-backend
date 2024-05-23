@@ -6,6 +6,7 @@ import { productRouter } from "./routes/product.router";
 import { configDotenv } from "dotenv";
 import path from "path";
 import { userRouter } from "./routes/user.router";
+import { indexRouter } from "./routes/index.router";
 import session from "express-session";
 import flash from "connect-flash";
 
@@ -37,9 +38,7 @@ app.use(express.static(path.join(__dirname, "../../frontend")));
 
 // Set up Routes as needed
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/products", productRouter);
