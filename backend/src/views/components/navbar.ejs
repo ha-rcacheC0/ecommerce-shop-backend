@@ -1,32 +1,58 @@
- <div id="top-nav " class="top-nav">
-   <nav class="nav">
-     <div class="container">
-       <div class="logo">
-         <a href="index.html"><img src="/imgs/crew-logo.png" alt="company logo"></img></a>
-       </div>
-       <button class="navbar-toggler" aria-expanded="false" aria-controls="navbarDropdown">
-         <span>&#9776;</span>
-       </button>
-       <div class="links">
-         <div class="link">
-           <a href="/">Home</a>
-         </div>
-         <div class="link">
-           <a href="#features">Fireworks</a>
-         </div>
-         <div class="link">
-           <a href="#learn">Shows</a>
-         </div>
-         <div class="link">
-           <a href="#pricing">Events</a>
-         </div>
-         <div class="link">
-           <a href="#hire-us">Contact Us</a>
-         </div>
-         <div class="buy-now-link btn">
-           <a href="">Buy Now</a>
-         </div>
-       </div>
-     </div>
-   </nav>
- </div>
+<div class="navbar bg-base-300 ">
+  <div class="nav-start flex-1">
+    <div class="dropdown">
+      <div tabIndex="0" role="button" class="btn btn-ghost md:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+        </svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+        <li>
+          <a href="/products">Fireworks</a>
+          <ul class="p-2">
+            <li><a href="/products/shows">Shows</a></li>
+          </ul>
+        </li>
+        <li><a href="/events">Events</a>
+          <ul class="p-2">
+            <li><a href="/events/new-years">New Years</a></li>
+            <li><a href="/events/fourth-july">Fourth of July</a></li>
+            <li><a href="/events/gender-reveal">Gender Reveal</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <a href="/" class="btn btn-link ">
+      <img class="w-40" src="/imgs/crew-logo.png" alt="company logo"></img>
+    </a>
+  </div>
+  <div class="navbar-center hidden md:flex flex-1 justify-center">
+    <ul tabindex="0" class="menu menu-horizontal  mt-3 px-1">
+      <li>
+        <details>
+          <summary>
+            <a href="/products">Fireworks</a>
+          </summary>
+          <ul class="p-2">
+            <li><a href="/products/shows">Shows</a></li>
+          </ul>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary><a href="/events">Events</a></summary>
+          <ul class="p-2">
+            <li><a href="/events/new-years">New Years</a></li>
+            <li><a href="/events/fourth-july">Fourth of July</a></li>
+            <li><a href="/events/gender-reveal">Gender Reveal</a></li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+
+  </div>
+  <div class="navbar-end flex gap-2 flex-1 ">
+    <a class="btn btn-primary" href="/user/register">Create Account</a>
+    <a class="btn btn-success" href="/user/login">Login</a>
+  </div>
+</div>

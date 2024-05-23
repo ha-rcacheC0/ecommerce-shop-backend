@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
+import { title } from "process";
 const productRouter = Router();
 
 /* GET ALL. */
@@ -20,7 +21,11 @@ productRouter.get("/", async function (_req, res) {
     },
   });
 
-  return res.status(200).send(allProducts);
+  return res.render("admin", {
+    title: "Product List",
+    page: "product-table",
+    products: allProducts,
+  });
 });
 
 // GET ONE  - ID // ANY UNIQUE VALUE

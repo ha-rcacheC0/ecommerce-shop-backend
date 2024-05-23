@@ -13,7 +13,7 @@ import { z } from "zod";
 
 const userRouter = Router();
 
-userRouter.get("/", (req: Request, res: Response) => {
+userRouter.get("/login", (req: Request, res: Response) => {
   res.render("index", {
     title: "Login",
     page: "login",

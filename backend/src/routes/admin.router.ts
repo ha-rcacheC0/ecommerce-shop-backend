@@ -3,7 +3,7 @@ const adminRouter = Router();
 
 /* GET home page. */
 adminRouter.get("/", function (req, res, next) {
-  res.render("index", { title: "ADMINS ONLY" });
+  res.render("admin", { title: "ADMINS ONLY", page: "admin-dash" });
 });
 
 export { adminRouter };
