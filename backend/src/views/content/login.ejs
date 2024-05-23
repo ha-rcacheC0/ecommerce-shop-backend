@@ -1,7 +1,7 @@
 <div class="container">
   <div>
     <div>
-      <h1>Login</h1>
+      <h1 class="text-3xl ">Login</h1>
       <% if(messages.length>0) {%> <% if(messages == "User Registered Successfully") { %>
       <div id="messagesArea" class="alert alert-success">
         <% } else { %>
@@ -12,27 +12,27 @@
 
         <form action="" method="post">
           <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="text-xl">Username</label>
             <input
               type="text"
-              class="form-control"
+              class="form-control p-3"
               id="username"
               name="username"
               required
             />
           </div>
           <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="text-xl">Password</label>
             <input
               type="password"
-              class="form-control"
+              class="form-control p-3"
               id="password"
               name="password"
               required
             />
           </div>
-          <div class="mb-3">
-            Don't Have an Account? Register <a href="/register">Here</a>
+          <div class="mb-3 ">
+            Don't Have an Account? <a href="/register" class="text-blue-500 underline"> Register Here</a>
           </div>
 
           <button id="login-btn" type="submit" class="btn btn-primary">

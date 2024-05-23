@@ -1,9 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --white: #FFF;
+  --white: #fff;
   --black: #000;
   --background-color: #2f3287;
   --brand-color-blue: #002868;
-  --brand-color-red: #BF0A30;
+  --brand-color-red: #bf0a30;
   --font-color-base: rgb(85, 85, 85);
   --font-color-dark: #15171a;
   --font-color-light: #b0aebe;
@@ -77,7 +81,7 @@
   --size-650: 40.625rem;
   --size-675: 42.1875rem;
   --size-700: 43.75rem;
-  --siz-800: 50rem;
+  --size-800: 50rem;
   --size-1200: 75rem;
 }
 
@@ -146,8 +150,6 @@ img {
   transition: ease-in-out 0.3s;
 }
 
-
-/*
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -161,10 +163,13 @@ img {
   border-radius: 1.25rem;
   transition: ease-in-out 0.3s;
 }
-*/
 
 .btn-primary {
-  background-image: linear-gradient(90deg, var(--grad-1) 0%, var(--grad-2) 100%);
+  background-image: linear-gradient(
+    90deg,
+    var(--grad-1) 0%,
+    var(--grad-2) 100%
+  );
   border: 1px solid var(--grad-1);
   box-shadow: 0 10px 20px rgba(161, 236, 255, 0.5);
   transition: ease-in-out 0.3s;
@@ -182,23 +187,19 @@ img {
 @media (min-width: 768px) {
   .pricing-table,
   .testimonial-grid,
-  .footer-bottom-wrapper { 
-      max-width: 720px; 
+  .footer-bottom-wrapper {
+    max-width: 720px;
   }
-
 }
 
-/*
 @media (min-width: 992px) {
   footer .container {
-      max-width: 960px;
+    max-width: 960px;
   }
-
 }
-*/
 
 @media (min-width: 1200px) {
-  .container { 
-      max-width: 1300px; 
+  .container {
+    max-width: 1300px;
   }
 }
