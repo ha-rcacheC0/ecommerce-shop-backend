@@ -18,14 +18,21 @@ productRouter.get("/", async function (_req, res) {
         },
       },
       ColorStrings: {
-        select: { name: true, id: true },
+        select: { name: true },
       },
+      effects: {
+        select: { name: true },
+      },
+    },
+    orderBy: {
+      id: "asc",
     },
   });
 
   return res.render("admin", {
     title: "Product List",
     page: "product-table",
+
     products: allProducts,
   });
 });
@@ -81,7 +88,6 @@ productRouter.get("/:id", async function (req, res) {
   if (!product)
     return res.status(404).send({ message: "No product was found " });
 
-  // return res.status(200).send(product);
   return res.render("admin", {
     title: "Product Management",
     page: "product-details",
@@ -147,8 +153,8 @@ productRouter.post("/create", async function (req, res) {
       return res
         .status(500)
         .send({ message: "Internal Server Error. Product not Created" });
-
-    return res.status(201).send(newProduct);
+    console.log("Created Product successfully");
+    return res.redirect("/api/products");
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: "Server Error" });

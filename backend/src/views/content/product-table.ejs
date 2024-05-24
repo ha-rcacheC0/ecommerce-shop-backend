@@ -24,6 +24,9 @@
       <% products.forEach(product=>{%>
       <%let colors = ""%>
       <%product.ColorStrings.forEach(color => {colors+=color.name + " "})%>
+      <% let effects=""%>
+      <%product.effects.forEach(effect =>{effects+=effect.name + " "})%>
+
 
       <tr>
         <td><%=product.id%></td>
@@ -33,7 +36,7 @@
         <td><%=product.casePrice%></td>
         <td><%=product.inStock%></td>
         <td><%=product.package%></td>
-        <td><%=product.effects%></td>
+        <td><%=effects%></td>
         <td><%=colors%></td>
         <td><%=product.Categories.name%></td>
         <td><%=product.Brands.name%></td>

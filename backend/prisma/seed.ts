@@ -1,5 +1,4 @@
 import { Brand, Category, Colors, Effects } from "@prisma/client";
-import { clearDB } from "./db.cleanup";
 import { prisma } from "./db.setup";
 
 const getEnumValues = (enumObj: any) => {
@@ -85,7 +84,6 @@ async function createProducts() {
 }
 
 async function seedDb() {
-  // Clear old values -- This is only useful if we are testing and modifying values
   console.log("Starting DB Seeding ");
 
   const brandsData = getEnumValues(Brand);
