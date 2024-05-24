@@ -94,6 +94,65 @@ enum Brand {
   SKIES_THE_LIMIT
 }
 
+enum State {
+  Alabama
+  Alaska
+  Arizona
+  Arkansas
+  California
+  Colorado
+  Connecticut
+  Delaware
+  Florida
+  Georgia
+  Hawaii
+  Idaho
+  Illinois
+  Indiana
+  Iowa
+  Kansas
+  Kentucky
+  Louisiana
+  Maine
+  Maryland
+  Massachusetts
+  Michigan
+  Minnesota
+  Mississippi
+  Missouri
+  Montana
+  Nebraska
+  Nevada
+  New_Hampshire
+  New_Jersey
+  New_Mexico
+  New_York
+  North_Carolina
+  North_Dakota
+  Ohio
+  Oklahoma
+  Oregon
+  Pennsylvania
+  Rhode_Island
+  South_Carolina
+  South_Dakota
+  Tennessee
+  Texas
+  Utah
+  Vermont
+  Virginia
+  Washington
+  West_Virginia
+  Wisconsin
+  Wyoming
+}
+
+enum Role {
+  USER
+  MANAGER
+  ADMIN
+}
+
 model Product {
   id           Int             @id
   title        String
@@ -134,4 +193,27 @@ model Brands {
   id      String    @id @default(cuid())
   name    Brand     @unique
   Product Product[]
+}
+
+model User {
+  id             String       @id @default(cuid())
+  role           Role         @default(USER)
+  email          String       @unique
+  hashedPassword String
+  createdOn      DateTime?    @default(now())
+  lastLogin      DateTime?
+  profiles       UserProfile?
+}
+
+model UserProfile {
+  id           String    @id @default(cuid())
+  firstName    String?
+  lastName     String?
+  dateOfBirth  DateTime?
+  streetNumber String?
+  streetName   String?
+  city         String?
+  state        State?
+  User         User      @relation(fields: [userId], references: [id])
+  userId       String    @unique
 }

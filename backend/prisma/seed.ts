@@ -1,43 +1,14 @@
-import { Colors } from "@prisma/client";
+import { Brand, Category, Colors, Effects } from "@prisma/client";
 import { clearDB } from "./db.cleanup";
 import { prisma } from "./db.setup";
 
-async function seedDb() {
-  // Clear old values -- This is only useful if we are testing and modifying values
-  console.log("Starting DB Seeding ");
-  await clearDB();
+const getEnumValues = (enumObj: any) => {
+  return Object.keys(enumObj).map((enumVal) => ({
+    name: enumObj[enumVal],
+  }));
+};
 
-  // Create Brand
-
-  const skyPioneer = await prisma.brands.create({
-    data: {
-      name: "SKY_PIONEER",
-    },
-  });
-
-  // Create Categories
-  const assortment = await prisma.categories.create({
-    data: {
-      name: "ASSORTMENT",
-    },
-  });
-
-  // Create Colors
-  const colors = await prisma.colorStrings.createManyAndReturn({
-    data: [
-      { name: "RED" },
-      { name: "BLUE" },
-      { name: "GREEN" },
-      { name: "PURPLE" },
-      { name: "PINK" },
-      { name: "WHITE" },
-    ],
-  });
-
-  const effects = await prisma.effectStrings.createManyAndReturn({
-    data: [{ name: "STROBES" }, { name: "CRACKLES" }],
-  });
-
+async function createProducts() {
   // Create Products
 
   const prod1 = await prisma.product.create({
@@ -46,16 +17,33 @@ async function seedDb() {
       title: "Carnival Pack Assortment (S & S)",
       inStock: true,
       Categories: {
-        connect: { id: assortment.id },
+        connectOrCreate: {
+          where: {
+            name: "ASSORTMENT",
+          },
+          create: { name: "ASSORTMENT" },
+        },
       },
-      Brands: { connect: { id: skyPioneer.id } },
+      Brands: {
+        connectOrCreate: {
+          where: {
+            name: "SKY_PIONEER",
+          },
+          create: { name: "SKY_PIONEER" },
+        },
+      },
       package: [36, 1],
       casePrice: 229.99,
       effects: {
-        connect: [{ id: effects[0].id }, { id: effects[1].id }],
+        connect: [{ name: "STROBES" }, { name: "CRACKLES" }],
       },
       ColorStrings: {
-        connect: colors.map((color) => ({ id: color.id })),
+        connect: [
+          { name: "RED" },
+          { name: "BLUE" },
+          { name: "PURPLE" },
+          { name: "PINK" },
+        ],
       },
       description:
         "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
@@ -69,29 +57,69 @@ async function seedDb() {
       title: "Wise Guy Assortment Box",
       inStock: true,
       Categories: {
-        connect: { id: assortment.id },
+        connect: { name: "ASSORTMENT" },
       },
       Brands: {
-        connectOrCreate: {
-          where: {
-            name: "WISE_GUY",
-          },
-          create: { name: "WISE_GUY" },
+        connect: {
+          name: "WISE_GUY",
         },
       },
       package: [36, 1],
       casePrice: 229.99,
       effects: {
-        connect: [{ id: effects[0].id }, { id: effects[1].id }],
+        connect: [{ name: "STROBES" }, { name: "CRACKLES" }],
       },
       ColorStrings: {
-        connect: colors.map((color) => ({ id: color.id })),
+        connect: [
+          { name: "RED" },
+          { name: "BLUE" },
+          { name: "PURPLE" },
+          { name: "PINK" },
+        ],
       },
       description:
         "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
       image: "/product-imgs/pro-id-1001.png",
     },
   });
+}
+
+async function seedDb() {
+  // Clear old values -- This is only useful if we are testing and modifying values
+  console.log("Starting DB Seeding ");
+
+  const brandsData = getEnumValues(Brand);
+  const colorsData = getEnumValues(Colors);
+  const categoriesData = getEnumValues(Category);
+  const effectsData = getEnumValues(Effects);
+  // Create Brand
+
+  const brands = await prisma.brands.createMany({
+    data: brandsData,
+    skipDuplicates: true,
+  });
+
+  // Create Categories
+  const categories = await prisma.categories.createMany({
+    data: categoriesData,
+    skipDuplicates: true,
+  });
+
+  // Create Colors
+  const colors = await prisma.colorStrings.createMany({
+    data: colorsData,
+    skipDuplicates: true,
+  });
+
+  const effects = await prisma.effectStrings.createManyAndReturn({
+    data: effectsData,
+    skipDuplicates: true,
+  });
+
+  const productsInDB = await prisma.product.count();
+  if (productsInDB === 0) {
+    await createProducts();
+  }
 }
 
 //
