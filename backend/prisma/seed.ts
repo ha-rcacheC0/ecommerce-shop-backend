@@ -8,39 +8,7 @@ const getEnumValues = (enumObj: any) => {
   }));
 };
 
-async function seedDb() {
-  // Clear old values -- This is only useful if we are testing and modifying values
-  console.log("Starting DB Seeding ");
-  await clearDB();
-
-  const brandsData = getEnumValues(Brand);
-  const colorsData = getEnumValues(Colors);
-  const categoriesData = getEnumValues(Category);
-  const effectsData = getEnumValues(Effects);
-  // Create Brand
-
-  const brands = await prisma.brands.createMany({
-    data: brandsData,
-    skipDuplicates: true,
-  });
-
-  // Create Categories
-  const categories = await prisma.categories.createMany({
-    data: categoriesData,
-    skipDuplicates: true,
-  });
-
-  // Create Colors
-  const colors = await prisma.colorStrings.createMany({
-    data: colorsData,
-    skipDuplicates: true,
-  });
-
-  const effects = await prisma.effectStrings.createManyAndReturn({
-    data: effectsData,
-    skipDuplicates: true,
-  });
-
+async function createProducts() {
   // Create Products
 
   const prod1 = await prisma.product.create({
@@ -114,6 +82,44 @@ async function seedDb() {
       image: "/product-imgs/pro-id-1001.png",
     },
   });
+}
+
+async function seedDb() {
+  // Clear old values -- This is only useful if we are testing and modifying values
+  console.log("Starting DB Seeding ");
+
+  const brandsData = getEnumValues(Brand);
+  const colorsData = getEnumValues(Colors);
+  const categoriesData = getEnumValues(Category);
+  const effectsData = getEnumValues(Effects);
+  // Create Brand
+
+  const brands = await prisma.brands.createMany({
+    data: brandsData,
+    skipDuplicates: true,
+  });
+
+  // Create Categories
+  const categories = await prisma.categories.createMany({
+    data: categoriesData,
+    skipDuplicates: true,
+  });
+
+  // Create Colors
+  const colors = await prisma.colorStrings.createMany({
+    data: colorsData,
+    skipDuplicates: true,
+  });
+
+  const effects = await prisma.effectStrings.createManyAndReturn({
+    data: effectsData,
+    skipDuplicates: true,
+  });
+
+  const productsInDB = await prisma.product.count();
+  if (productsInDB === 0) {
+    await createProducts();
+  }
 }
 
 //
