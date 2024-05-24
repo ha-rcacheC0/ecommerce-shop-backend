@@ -65,6 +65,7 @@ enum Category {
 enum Brand {
   BOOM_WOW
   SKY_SLAM
+  DUCK
   STARGET
   SKY_PIONEER
   T_SKY
