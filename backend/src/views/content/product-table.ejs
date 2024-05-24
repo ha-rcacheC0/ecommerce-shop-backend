@@ -37,7 +37,7 @@
         <td><%=colors%></td>
         <td><%=product.Categories.name%></td>
         <td><%=product.Brands.name%></td>
-        <td class="text-center"><a href="/api/products/edit/<%=product.id%>" class="btn btn-warning">Edit </a></td>
+        <td class="text-center"><a href="/api/products/<%=product.id%>" class="btn btn-warning">Edit </a></td>
         <td class="text-center"><a href="/api/products/delete/<%=product.id%>" class="btn btn-error">Delete </a></td>
       </tr>
       <%})%>

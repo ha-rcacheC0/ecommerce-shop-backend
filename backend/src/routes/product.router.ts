@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
-import { title } from "process";
+import { Decimal } from "decimal.js";
+import { Brand, Category, Colors, Effects } from "@prisma/client";
+
 const productRouter = Router();
 
 /* GET ALL. */
@@ -25,6 +27,23 @@ productRouter.get("/", async function (_req, res) {
     title: "Product List",
     page: "product-table",
     products: allProducts,
+  });
+});
+
+productRouter.get("/create", function (_req, res) {
+  return res.render("admin", {
+    title: "Product Management",
+    page: "product-details",
+    product: {
+      Categories: [{ name: null }],
+      Brands: [{ name: null }],
+      ColorStrings: [{ name: null }],
+      effects: [{ name: null }],
+    },
+    categories: Category,
+    brands: Brand,
+    effects: Effects,
+    colors: Colors,
   });
 });
 
@@ -54,12 +73,24 @@ productRouter.get("/:id", async function (req, res) {
       ColorStrings: {
         select: { name: true, id: true },
       },
+      effects: {
+        select: { name: true, id: true },
+      },
     },
   });
   if (!product)
     return res.status(404).send({ message: "No product was found " });
 
-  return res.status(200).send(product);
+  // return res.status(200).send(product);
+  return res.render("admin", {
+    title: "Product Management",
+    page: "product-details",
+    product: product,
+    categories: Category,
+    brands: Brand,
+    effects: Effects,
+    colors: Colors,
+  });
 });
 
 // POST - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO ADD THERE OWN PRODUCTS
@@ -68,47 +99,68 @@ productRouter.get("/:id", async function (req, res) {
 
 productRouter.post("/create", async function (req, res) {
   const {
-    id,
-    title,
-    inStock,
-    category,
-    brand,
-    packageSize,
-    price,
-    description,
-    image,
+    productID,
+    productTitle,
+    productInStock,
+    productCategory,
+    productBrand,
+    productPackage,
+    productCasePrice,
+    productDescription,
+    productImageURL,
+    productColors = [], // Optional array of color IDs
+    productEffects = [], // Optional array of effect IDs
   } = req.body;
-  const newProduct = await prisma.product.create({
-    data: {
-      id,
-      title,
-      inStock,
-      casePrice: price,
-      package: packageSize,
-      Brands: {
-        connect: { id: brand },
-      },
-      Categories: { connect: { id: category } },
-      effects: { connect: [] },
-      ColorStrings: { connect: [] },
-      description,
-      image,
+
+  const newProductData = {
+    id: +productID,
+    title: productTitle,
+    inStock: productInStock === "on", // Convert 'on' to boolean
+    casePrice: new Decimal(productCasePrice).toFixed(2), // Ensure precision to 2 decimal places
+    package: productPackage.split(",").map(Number), // Convert productPackage to array of integers
+    description: productDescription,
+    image: productImageURL || "placeholder", // Default to 'placeholder' if image is not provided
+    Brands: {
+      connect: { name: productBrand },
     },
-  });
+    Categories: { connect: { name: productCategory } },
+    effects: {
+      connect:
+        productEffects.length > 0
+          ? productEffects.map((effectName: string) => ({ name: effectName }))
+          : undefined,
+    },
+    ColorStrings: {
+      connect:
+        productColors.length > 0
+          ? productColors.map((colorName: string) => ({ name: colorName }))
+          : undefined,
+    },
+  };
 
-  if (!newProduct)
-    return res
-      .status(500)
-      .send({ message: "Internal Server Error. Product not Created" });
+  try {
+    const newProduct = await prisma.product.create({
+      data: newProductData,
+    });
 
-  return res.status(201).send(newProduct);
+    if (!newProduct)
+      return res
+        .status(500)
+        .send({ message: "Internal Server Error. Product not Created" });
+
+    return res.status(201).send(newProduct);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ error: "Server Error" });
+  }
 });
 
 // PATCH (or PUT) - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO EDIT THE PRODUCTS   -
 // VALIDATE BODY TO ONLY HAVE FIELDS THAT CAN EXIST BUT DON'T NEED TO HAVE ALL FIELDS
 
-productRouter.patch("/:id", async function (req, res) {
+productRouter.post("/:id", async function (req, res) {
   const idAsNum = +req.params.id;
+  console.log("body", req.body);
 
   if (isNaN(idAsNum)) {
     return res
@@ -117,49 +169,60 @@ productRouter.patch("/:id", async function (req, res) {
   }
 
   const {
-    brand, // New brand ID to connect
-    category, // New category ID to connect
-    newEffects = [], // Array of effect IDs to connect
-    removeEffects = [], // Array of effect IDs to disconnect
-    newColors = [], // Array of color string IDs to connect
-    removeColors = [], // Array of color string IDs to disconnect
-    ...updateData // Other fields to update
+    productID,
+    productTitle,
+    productCasePrice,
+    productInStock,
+    productCategory,
+    productBrand,
+    productPackage,
+    productColors = [],
+    productEffects = [],
+    productDescription,
+    productImageURL,
   } = req.body;
 
-  const modifiedProduct = await prisma.product.update({
-    where: {
-      id: idAsNum,
+  const updateData = {
+    id: +productID,
+    title: productTitle,
+    casePrice: new Decimal(productCasePrice).toFixed(2),
+    inStock: productInStock === "on",
+    package: productPackage.split(",").map(Number), // Convert package to array of integers
+    description: productDescription,
+    image: productImageURL,
+    Brands: productBrand ? { connect: { name: productBrand } } : undefined,
+    Categories: productCategory
+      ? { connect: { name: productCategory } }
+      : undefined,
+    effects: {
+      connect:
+        productEffects.length > 0
+          ? productEffects.map((effectName: string) => ({ name: effectName }))
+          : undefined,
     },
-    data: {
-      ...updateData,
-      Brands: brand ? { connect: { id: brand } } : undefined,
-      Categories: category ? { connect: { id: category } } : undefined,
-      effects: {
-        connect:
-          newEffects.length > 0
-            ? newEffects.map((effectId: string) => ({ id: effectId }))
-            : undefined,
-        disconnect:
-          removeEffects.length > 0
-            ? removeEffects.map((effectId: string) => ({ id: effectId }))
-            : undefined,
-      },
-      ColorStrings: {
-        connect:
-          newColors.length > 0
-            ? newColors.map((colorId: string) => ({ id: colorId }))
-            : undefined,
-        disconnect:
-          removeColors.length > 0
-            ? removeColors.map((colorId: string) => ({ id: colorId }))
-            : undefined,
-      },
+    ColorStrings: {
+      connect:
+        productColors.length > 0
+          ? productColors.map((colorName: string) => ({ name: colorName }))
+          : undefined,
     },
-  });
+  };
 
-  if (!modifiedProduct)
-    return res.status(500).send({ error: "Unable to Modify" });
-  return res.status(201).send(modifiedProduct);
+  try {
+    const modifiedProduct = await prisma.product.update({
+      where: {
+        id: idAsNum,
+      },
+      data: updateData,
+    });
+
+    if (!modifiedProduct)
+      return res.status(500).send({ error: "Unable to Modify" });
+    return res.status(201).send(modifiedProduct);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ error: "Server Error" });
+  }
 });
 
 // DELETE - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO DELETE THE PRODUCTS -
