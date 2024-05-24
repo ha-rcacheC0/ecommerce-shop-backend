@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { User } from "@prisma/client";
 import { adminRouter } from "./routes/admin.router";
-import { productRouter } from "./routes/product.router";
+import { productRouter } from "./routes/product-admin.router";
 import { configDotenv } from "dotenv";
 import path from "path";
 import { userRouter } from "./routes/user.router";

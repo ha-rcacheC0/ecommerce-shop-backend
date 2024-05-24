@@ -96,7 +96,7 @@ userRouter.post(
     if (!isPasswordCorrect) {
       console.log("Error: Invalid Credentials. SignIn Failed");
       req.flash("loginMessage", "Invalid Credentials, please try again");
-      return res.redirect("/login");
+      return res.redirect("/user/login");
     }
 
     await prisma.user.update({
@@ -110,9 +110,13 @@ userRouter.post(
     const userInfo = createTokenUserInfo(user);
     const token = createUserJwtToken(user);
 
-    localStorage.setItem("user", JSON.stringify(token));
-
-    if (userInfo.role !== "MEMBER") return res.redirect("/api/admin");
+    if (userInfo.role !== "USER") {
+      return res.render("admin", {
+        title: "ADMINS ONLY",
+        page: "admin-dash",
+        token: token,
+      });
+    }
     return res.redirect("/shop");
   }
 );

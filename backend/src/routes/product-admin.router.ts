@@ -2,42 +2,47 @@ import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
 import { Decimal } from "decimal.js";
 import { Brand, Category, Colors, Effects } from "@prisma/client";
+import { authenticationMiddleware } from "../utils/auth-utils";
 
-const productRouter = Router();
+const productAdminRouter = Router();
 
 /* GET ALL. */
-productRouter.get("/", async function (_req, res) {
-  const allProducts = await prisma.product.findMany({
-    include: {
-      Brands: {
-        select: { name: true },
-      },
-      Categories: {
-        select: {
-          name: true,
+productAdminRouter.get(
+  "/",
+  authenticationMiddleware,
+  async function (req, res) {
+    const allProducts = await prisma.product.findMany({
+      include: {
+        Brands: {
+          select: { name: true },
+        },
+        Categories: {
+          select: {
+            name: true,
+          },
+        },
+        ColorStrings: {
+          select: { name: true },
+        },
+        effects: {
+          select: { name: true },
         },
       },
-      ColorStrings: {
-        select: { name: true },
+      orderBy: {
+        id: "asc",
       },
-      effects: {
-        select: { name: true },
-      },
-    },
-    orderBy: {
-      id: "asc",
-    },
-  });
+    });
 
-  return res.render("admin", {
-    title: "Product List",
-    page: "product-table",
+    return res.render("admin", {
+      title: "Product List",
+      page: "product-table",
 
-    products: allProducts,
-  });
-});
+      products: allProducts,
+    });
+  }
+);
 
-productRouter.get("/create", function (_req, res) {
+productAdminRouter.get("/create", function (_req, res) {
   return res.render("admin", {
     title: "Product Management",
     page: "product-details",
@@ -56,7 +61,7 @@ productRouter.get("/create", function (_req, res) {
 
 // GET ONE  - ID // ANY UNIQUE VALUE
 
-productRouter.get("/:id", async function (req, res) {
+productAdminRouter.get("/:id", async function (req, res) {
   const idAsNum = +req.params.id;
 
   if (isNaN(idAsNum))
@@ -103,7 +108,7 @@ productRouter.get("/:id", async function (req, res) {
 
 // TODO: ADD MIDDLEWARES TO :  VALIDATE USER MAKING REQUEST,VALIDATE REQUEST BODY
 
-productRouter.post("/create", async function (req, res) {
+productAdminRouter.post("/create", async function (req, res) {
   const {
     productID,
     productTitle,
@@ -165,7 +170,7 @@ productRouter.post("/create", async function (req, res) {
 // PATCH (or PUT) - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO EDIT THE PRODUCTS   -
 // VALIDATE BODY TO ONLY HAVE FIELDS THAT CAN EXIST BUT DON'T NEED TO HAVE ALL FIELDS
 
-productRouter.post("/:id", async function (req, res) {
+productAdminRouter.post("/:id", async function (req, res) {
   const idAsNum = +req.params.id;
   console.log("body", req.body);
 
@@ -235,7 +240,7 @@ productRouter.post("/:id", async function (req, res) {
 
 // DELETE - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO DELETE THE PRODUCTS -
 
-productRouter.delete("/:id", async function (req, res) {
+productAdminRouter.delete("/:id", async function (req, res) {
   const idAsNum = +req.params.id;
 
   if (isNaN(idAsNum))
@@ -251,4 +256,4 @@ productRouter.delete("/:id", async function (req, res) {
   return res.status(200).send(deletedProduct);
 });
 
-export { productRouter };
+export { productAdminRouter as productRouter };
