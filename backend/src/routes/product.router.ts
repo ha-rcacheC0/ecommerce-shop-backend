@@ -153,6 +153,7 @@ productRouter.post("/create", async function (req, res) {
       return res
         .status(500)
         .send({ message: "Internal Server Error. Product not Created" });
+
     console.log("Created Product successfully");
     return res.redirect("/api/products");
   } catch (error) {
@@ -224,7 +225,8 @@ productRouter.post("/:id", async function (req, res) {
 
     if (!modifiedProduct)
       return res.status(500).send({ error: "Unable to Modify" });
-    return res.status(201).send(modifiedProduct);
+    console.log("Created Product successfully");
+    return res.redirect("/api/products");
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: "Server Error" });

@@ -215,6 +215,6 @@ model UserProfile {
   streetName   String?
   city         String?
   state        State?
-  User         User      @relation(fields: [userId], references: [id])
+  User         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String    @unique
 }
