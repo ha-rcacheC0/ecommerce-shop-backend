@@ -112,8 +112,10 @@ productRouter.post("/create", async function (req, res) {
     productBrand,
     productPackage,
     productCasePrice,
+    productUnitPrice,
     productDescription,
     productImageURL,
+    productVideoURL,
     productColors = [], // Optional array of color IDs
     productEffects = [], // Optional array of effect IDs
   } = req.body;
@@ -122,10 +124,12 @@ productRouter.post("/create", async function (req, res) {
     id: +productID,
     title: productTitle,
     inStock: productInStock === "on", // Convert 'on' to boolean
+    unitPrice: new Decimal(productUnitPrice).toFixed(2),
     casePrice: new Decimal(productCasePrice).toFixed(2), // Ensure precision to 2 decimal places
     package: productPackage.split(",").map(Number), // Convert productPackage to array of integers
     description: productDescription,
     image: productImageURL || "placeholder", // Default to 'placeholder' if image is not provided
+    videoURL: productVideoURL,
     Brands: {
       connect: { name: productBrand },
     },
