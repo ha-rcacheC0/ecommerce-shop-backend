@@ -10,6 +10,11 @@ import { indexRouter } from "./routes/index.router";
 import session from "express-session";
 import flash from "connect-flash";
 
+import {
+  ClerkExpressWithAuth,
+  ClerkExpressRequireAuth,
+} from "@clerk/clerk-sdk-node";
+
 configDotenv();
 
 const app = express();
@@ -42,12 +47,20 @@ app.use(express.static(path.join(__dirname, "../../frontend")));
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
-app.use("/api/admin", adminRouter);
-app.use("/api/products", productRouter);
+app.use(
+  "/api/admin",
+  ClerkExpressRequireAuth({ signInUrl: "/user/login" }),
+  adminRouter
+);
+app.use(
+  "/api/products",
+  ClerkExpressRequireAuth({ signInUrl: "/user/login" }),
+  productRouter
+);
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {
-    console.log(`Listening on localhost://${port} `);
+    console.log(`Listening on http://localhost:${port} `);
   }
 });
 

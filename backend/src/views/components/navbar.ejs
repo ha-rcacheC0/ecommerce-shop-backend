@@ -52,7 +52,41 @@
 
   </div>
   <div class="navbar-end flex gap-2 flex-1 ">
-    <a class="btn btn-primary" href="/user/register">Create Account</a>
-    <a class="btn btn-success" href="/user/login">Login</a>
+    <div id="user-actions"></div>
   </div>
+
+  <script>
+    function openSignIn() {
+
+      Clerk.openSignIn();
+    }
+
+    function openSignUp() {
+
+      Clerk.openSignUp();
+    }
+
+
+    window.addEventListener("load", async function() {
+      await Clerk.load();
+
+      console.log("ClerkJS is loaded");
+
+      if (Clerk.user) {
+        document.getElementById("user-actions").innerHTML = `
+        <div id="user-button"></div>
+      `;
+
+        const userButtonDiv = document.getElementById("user-button");
+
+        Clerk.mountUserButton(userButtonDiv);
+      } else {
+        document.getElementById("user-actions").innerHTML = `
+        <button class="btn btn-success" onclick="openSignIn()">Sign In</button>
+        <button class="btn btn-primary" onclick="openSignUp()">Create Account</button>
+      `;
+
+      }
+    });
+  </script>
 </div>
