@@ -232,7 +232,7 @@ productRouter.post("/:id", async function (req, res) {
 
     if (!modifiedProduct)
       return res.status(500).send({ error: "Unable to Modify" });
-    return res.status(201).send(modifiedProduct);
+    return res.redirect("/api/products");
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: "Server Error" });
