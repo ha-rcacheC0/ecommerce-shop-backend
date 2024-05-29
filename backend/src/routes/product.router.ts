@@ -190,7 +190,7 @@ productRouter.post("/:id", async function (req, res) {
     productEffects = [],
     productDescription,
     productImageURL,
-    productUnitPrice,
+    productUnitPrice = 0.0,
     productVideoURL,
   } = req.body;
 
@@ -201,8 +201,7 @@ productRouter.post("/:id", async function (req, res) {
     inStock: productInStock === "on",
     package: productPackage.split(",").map(Number), // Convert package to array of integers
     description: productDescription,
-    unitPrice:
-      new Decimal(productUnitPrice).toFixed(2) || new Decimal(0.0).toFixed(2),
+    unitPrice: new Decimal(productUnitPrice).toFixed(2),
     videoURL: productVideoURL,
     image: productImageURL,
     Brands: productBrand ? { connect: { name: productBrand } } : undefined,
