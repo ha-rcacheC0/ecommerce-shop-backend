@@ -3,10 +3,18 @@ import { prisma } from "../../prisma/db.setup";
 import { Decimal } from "decimal.js";
 import { Brand, Category, Colors, Effects } from "@prisma/client";
 
+function getPaginationParams(query: { page?: string; limit?: string }) {
+  const page = query.page ? parseInt(query.page, 10) : 1;
+  const limit = query.limit ? parseInt(query.limit, 10) : 10;
+  const offset = (page - 1) * limit;
+  return { limit, offset };
+}
+
 const productRouter = Router();
 
 /* GET ALL. */
-productRouter.get("/", async function (_req, res) {
+productRouter.get("/", async function (req, res) {
+  const { limit, offset } = getPaginationParams(req.query);
   const allProducts = await prisma.product.findMany({
     include: {
       Brands: {
@@ -27,31 +35,13 @@ productRouter.get("/", async function (_req, res) {
     orderBy: {
       id: "asc",
     },
+    take: limit,
   });
 
-  return res.render("admin", {
-    title: "Product List",
-    page: "product-table",
+  if (!allProducts)
+    return res.status(400).send({ message: "Unable to find products" });
 
-    products: allProducts,
-  });
-});
-
-productRouter.get("/create", function (_req, res) {
-  return res.render("admin", {
-    title: "Product Management",
-    page: "product-details",
-    product: {
-      Categories: [{ name: null }],
-      Brands: [{ name: null }],
-      ColorStrings: [{ name: null }],
-      effects: [{ name: null }],
-    },
-    categories: Category,
-    brands: Brand,
-    effects: Effects,
-    colors: Colors,
-  });
+  return res.status(200).send(allProducts);
 });
 
 // GET ONE  - ID // ANY UNIQUE VALUE
@@ -88,15 +78,7 @@ productRouter.get("/:id", async function (req, res) {
   if (!product)
     return res.status(404).send({ message: "No product was found " });
 
-  return res.render("admin", {
-    title: "Product Management",
-    page: "product-details",
-    product: product,
-    categories: Category,
-    brands: Brand,
-    effects: Effects,
-    colors: Colors,
-  });
+  return res.status(200).send(product);
 });
 
 // POST - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO ADD THERE OWN PRODUCTS
@@ -158,7 +140,7 @@ productRouter.post("/create", async function (req, res) {
         .status(500)
         .send({ message: "Internal Server Error. Product not Created" });
     console.log("Created Product successfully");
-    return res.redirect("/api/products");
+    return res.status(201).send(newProduct);
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: "Server Error" });
@@ -170,7 +152,6 @@ productRouter.post("/create", async function (req, res) {
 
 productRouter.post("/:id", async function (req, res) {
   const idAsNum = +req.params.id;
-  console.log("body", req.body);
 
   if (isNaN(idAsNum)) {
     return res
@@ -195,10 +176,7 @@ productRouter.post("/:id", async function (req, res) {
   } = req.body;
   let unitPrice = productUnitPrice;
 
-  if (!productUnitPrice) {
-    console.log("THIS TRIGGERED");
-    unitPrice = 0;
-  }
+  if (!productUnitPrice) unitPrice = 0;
 
   const updateData = {
     id: +productID,
@@ -238,7 +216,7 @@ productRouter.post("/:id", async function (req, res) {
 
     if (!modifiedProduct)
       return res.status(500).send({ error: "Unable to Modify" });
-    return res.redirect("/api/products");
+    return res.send(201).send(modifiedProduct);
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: "Server Error" });
