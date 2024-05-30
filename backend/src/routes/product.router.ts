@@ -2,47 +2,59 @@ import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
 import { Decimal } from "decimal.js";
 import { Brand, Category, Colors, Effects } from "@prisma/client";
+import { validateRequestQuery } from "zod-express-middleware";
+import { z } from "zod";
 
-function getPaginationParams(query: { page?: string; limit?: string }) {
-  const page = query.page ? parseInt(query.page, 10) : 1;
-  const limit = query.limit ? parseInt(query.limit, 10) : 10;
-  const offset = (page - 1) * limit;
-  return { limit, offset };
+function getPaginationParams(query: { page: number; pageSize: number }) {
+  const page = query.page ? query.page : 1;
+  const pageSize = query.pageSize ? query.pageSize : 10;
+  const offset = (page - 1) * pageSize;
+  return { pageSize, offset };
 }
 
 const productRouter = Router();
 
 /* GET ALL. */
-productRouter.get("/", async function (req, res) {
-  const { limit, offset } = getPaginationParams(req.query);
-  const allProducts = await prisma.product.findMany({
-    include: {
-      Brands: {
-        select: { name: true },
-      },
-      Categories: {
-        select: {
-          name: true,
+productRouter.get(
+  "/",
+  validateRequestQuery(
+    z.object({ page: z.coerce.number(), pageSize: z.coerce.number() })
+  ),
+  async function (req, res) {
+    const { pageSize, offset } = getPaginationParams(req.query);
+    const allProducts = await prisma.product.findMany({
+      include: {
+        Brands: {
+          select: { name: true },
+        },
+        Categories: {
+          select: {
+            name: true,
+          },
+        },
+        ColorStrings: {
+          select: { name: true },
+        },
+        effects: {
+          select: { name: true },
         },
       },
-      ColorStrings: {
-        select: { name: true },
+      orderBy: {
+        id: "asc",
       },
-      effects: {
-        select: { name: true },
-      },
-    },
-    orderBy: {
-      id: "asc",
-    },
-    take: limit,
-  });
+    });
+    const totalPages = Math.ceil(allProducts.length / pageSize);
+    const currentPage = req.query.page;
 
-  if (!allProducts)
-    return res.status(400).send({ message: "Unable to find products" });
+    if (!allProducts)
+      return res.status(400).send({ message: "Unable to find products" });
 
-  return res.status(200).send(allProducts);
-});
+    return res.status(200).send({
+      contents: allProducts.slice(offset, offset + pageSize),
+      hasMore: currentPage < totalPages,
+    });
+  }
+);
 
 // GET ONE  - ID // ANY UNIQUE VALUE
 
