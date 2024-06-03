@@ -5,13 +5,6 @@ import { Brand, Category, Colors, Effects } from "@prisma/client";
 import { validateRequestQuery } from "zod-express-middleware";
 import { z } from "zod";
 
-function getPaginationParams(query: { page: number; pageSize: number }) {
-  const page = query.page ? query.page : 1;
-  const pageSize = query.pageSize ? query.pageSize : 10;
-  const offset = (page - 1) * pageSize;
-  return { pageSize, offset };
-}
-
 const productRouter = Router();
 
 /* GET ALL. */
@@ -21,7 +14,9 @@ productRouter.get(
     z.object({ page: z.coerce.number(), pageSize: z.coerce.number() })
   ),
   async function (req, res) {
-    const { pageSize, offset } = getPaginationParams(req.query);
+    const page = req.query.page;
+    const pageSize = +req.query.pageSize;
+    const offset = (page - 1) * pageSize;
     const allProducts = await prisma.product.findMany({
       include: {
         Brands: {
@@ -44,14 +39,13 @@ productRouter.get(
       },
     });
     const totalPages = Math.ceil(allProducts.length / pageSize);
-    const currentPage = req.query.page;
 
     if (!allProducts)
       return res.status(400).send({ message: "Unable to find products" });
 
     return res.status(200).send({
       contents: allProducts.slice(offset, offset + pageSize),
-      hasMore: currentPage < totalPages,
+      hasMore: page < totalPages,
     });
   }
 );

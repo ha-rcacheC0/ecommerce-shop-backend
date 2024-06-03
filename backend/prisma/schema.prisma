@@ -188,6 +188,8 @@ model Product {
   Categories      Categories      @relation(fields: [categoriesId], references: [id])
   ColorStrings    ColorStrings[]  @relation("ColorStringsToProduct")
   effects         EffectStrings[] @relation("EffectStringsToProduct")
+  Cart            Cart?           @relation(fields: [cartId], references: [id])
+  cartId          String?
 
   @@unique([id, categoriesId])
 }
@@ -224,17 +226,44 @@ model User {
   createdOn      DateTime?    @default(now())
   lastLogin      DateTime?
   profiles       UserProfile?
+  cartId         String
+  Cart           Cart?
 }
 
 model UserProfile {
-  id           String    @id @default(cuid())
-  firstName    String?
-  lastName     String?
-  dateOfBirth  DateTime?
-  streetNumber String?
-  streetName   String?
-  city         String?
-  state        State?
-  userId       String    @unique
-  User         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String    @id @default(cuid())
+  firstName         String?
+  lastName          String?
+  dateOfBirth       DateTime?
+  phoneNumber       String?
+  billingAddressId  String?
+  shippingAddressId String?
+  billingAddress    Address?  @relation(name: "BillingAddress", fields: [billingAddressId], references: [id])
+  shippingAddress   Address?  @relation(name: "ShippingAddress", fields: [shippingAddressId], references: [id])
+  canContact        Boolean   @default(false)
+  userId            String    @unique
+  User              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addressId         String?
+
+  cartId String
+}
+
+model Address {
+  id                   String        @id @default(cuid())
+  street1              String
+  street2              String?
+  city                 String
+  state                State
+  postalCode           String
+  billingUserProfiles  UserProfile[] @relation("BillingAddress")
+  shippingUserProfiles UserProfile[] @relation("ShippingAddress")
+}
+
+model Cart {
+  id       String    @id @default(cuid())
+  products Product[]
+  userId   String    @unique
+  User     User      @relation(fields: [userId], references: [id])
+
+  @@unique([id, userId])
 }
