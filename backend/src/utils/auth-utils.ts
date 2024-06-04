@@ -14,7 +14,7 @@ export const encryptPassword = (password: string) => {
   return bcrypt.hash(password, saltRounds);
 };
 
-export const createTokenUserInfo = (user: any) => {
+export const createTokenUserInfo = (user: User) => {
   return {
     email: user.email,
     role: user.role,
