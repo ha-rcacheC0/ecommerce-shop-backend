@@ -9,6 +9,7 @@ import { userRouter } from "./routes/user.router";
 import { indexRouter } from "./routes/index.router";
 import session from "express-session";
 import flash from "connect-flash";
+import { createClerkClient } from "@clerk/clerk-sdk-node";
 
 import {
   ClerkExpressWithAuth,
@@ -42,6 +43,7 @@ app.use(cors());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "../../frontend")));
+const clerkClient = createClerkClient({});
 
 // Set up Routes as needed
 
@@ -53,8 +55,8 @@ app.use(
   adminRouter
 );
 app.use(
-  "/api/products",
-  ClerkExpressRequireAuth({ signInUrl: "/user/login" }),
+  "/products",
+
   productRouter
 );
 

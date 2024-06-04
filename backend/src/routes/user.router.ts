@@ -13,23 +13,31 @@ import { z } from "zod";
 
 const userRouter = Router();
 
-userRouter.get("/login", (req: Request, res: Response) => {
-  res.render("index", {
-    title: "Login",
-    page: "login",
-
-    messages: req.flash("loginMessage"),
-  });
-});
-
-userRouter.get("/register", (req: Request, res: Response) => {
-  res.render("index", {
-    title: "Register",
-    page: "register",
-
-    messages: req.flash("loginMessage"),
-  });
-});
+userRouter.post(
+  "/register",
+  validateRequest({
+    body: z
+      .object({ email: z.string().email(), password: z.string() })
+      .strict(),
+  }),
+  async (req, res) => {
+    const { email, password } = req.body;
+    const user = await prisma.user.create({
+      data: {
+        email: email,
+        hashedPassword: await encryptPassword(password),
+        profiles: {
+          create: {},
+        },
+      },
+    });
+    if (!user)
+      return res
+        .status(500)
+        .send({ message: "Something went wrong. User was not created" });
+    return res.status(201).send(user);
+  }
+);
 
 userRouter.post(
   "/login",
@@ -48,9 +56,7 @@ userRouter.post(
     });
 
     if (!user) {
-      console.log("ERROR: No User Found. Signin Failed");
-      req.flash("loginMessage", "No User Found");
-      return res.redirect("/login");
+      return res.status(404).send({ message: "User Not Found" });
     }
 
     const isPasswordCorrect = await bcrypt.compare(
@@ -58,9 +64,9 @@ userRouter.post(
       user.hashedPassword
     );
     if (!isPasswordCorrect) {
-      console.log("Error: Invalid Credentials. SignIn Failed");
-      req.flash("loginMessage", "Invalid Credentials, please try again");
-      return res.redirect("/login");
+      return res
+        .status(401)
+        .send({ message: "Invalid Credentials, please try again" });
     }
 
     await prisma.user.update({
@@ -74,10 +80,7 @@ userRouter.post(
     const userInfo = createTokenUserInfo(user);
     const token = createUserJwtToken(user);
 
-    localStorage.setItem("user", JSON.stringify(token));
-
-    if (userInfo.role !== "MEMBER") return res.redirect("/api/admin");
-    return res.redirect("/shop");
+    return res.status(200).send({ token, userInfo });
   }
 );
 
