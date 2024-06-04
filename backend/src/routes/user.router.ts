@@ -27,7 +27,7 @@ userRouter.post(
         email: email,
         hashedPassword: await encryptPassword(password),
         profiles: {
-          create: true,
+          create: {},
         },
       },
     });
