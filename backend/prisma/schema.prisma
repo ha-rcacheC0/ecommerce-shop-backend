@@ -245,7 +245,7 @@ model UserProfile {
   User              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   addressId         String?
 
-  cartId String
+  cartId String?
 }
 
 model Address {
