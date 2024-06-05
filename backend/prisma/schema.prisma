@@ -226,7 +226,7 @@ model User {
   createdOn      DateTime?    @default(now())
   lastLogin      DateTime?
   profiles       UserProfile?
-  cartId         String
+  cartId         String?
   Cart           Cart?
 }
 
@@ -244,8 +244,6 @@ model UserProfile {
   userId            String    @unique
   User              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   addressId         String?
-
-  cartId String?
 }
 
 model Address {

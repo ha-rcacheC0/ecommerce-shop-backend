@@ -29,6 +29,9 @@ userRouter.post(
         profiles: {
           create: {},
         },
+        Cart: {
+          create: {},
+        },
       },
     });
     if (!user)
