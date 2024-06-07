@@ -226,7 +226,6 @@ model User {
   createdOn      DateTime?    @default(now())
   lastLogin      DateTime?
   profiles       UserProfile?
-  cartId         String?
   Cart           Cart?
 }
 
@@ -243,7 +242,6 @@ model UserProfile {
   canContact        Boolean   @default(false)
   userId            String    @unique
   User              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  addressId         String?
 }
 
 model Address {

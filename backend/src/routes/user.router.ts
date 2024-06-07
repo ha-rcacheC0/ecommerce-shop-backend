@@ -17,28 +17,45 @@ userRouter.post(
   "/register",
   validateRequest({
     body: z
-      .object({ email: z.string().email(), password: z.string() })
+      .object({
+        email: z.string().email(),
+        password: z.string(),
+      })
       .strict(),
   }),
   async (req, res) => {
     const { email, password } = req.body;
-    const user = await prisma.user.create({
-      data: {
-        email: email,
-        hashedPassword: await encryptPassword(password),
-        profiles: {
-          create: {},
+
+    try {
+      const user = await prisma.user.create({
+        data: {
+          email,
+          hashedPassword: await encryptPassword(password),
+          profiles: {
+            create: {},
+          },
+          Cart: {
+            create: {},
+          },
         },
-        Cart: {
-          create: {},
+        include: {
+          Cart: true,
         },
-      },
-    });
-    if (!user)
+      });
+
+      if (!user) {
+        return res
+          .status(500)
+          .send({ message: "Something went wrong. User was not created" });
+      }
+
+      return res.status(201).send(user);
+    } catch (error) {
+      console.error("Error creating user:", error);
       return res
         .status(500)
         .send({ message: "Something went wrong. User was not created" });
-    return res.status(201).send(user);
+    }
   }
 );
 
@@ -55,6 +72,9 @@ userRouter.post(
     const user = await prisma.user.findFirst({
       where: {
         email: email,
+      },
+      include: {
+        Cart: true,
       },
     });
 
@@ -80,11 +100,14 @@ userRouter.post(
         id: user.id,
       },
     });
+
     const userInfo = createTokenUserInfo(user);
     const token = createUserJwtToken(user);
+    console.log("this went fine", { token, userInfo });
 
     return res.status(200).send({ token, userInfo });
   }
 );
+// Write Get for User Info
 
 export { userRouter };

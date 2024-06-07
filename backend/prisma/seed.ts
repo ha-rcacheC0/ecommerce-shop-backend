@@ -113,11 +113,6 @@ async function seedDb() {
     data: effectsData,
     skipDuplicates: true,
   });
-
-  const productsInDB = await prisma.product.count();
-  if (productsInDB === 0) {
-    await createProducts();
-  }
 }
 
 //

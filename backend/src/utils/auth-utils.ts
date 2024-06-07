@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Cart, User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -14,11 +14,26 @@ export const encryptPassword = (password: string) => {
   return bcrypt.hash(password, saltRounds);
 };
 
-export const createTokenUserInfo = (user: User) => {
+type UserWithCart = {
+  Cart: {
+    id: string;
+    userId: string;
+  } | null;
+  id: string;
+  role: string;
+  email: string;
+  hashedPassword: string;
+  createdOn: Date | null;
+  lastLogin: Date | null;
+};
+
+export const createTokenUserInfo = (user: UserWithCart) => {
+  console.log(user);
   return {
     email: user.email,
     role: user.role,
     lastLogin: user.lastLogin,
+    Cart: user.Cart,
   };
 };
 
@@ -27,7 +42,7 @@ const jwtInfoSchema = z.object({
   iat: z.number(),
 });
 
-export const createUserJwtToken = (user: User) => {
+export const createUserJwtToken = (user: UserWithCart) => {
   return jwt.sign(createTokenUserInfo(user), process.env.JWT_SECRET!);
 };
 
