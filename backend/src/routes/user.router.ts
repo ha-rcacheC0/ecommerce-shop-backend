@@ -108,6 +108,16 @@ userRouter.post(
     return res.status(200).send({ token, userInfo });
   }
 );
-// Write Get for User Info
+userRouter.get("/userInfo", authenticationMiddleware, async (req, res) => {
+  const { id } = req.user!;
+  const user = await prisma.userProfile.findFirst({
+    where: {
+      userId: id,
+    },
+  });
+  if (!user)
+    return res.status(400).send({ message: "User Profile was not found" });
+  return res.status(200).send(user);
+});
 
 export { userRouter };
