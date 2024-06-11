@@ -74,7 +74,19 @@ userRouter.post(
         email: email,
       },
       include: {
-        Cart: true,
+        Cart: {
+          include: {
+            products: {
+              include: {
+                Brands: true,
+                Categories: true,
+                ColorStrings: true,
+                effects: true,
+              },
+            },
+            User: true,
+          },
+        },
       },
     });
 

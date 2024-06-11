@@ -10,11 +10,7 @@ import { indexRouter } from "./routes/index.router";
 import session from "express-session";
 import flash from "connect-flash";
 import { createClerkClient } from "@clerk/clerk-sdk-node";
-
-import {
-  ClerkExpressWithAuth,
-  ClerkExpressRequireAuth,
-} from "@clerk/clerk-sdk-node";
+import { cartRouter } from "./routes/cart.router";
 
 configDotenv();
 
@@ -49,16 +45,9 @@ const clerkClient = createClerkClient({});
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
-app.use(
-  "/api/admin",
-  ClerkExpressRequireAuth({ signInUrl: "/user/login" }),
-  adminRouter
-);
-app.use(
-  "/products",
-
-  productRouter
-);
+app.use("/api/admin", adminRouter);
+app.use("/products", productRouter);
+app.use("/cart", cartRouter);
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {
