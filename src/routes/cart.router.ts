@@ -10,10 +10,16 @@ cartRouter.get("/:cartId", async (req, res) => {
       id: cartId,
     },
     include: {
-      products: {
+      CartProducts: {
         include: {
-          Brands: true,
-          Categories: true,
+          Product: {
+            include: {
+              Brands: true,
+              Categories: true,
+              ColorStrings: true,
+              EffectStrings: true,
+            },
+          },
         },
       },
     },
@@ -37,13 +43,30 @@ cartRouter.post("/:cartId", async (req, res) => {
     return res.status(404).send({ message: "Cannot find cart with that id" });
 
   const updatedCart = await prisma.cart.update({
-    data: {
-      products: { connect: { id: productId } },
-    },
     where: {
       id: cartId,
     },
+    data: {
+      CartProducts: {
+        upsert: {
+          where: {
+            productId: productId,
+            cartId: cartId,
+          },
+          create: {
+            quantity: 1,
+            Product: { connect: { id: productId } },
+          },
+          update: {
+            quantity: {
+              increment: 1,
+            },
+          },
+        },
+      },
+    },
   });
+
   if (!updatedCart)
     return res
       .status(400)

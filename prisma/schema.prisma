@@ -187,9 +187,8 @@ model Product {
   Brands          Brands          @relation(fields: [brandsId], references: [id])
   Categories      Categories      @relation(fields: [categoriesId], references: [id])
   ColorStrings    ColorStrings[]  @relation("ColorStringsToProduct")
-  effects         EffectStrings[] @relation("EffectStringsToProduct")
-  Cart            Cart?           @relation(fields: [cartId], references: [id])
-  cartId          String?
+  EffectStrings   EffectStrings[] @relation("EffectStringsToProduct")
+  CartProduct     CartProduct[]
 
   @@unique([id, categoriesId])
 }
@@ -256,10 +255,21 @@ model Address {
 }
 
 model Cart {
-  id       String    @id @default(cuid())
-  products Product[]
-  userId   String?   @unique
-  User     User?     @relation(fields: [userId], references: [id])
+  id           String        @id @default(cuid())
+  userId       String?       @unique
+  User         User?         @relation(fields: [userId], references: [id])
+  CartProducts CartProduct[]
 
   @@unique([id, userId])
+}
+
+model CartProduct {
+  id        String  @id @default(cuid())
+  quantity  Int
+  cartId    String
+  productId Int     @unique
+  Cart      Cart    @relation(fields: [cartId], references: [id])
+  Product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
 }

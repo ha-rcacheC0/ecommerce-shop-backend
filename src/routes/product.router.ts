@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
 import { Decimal } from "decimal.js";
-import { Brand, Category, Colors, Effects } from "@prisma/client";
+
 import { validateRequestQuery } from "zod-express-middleware";
 import { z } from "zod";
 
@@ -30,7 +30,7 @@ productRouter.get(
         ColorStrings: {
           select: { name: true },
         },
-        effects: {
+        EffectStrings: {
           select: { name: true },
         },
       },
@@ -76,7 +76,7 @@ productRouter.get("/:id", async function (req, res) {
       ColorStrings: {
         select: { name: true, id: true },
       },
-      effects: {
+      EffectStrings: {
         select: { name: true, id: true },
       },
     },
@@ -122,7 +122,7 @@ productRouter.post("/create", async function (req, res) {
       connect: { name: productBrand },
     },
     Categories: { connect: { name: productCategory } },
-    effects: {
+    EffectStrings: {
       connect:
         productEffects.length > 0
           ? productEffects.map((effectName: string) => ({ name: effectName }))
@@ -198,7 +198,7 @@ productRouter.post("/:id", async function (req, res) {
     Categories: productCategory
       ? { connect: { name: productCategory } }
       : undefined,
-    effects: {
+    EffectStrings: {
       connect:
         productEffects.length > 0
           ? productEffects.map((effectName: string) => ({ name: effectName }))

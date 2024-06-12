@@ -76,12 +76,16 @@ userRouter.post(
       include: {
         Cart: {
           include: {
-            products: {
+            CartProducts: {
               include: {
-                Brands: true,
-                Categories: true,
-                ColorStrings: true,
-                effects: true,
+                Product: {
+                  include: {
+                    Brands: true,
+                    Categories: true,
+                    ColorStrings: true,
+                    EffectStrings: true,
+                  },
+                },
               },
             },
             User: true,
