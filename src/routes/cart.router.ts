@@ -30,7 +30,7 @@ cartRouter.get("/:cartId", async (req, res) => {
   return res.status(200).send(cart);
 });
 
-cartRouter.post("/:cartId", async (req, res) => {
+cartRouter.post("/:cartId/add", async (req, res) => {
   const cartId = req.params.cartId;
   const { productId } = req.body;
 
@@ -74,4 +74,83 @@ cartRouter.post("/:cartId", async (req, res) => {
   return res.status(201).send(updatedCart);
 });
 
+cartRouter.post("/:cartId/remove", async (req, res) => {
+  const cartId = req.params.cartId;
+  const { productId } = req.body;
+
+  const cart = await prisma.cart.findFirst({
+    where: {
+      id: cartId,
+    },
+    include: {
+      CartProducts: true, // Include the CartProducts to check if the product is in the cart
+    },
+  });
+
+  if (!cart)
+    return res.status(404).send({ message: "Cannot find cart with that id" });
+
+  const cartProduct = cart.CartProducts.find(
+    (cp) => cp.productId === productId
+  );
+
+  if (!cartProduct)
+    return res.status(404).send({ message: "Cannot find product in cart" });
+
+  const updatedCart = await prisma.cart.update({
+    where: {
+      id: cartId,
+    },
+    data: {
+      CartProducts: {
+        deleteMany: {
+          cartId: cartId,
+          productId: productId,
+        },
+      },
+    },
+  });
+
+  if (!updatedCart)
+    return res.status(400).send({
+      message: "Unable to remove product from cart. Please try again",
+    });
+
+  return res.status(200).send(updatedCart);
+});
+
+cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
+  const { cartId, productId, quantity } = req.body;
+
+  if (quantity < 1) {
+    return res.status(400).send({ message: "Quantity must be at least 1" });
+  }
+
+  const cartProduct = await prisma.cartProduct.findUnique({
+    where: {
+      cartId_productId: {
+        cartId,
+        productId,
+      },
+    },
+  });
+
+  if (!cartProduct) {
+    return res.status(404).send({ message: "Product not found in cart" });
+  }
+
+  const updatedCartProduct = await prisma.cartProduct.update({
+    where: {
+      cartId_productId: {
+        cartId,
+        productId,
+      },
+    },
+    data: {
+      quantity,
+    },
+  });
+
+  return res.status(200).send(updatedCartProduct);
+});
 export { cartRouter };
