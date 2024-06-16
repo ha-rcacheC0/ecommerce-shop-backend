@@ -1,0 +1,237 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This API covers publicly accessible merchant actions",
+    "title": "The Helcim API",
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.helcim.com/v2/"
+    }
+  ],
+  "tags": [
+    {
+      "description": "TODO",
+      "name": "TODO"
+    }
+  ],
+  "paths": {
+    "/helcim-pay/initialize": {
+      "post": {
+        "operationId": "checkout-init",
+        "parameters": [
+          {
+            "description": "API Access Token",
+            "in": "header",
+            "name": "api-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "paymentType": {
+                    "description": "Payment Type. Valid payment types are purchase | preauth | verify",
+                    "example": "purchase",
+                    "type": "string"
+                  },
+                  "amount": {
+                    "description": "The amount of the transaction to be processed",
+                    "example": 100,
+                    "type": "number"
+                  },
+                  "currency": {
+                    "description": "Currency abbreviation. CAD | USD",
+                    "example": "CAD",
+                    "type": "string"
+                  },
+                  "customerCode": {
+                    "description": "This is the code of an existing customer in Helcim associated with this checkout",
+                    "example": "CST1000",
+                    "type": "string"
+                  },
+                  "invoiceNumber": {
+                    "description": "This is the number of an existing invoice in Helcim associated with this checkout",
+                    "example": "INV1000",
+                    "type": "string"
+                  },
+                  "paymentMethod": {
+                    "description": "This is the payment method (credit card, ACH) that customer can use to pay the amount. cc | ach | cc-ach",
+                    "example": "cc-ach",
+                    "type": "string"
+                  },
+                  "allowPartial": {
+                    "description": "This is used to determine whether the partial payment UI will be displayed to the customer",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "hasConvenienceFee": {
+                    "description": "This is used to apply the convenience fee rate to credit card transaction should customer chooses this payment method",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "taxAmount": {
+                    "description": "This is used to enable level 2 processing lower rates. The value should be the dollar amount of the tax to 2 decimal places.",
+                    "example": 3.67,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currency",
+                  "paymentType"
+                ],
+                "title": "Helcim Pay Initialize",
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "checkoutToken": {
+                      "description": "The checkout token is used to initialize Helcim Pay",
+                      "type": "string"
+                    },
+                    "secretToken": {
+                      "description": "The secret token is used to validate the transaction response",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "description": "List of errors",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Failed"
+          }
+        },
+        "summary": "Creates a HelcimPay.js Checkout Session",
+        "tags": [
+          "Helcim Pay"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HelcimPayInitializeRequest": {
+        "properties": {
+          "paymentType": {
+            "description": "Payment Type. Valid payment types are purchase | preauth | verify",
+            "example": "purchase",
+            "type": "string"
+          },
+          "amount": {
+            "description": "The amount of the transaction to be processed",
+            "example": 100,
+            "type": "number"
+          },
+          "currency": {
+            "description": "Currency abbreviation. CAD | USD",
+            "example": "CAD",
+            "type": "string"
+          },
+          "customerCode": {
+            "description": "This is the code of an existing customer in Helcim associated with this checkout",
+            "example": "CST1000",
+            "type": "string"
+          },
+          "invoiceNumber": {
+            "description": "This is the number of an existing invoice in Helcim associated with this checkout",
+            "example": "INV1000",
+            "type": "string"
+          },
+          "paymentMethod": {
+            "description": "This is the payment method (credit card, ACH) that customer can use to pay the amount. cc | ach | cc-ach",
+            "example": "cc-ach",
+            "type": "string"
+          },
+          "allowPartial": {
+            "description": "This is used to determine whether the partial payment UI will be displayed to the customer",
+            "example": 1,
+            "type": "number"
+          },
+          "hasConvenienceFee": {
+            "description": "This is used to apply the convenience fee rate to credit card transaction should customer chooses this payment method",
+            "example": 1,
+            "type": "number"
+          },
+          "taxAmount": {
+            "description": "This is used to enable level 2 processing lower rates. The value should be the dollar amount of the tax to 2 decimal places.",
+            "example": 3.67,
+            "type": "number"
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "paymentType"
+        ],
+        "title": "Helcim Pay Initialize",
+        "type": "object"
+      },
+      "checkout_init_200_response": {
+        "properties": {
+          "checkoutToken": {
+            "description": "The checkout token is used to initialize Helcim Pay",
+            "type": "string"
+          },
+          "secretToken": {
+            "description": "The secret token is used to validate the transaction response",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "checkout_init_default_response": {
+        "properties": {
+          "errors": {
+            "description": "List of errors",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiAccessAuth": {
+        "description": "API Token",
+        "in": "header",
+        "name": "api-token",
+        "type": "apiKey"
+      }
+    }
+  }
+}

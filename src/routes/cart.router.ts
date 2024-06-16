@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
-
+import sdk from "@api/helcimdevdocs";
 const cartRouter = Router();
 
 cartRouter.get("/:cartId", async (req, res) => {
@@ -20,6 +20,9 @@ cartRouter.get("/:cartId", async (req, res) => {
               EffectStrings: true,
             },
           },
+        },
+        orderBy: {
+          productId: "asc",
         },
       },
     },
@@ -152,5 +155,24 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
   });
 
   return res.status(200).send(updatedCartProduct);
+});
+
+cartRouter.post("/:cartId/purchase", async (req, res) => {
+  const { amount, CartProducts } = req.body;
+
+  sdk
+    .checkoutInit(
+      {
+        paymentType: "purchase",
+        amount: amount,
+        currency: "CAD",
+        paymentMethod: "cc-ach",
+      },
+      {
+        "api-token": process.env.TEMP_HELCIM_API_KEY!,
+      }
+    )
+    .then(({ data }) => res.status(200).send(data))
+    .catch((err) => console.error(err));
 });
 export { cartRouter };

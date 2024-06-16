@@ -8,6 +8,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@api/helcimdevdocs": "file:.api/apis/helcimdevdocs",
     "@clerk/clerk-sdk-node": "^5.0.9",
     "@prisma/adapter-pg": "^5.14.0",
     "@prisma/client": "^5.14.0",
