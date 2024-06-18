@@ -165,14 +165,14 @@ cartRouter.post("/:cartId/purchase", async (req, res) => {
       {
         paymentType: "purchase",
         amount: amount,
-        currency: "CAD",
+        currency: "USD",
         paymentMethod: "cc-ach",
       },
       {
-        "api-token": process.env.TEMP_HELCIM_API_KEY!,
+        "api-token": process.env.TEMP_HELCIM_API_TOKEN!,
       }
     )
     .then(({ data }) => res.status(200).send(data))
-    .catch((err) => console.error(err));
+    .catch((err) => console.error("Fetch Error ", err));
 });
 export { cartRouter };
