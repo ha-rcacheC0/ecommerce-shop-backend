@@ -119,8 +119,6 @@ userRouter.post(
 
     const userInfo = createTokenUserInfo(user);
     const token = createUserJwtToken(user);
-    console.log("this went fine", { token, userInfo });
-
     return res.status(200).send({ token, userInfo });
   }
 );
@@ -217,7 +215,6 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
 
     return res.status(201).send(updatedUserInfo);
   } catch (error) {
-    console.error("Error updating user info:", error);
     return res.status(500).send({ message: "Internal Server Error" });
   }
 });
