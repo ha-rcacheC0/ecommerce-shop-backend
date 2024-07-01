@@ -11,7 +11,7 @@
     "@api/helcimdevdocs": "file:.api/apis/helcimdevdocs",
     "@clerk/clerk-sdk-node": "^5.0.9",
     "@prisma/adapter-pg": "^5.14.0",
-    "@prisma/client": "^5.14.0",
+    "@prisma/client": "^5.16.1",
     "bcrypt": "^5.1.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
@@ -39,7 +39,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.12",
     "daisyui": "^4.11.1",
-    "prisma": "^5.14.0",
+    "prisma": "^5.16.1",
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

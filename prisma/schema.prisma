@@ -172,13 +172,13 @@ enum Role {
 }
 
 model Product {
-  id              Int             @id
+  id              String          @id @default(cuid())
+  sku             Int             @unique
   title           String
   description     String?
   image           String          @default("placeholder")
   videoURL        String?
   casePrice       Decimal
-  unitPrice       Decimal?
   isCaseBreakable Boolean         @default(true)
   inStock         Boolean
   package         Int[]
@@ -189,8 +189,20 @@ model Product {
   ColorStrings    ColorStrings[]  @relation("ColorStringsToProduct")
   EffectStrings   EffectStrings[] @relation("EffectStringsToProduct")
   CartProduct     CartProduct[]
+  UnitProduct     UnitProduct?
+  UnitProductId   Int?            @unique
 
   @@unique([id, categoriesId])
+}
+
+model UnitProduct {
+  id             String  @id @default(cuid())
+  sku            String  @unique
+  productId      String  @unique
+  Product        Product @relation(fields: [productId], references: [id])
+  unitPrice      Decimal
+  package        Int[]
+  availableStock Int
 }
 
 model EffectStrings {
@@ -267,8 +279,8 @@ model CartProduct {
   id        String  @id @default(cuid())
   quantity  Int
   cartId    String
-  productId Int     @unique
-  isUnit    Boolean
+  productId String  @unique
+  isUnit    Boolean @default(false)
   Cart      Cart    @relation(fields: [cartId], references: [id])
   Product   Product @relation(fields: [productId], references: [id])
 

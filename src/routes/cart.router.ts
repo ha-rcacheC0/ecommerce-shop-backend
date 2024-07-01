@@ -18,6 +18,7 @@ cartRouter.get("/:cartId", async (req, res) => {
               Categories: true,
               ColorStrings: true,
               EffectStrings: true,
+              UnitProduct: true,
             },
           },
         },
@@ -27,15 +28,17 @@ cartRouter.get("/:cartId", async (req, res) => {
       },
     },
   });
-  if (!cart)
+
+  if (!cart) {
     return res.status(404).send({ message: "Cannot find cart with that id" });
+  }
 
   return res.status(200).send(cart);
 });
 
 cartRouter.post("/:cartId/add", async (req, res) => {
   const cartId = req.params.cartId;
-  const { productId } = req.body;
+  const { productId, isUnit } = req.body;
 
   const cart = await prisma.cart.findFirst({
     where: {

@@ -4,8 +4,12 @@ import { Decimal } from "decimal.js";
 
 import { validateRequestQuery } from "zod-express-middleware";
 import { z } from "zod";
+import { productSchema } from "../utils/validation-utils";
+import { Prisma } from "@prisma/client";
+import { calcUnitPrice } from "../utils/creation-utils";
 
 const productRouter = Router();
+type ProductCreateInput = Prisma.ProductCreateInput;
 
 /* GET ALL. */
 productRouter.get(
@@ -33,6 +37,7 @@ productRouter.get(
         EffectStrings: {
           select: { name: true },
         },
+        UnitProduct: true,
       },
       orderBy: {
         id: "asc",
@@ -53,16 +58,11 @@ productRouter.get(
 // GET ONE  - ID // ANY UNIQUE VALUE
 
 productRouter.get("/:id", async function (req, res) {
-  const idAsNum = +req.params.id;
-
-  if (isNaN(idAsNum))
-    return res
-      .status(503)
-      .send({ message: "Id must be a number , please try again" });
+  const id = req.params.id;
 
   const product = await prisma.product.findFirst({
     where: {
-      id: idAsNum,
+      id: id,
     },
     include: {
       Brands: {
@@ -79,6 +79,7 @@ productRouter.get("/:id", async function (req, res) {
       EffectStrings: {
         select: { name: true, id: true },
       },
+      UnitProduct: true,
     },
   });
   if (!product)
@@ -100,7 +101,6 @@ productRouter.post("/create", async function (req, res) {
     productBrand,
     productPackage,
     productCasePrice,
-    productUnitPrice,
     productDescription,
     productImageURL,
     productVideoURL,
@@ -108,24 +108,22 @@ productRouter.post("/create", async function (req, res) {
     productEffects = [], // Optional array of effect IDs
   } = req.body;
 
-  const newProductData = {
-    id: +productID,
+  const packageIntArray: number[] = productPackage.split(",").map(Number);
+  const newProductData: ProductCreateInput = {
+    sku: +productID,
     title: productTitle,
     inStock: productInStock === "on", // Convert 'on' to boolean
-    unitPrice: new Decimal(productUnitPrice).toFixed(2),
     casePrice: new Decimal(productCasePrice).toFixed(2), // Ensure precision to 2 decimal places
-    package: productPackage.split(",").map(Number), // Convert productPackage to array of integers
+    package: packageIntArray,
     description: productDescription,
     image: productImageURL || "placeholder", // Default to 'placeholder' if image is not provided
     videoURL: productVideoURL,
-    Brands: {
-      connect: { name: productBrand },
-    },
-    Categories: { connect: { name: productCategory } },
     EffectStrings: {
       connect:
         productEffects.length > 0
-          ? productEffects.map((effectName: string) => ({ name: effectName }))
+          ? productEffects.map((effectName: string) => ({
+              name: effectName,
+            }))
           : undefined,
     },
     ColorStrings: {
@@ -134,11 +132,42 @@ productRouter.post("/create", async function (req, res) {
           ? productColors.map((colorName: string) => ({ name: colorName }))
           : undefined,
     },
+    Brands: {
+      connectOrCreate: {
+        where: {
+          name: productBrand,
+        },
+        create: {
+          name: productBrand,
+        },
+      },
+    },
+    Categories: {
+      connect: { name: productCategory },
+    },
   };
+  // Conditionally add Brands and Categories only if they are provided
 
   try {
     const newProduct = await prisma.product.create({
-      data: newProductData,
+      data: {
+        ...newProductData,
+        UnitProduct: {
+          create: {
+            unitPrice: calcUnitPrice(productCasePrice, packageIntArray[0]),
+            sku: productID + "-u",
+            availableStock: 0,
+            package: [1, ...packageIntArray.slice(1)],
+          },
+        },
+      },
+
+      include: {
+        Brands: true,
+        Categories: true,
+        EffectStrings: true,
+        ColorStrings: true,
+      },
     });
 
     if (!newProduct)
@@ -168,36 +197,29 @@ productRouter.post("/:id", async function (req, res) {
   const {
     productID,
     productTitle,
-    productCasePrice,
-    productInStock,
-    productCategory,
-    productBrand,
-    productPackage,
-    productColors = [],
-    productEffects = [],
     productDescription,
     productImageURL,
-    productUnitPrice,
+    productCasePrice,
+    productInStock,
+    productCaseBreakable,
+    productPackage,
+    productCategory,
+    productBrand,
+    productColors = [],
+    productEffects = [],
     productVideoURL,
   } = req.body;
-  let unitPrice = productUnitPrice;
 
-  if (!productUnitPrice) unitPrice = 0;
-
-  const updateData = {
-    id: +productID,
+  const updateData: any = {
+    sku: +productID,
     title: productTitle,
+    description: productDescription,
+    image: productImageURL,
     casePrice: new Decimal(productCasePrice).toFixed(2),
     inStock: productInStock === "on",
     package: productPackage.split(",").map(Number), // Convert package to array of integers
-    description: productDescription,
-    unitPrice: new Decimal(unitPrice).toFixed(2),
     videoURL: productVideoURL,
-    image: productImageURL,
-    Brands: productBrand ? { connect: { name: productBrand } } : undefined,
-    Categories: productCategory
-      ? { connect: { name: productCategory } }
-      : undefined,
+    isCaseBreakable: productCaseBreakable === "on",
     EffectStrings: {
       connect:
         productEffects.length > 0
@@ -212,10 +234,23 @@ productRouter.post("/:id", async function (req, res) {
     },
   };
 
+  // Conditionally add Brands and Categories only if they are provided
+  if (productBrand) {
+    updateData.Brands = {
+      connect: { name: productBrand },
+    };
+  }
+
+  if (productCategory) {
+    updateData.Categories = {
+      connect: { name: productCategory },
+    };
+  }
+
   try {
     const modifiedProduct = await prisma.product.update({
       where: {
-        id: idAsNum,
+        sku: idAsNum,
       },
       data: updateData,
     });
@@ -241,7 +276,7 @@ productRouter.delete("/:id", async function (req, res) {
 
   const deletedProduct = await prisma.product.delete({
     where: {
-      id: idAsNum,
+      sku: idAsNum,
     },
   });
   return res.status(200).send(deletedProduct);
