@@ -47,7 +47,30 @@ cartRouter.post("/:cartId/add", async (req, res) => {
   });
   if (!cart)
     return res.status(404).send({ message: "Cannot find cart with that id" });
+  let createData;
+  let updateData;
 
+  if (isUnit) {
+    createData = {
+      unitQuantity: 1,
+      Product: { connect: { id: productId } },
+    };
+    updateData = {
+      unitQuantity: {
+        increment: 1,
+      },
+    };
+  } else {
+    createData = {
+      caseQuantity: 1,
+      Product: { connect: { id: productId } },
+    };
+    updateData = {
+      caseQuantity: {
+        increment: 1,
+      },
+    };
+  }
   const updatedCart = await prisma.cart.update({
     where: {
       id: cartId,
@@ -59,15 +82,8 @@ cartRouter.post("/:cartId/add", async (req, res) => {
             productId: productId,
             cartId: cartId,
           },
-          create: {
-            quantity: 1,
-            Product: { connect: { id: productId } },
-          },
-          update: {
-            quantity: {
-              increment: 1,
-            },
-          },
+          create: createData,
+          update: updateData,
         },
       },
     },
@@ -126,11 +142,7 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
 });
 
 cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
-  const { cartId, productId, quantity } = req.body;
-
-  if (quantity < 1) {
-    return res.status(400).send({ message: "Quantity must be at least 1" });
-  }
+  const { cartId, productId, quantity, isUnit } = req.body;
 
   const cartProduct = await prisma.cartProduct.findUnique({
     where: {
@@ -145,6 +157,18 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
     return res.status(404).send({ message: "Product not found in cart" });
   }
 
+  let updateData;
+
+  if (isUnit) {
+    updateData = {
+      unitQuantity: quantity,
+    };
+  } else {
+    updateData = {
+      caseQuantity: quantity,
+    };
+  }
+
   const updatedCartProduct = await prisma.cartProduct.update({
     where: {
       cartId_productId: {
@@ -152,9 +176,7 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
         productId,
       },
     },
-    data: {
-      quantity,
-    },
+    data: updateData,
   });
 
   return res.status(200).send(updatedCartProduct);
