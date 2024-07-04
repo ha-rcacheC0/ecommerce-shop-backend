@@ -140,7 +140,7 @@ userRouter.get("/userInfo", authenticationMiddleware, async (req, res) => {
 
 userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
   const { id } = req.user!;
-  console.log("body:", req.body);
+
   const {
     firstName,
     lastName,
