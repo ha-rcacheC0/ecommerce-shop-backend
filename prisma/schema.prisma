@@ -171,26 +171,34 @@ enum Role {
   ADMIN
 }
 
+enum Status {
+  ORDERED
+  PENDING
+  COMPLETED
+}
+
 model Product {
-  id              String          @id @default(cuid())
-  sku             Int             @unique
-  title           String
-  description     String?
-  image           String          @default("placeholder")
-  videoURL        String?
-  casePrice       Decimal
-  isCaseBreakable Boolean         @default(true)
-  inStock         Boolean
-  package         Int[]
-  categoriesId    String
-  brandsId        String
-  Brands          Brands          @relation(fields: [brandsId], references: [id])
-  Categories      Categories      @relation(fields: [categoriesId], references: [id])
-  ColorStrings    ColorStrings[]  @relation("ColorStringsToProduct")
-  EffectStrings   EffectStrings[] @relation("EffectStringsToProduct")
-  CartProduct     CartProduct[]
-  UnitProduct     UnitProduct?
-  UnitProductId   Int?            @unique
+  id               String             @id @default(cuid())
+  sku              Int                @unique
+  title            String
+  description      String?
+  image            String             @default("placeholder")
+  videoURL         String?
+  casePrice        Decimal
+  isCaseBreakable  Boolean            @default(true)
+  inStock          Boolean
+  package          Int[]
+  categoriesId     String
+  brandsId         String
+  Brands           Brands             @relation(fields: [brandsId], references: [id])
+  Categories       Categories         @relation(fields: [categoriesId], references: [id])
+  ColorStrings     ColorStrings[]     @relation("ColorStringsToProduct")
+  EffectStrings    EffectStrings[]    @relation("EffectStringsToProduct")
+  CartProduct      CartProduct[]
+  UnitProduct      UnitProduct?
+  UnitProductId    Int?               @unique
+  PurchaseItem     PurchaseItem[]
+  BreakCaseRequest BreakCaseRequest[]
 
   @@unique([id, categoriesId])
 }
@@ -230,14 +238,15 @@ model Brands {
 }
 
 model User {
-  id             String       @id @default(cuid())
-  role           Role         @default(USER)
-  email          String       @unique
+  id             String           @id @default(cuid())
+  role           Role             @default(USER)
+  email          String           @unique
   hashedPassword String
-  createdOn      DateTime?    @default(now())
+  createdOn      DateTime?        @default(now())
   lastLogin      DateTime?
   profiles       UserProfile?
   Cart           Cart?
+  PurchaseRecord PurchaseRecord[]
 }
 
 model UserProfile {
@@ -285,4 +294,32 @@ model CartProduct {
   Product      Product @relation(fields: [productId], references: [id])
 
   @@unique([cartId, productId])
+}
+
+model PurchaseRecord {
+  id            String         @id @default(cuid())
+  status        Status         @default(ORDERED)
+  amount        Decimal
+  date          DateTime       @default(now())
+  userId        String
+  User          User           @relation(fields: [userId], references: [id])
+  PurchaseItems PurchaseItem[]
+}
+
+model PurchaseItem {
+  id             String         @id @default(cuid())
+  purchaseId     String
+  productId      String
+  quantity       Int
+  isUnit         Boolean
+  PurchaseRecord PurchaseRecord @relation(fields: [purchaseId], references: [id])
+  Product        Product        @relation(fields: [productId], references: [id])
+}
+
+model BreakCaseRequest {
+  id        String   @id @default(cuid())
+  productId String
+  quantity  Int
+  createdAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id])
 }
