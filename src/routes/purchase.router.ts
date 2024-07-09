@@ -1,10 +1,15 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import {
+  addToDailyUnitBreakList,
+  sendEmail,
+  generateEmailHtml,
+} from "../utils/email-utils";
 
 const prisma = new PrismaClient();
-const router = express.Router();
+const purchaseRouter = express.Router();
 
-router.post("/purchase", async (req, res) => {
+purchaseRouter.post("/", async (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
@@ -21,9 +26,9 @@ router.post("/purchase", async (req, res) => {
     return res.status(400).send({ message: "Cart is empty or not found" });
   }
 
-  // Calculate the total amount
   let amount = 0;
   const purchaseItems = [];
+  let hasUnits = false;
 
   for (const item of cart.CartProducts) {
     const product = await prisma.product.findUnique({
@@ -37,7 +42,6 @@ router.post("/purchase", async (req, res) => {
         .send({ message: `Product with id ${item.productId} not found` });
     }
 
-    // Handle cases
     if (item.caseQuantity > 0) {
       amount += product.casePrice.toNumber() * item.caseQuantity;
       purchaseItems.push({
@@ -47,7 +51,6 @@ router.post("/purchase", async (req, res) => {
       });
     }
 
-    // Handle units
     if (item.unitQuantity > 0) {
       const unitPrice = product.UnitProduct!.unitPrice.toNumber();
       const availableStock = product.UnitProduct!.availableStock;
@@ -60,14 +63,16 @@ router.post("/purchase", async (req, res) => {
             quantity: neededStock,
           },
         });
+
         amount += unitPrice * availableStock;
         purchaseItems.push({
           productId: item.productId,
           quantity: availableStock,
           isUnit: true,
         });
+
+        hasUnits = true;
       } else {
-        // Use available stock
         amount += unitPrice * item.unitQuantity;
         purchaseItems.push({
           productId: item.productId,
@@ -75,16 +80,16 @@ router.post("/purchase", async (req, res) => {
           isUnit: true,
         });
 
-        // Update unit inventory
         await prisma.unitProduct.update({
           where: { productId: item.productId },
           data: { availableStock: availableStock - item.unitQuantity },
         });
+
+        hasUnits = true;
       }
     }
   }
 
-  // Create the purchase record
   const purchase = await prisma.purchaseRecord.create({
     data: {
       userId,
@@ -98,12 +103,23 @@ router.post("/purchase", async (req, res) => {
     },
   });
 
-  // Clear the cart
   await prisma.cartProduct.deleteMany({
     where: { cartId: cart.id },
   });
 
+  // Sending email logic
+  const staffEmail = "staff@example.com"; // Replace with actual staff email
+
+  if (!hasUnits) {
+    // Send email immediately for case-only orders
+    await sendEmail(
+      staffEmail,
+      "New Order for Shipping",
+      generateEmailHtml(purchase)
+    );
+  }
+
   return res.status(201).send(purchase);
 });
 
-export default router;
+export { purchaseRouter };

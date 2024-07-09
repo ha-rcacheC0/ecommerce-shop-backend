@@ -3,6 +3,7 @@ import cors from "cors";
 import { User } from "@prisma/client";
 import { adminRouter } from "./routes/admin.router";
 import { productRouter } from "./routes/product.router";
+import { purchaseRouter } from "./routes/purchase.router";
 import { configDotenv } from "dotenv";
 import path from "path";
 import { userRouter } from "./routes/user.router";
@@ -46,6 +47,7 @@ const clerkClient = createClerkClient({});
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/purchase", purchaseRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 
