@@ -1,10 +1,6 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import {
-  addToDailyUnitBreakList,
-  sendEmail,
-  generateEmailHtml,
-} from "../utils/email-utils";
+import { sendEmail, generateEmailHtml } from "../utils/email-utils";
 
 const prisma = new PrismaClient();
 const purchaseRouter = express.Router();

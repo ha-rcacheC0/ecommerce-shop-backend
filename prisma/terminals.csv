@@ -1,0 +1,5 @@
+acceptOutOfStateLicence ,terminalName ,businessRequired ,street1     ,street2   ,city        ,state ,postalCode
+true                    ,Terminal 1   ,true             ,123 Main St ,          ,New York    ,NY    ,     10001
+false                   ,Terminal 2   ,false            ,456 Elm St  ,Apt 5     ,Los Angeles ,CA    ,     90001
+true                    ,Terminal 3   ,true             ,789 Oak St  ,          ,Chicago     ,IL    ,     60601
+false                   ,Terminal 4   ,false            ,101 Pine St ,Suite 200 ,Houston     ,TX    ,     77001

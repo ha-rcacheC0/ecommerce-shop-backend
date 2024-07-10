@@ -6,7 +6,8 @@
     "start": "ts-node src/app.ts",
     "dev": "nodemon",
     "seed": "ts-node prisma/seed.ts",
-    "CSVseed": "ts-node prisma/seedFromCSV.ts"
+    "CSVseed": "ts-node prisma/seedFromCSV.ts",
+    "termSeed": "ts-node prisma/seedTerminalsFromCSV.ts"
   },
   "dependencies": {
     "@api/helcimdevdocs": "file:.api/apis/helcimdevdocs",

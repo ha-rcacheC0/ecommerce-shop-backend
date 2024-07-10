@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import cron from "node-cron";
 import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 const transporter = nodemailer.createTransport({
   host: "smtp.example.com", // Replace with your SMTP server
@@ -19,12 +20,6 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     subject,
     html,
   });
-};
-
-// Mock function to add purchase ID to a daily list (to be implemented)
-export const addToDailyUnitBreakList = async (purchaseId: string) => {
-  // Implement the logic to add the purchase ID to a daily list
-  // For example, you could store it in a database table
 };
 
 // Function to generate the email HTML content
@@ -46,8 +41,6 @@ export const generateEmailHtml = (purchase: any) => {
     </ul>
   `;
 };
-
-const prisma = new PrismaClient();
 
 const sendDailyUnitBreakEmail = async () => {
   const breakRequests = await prisma.breakCaseRequest.findMany({

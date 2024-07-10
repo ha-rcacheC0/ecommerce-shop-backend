@@ -265,14 +265,15 @@ model UserProfile {
 }
 
 model Address {
-  id                   String        @id @default(cuid())
+  id                   String              @id @default(cuid())
   street1              String
   street2              String?
   city                 String
   state                State
   postalCode           String
-  billingUserProfiles  UserProfile[] @relation("BillingAddress")
-  shippingUserProfiles UserProfile[] @relation("ShippingAddress")
+  billingUserProfiles  UserProfile[]       @relation("BillingAddress")
+  shippingUserProfiles UserProfile[]       @relation("ShippingAddress")
+  ApprovedTerminals    ApprovedTerminals[]
 }
 
 model Cart {
@@ -322,4 +323,14 @@ model BreakCaseRequest {
   quantity  Int
   createdAt DateTime @default(now())
   Product   Product  @relation(fields: [productId], references: [id])
+}
+
+// terminal - Address, Terminal Name, OutOfStateLicence, BusinessRequired
+model ApprovedTerminals {
+  id                      String  @id @default(cuid())
+  acceptOutOfStateLicence Boolean
+  terminalName            String
+  businessRequired        Boolean
+  Address                 Address @relation(fields: [addressId], references: [id])
+  addressId               String
 }
