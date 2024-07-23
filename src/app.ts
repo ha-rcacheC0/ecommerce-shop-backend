@@ -12,6 +12,7 @@ import session from "express-session";
 import flash from "connect-flash";
 import { createClerkClient } from "@clerk/clerk-sdk-node";
 import { cartRouter } from "./routes/cart.router";
+import { terminalRouter } from "./routes/terminal.router";
 
 configDotenv();
 
@@ -50,6 +51,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/purchase", purchaseRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
+app.use("/api/terminal", terminalRouter);
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {

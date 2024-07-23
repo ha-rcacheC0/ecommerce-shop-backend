@@ -177,6 +177,11 @@ enum Status {
   COMPLETED
 }
 
+enum TerminalCompany {
+  FEDEX
+  DHL
+}
+
 model Product {
   id               String             @id @default(cuid())
   sku              Int                @unique
@@ -274,6 +279,7 @@ model Address {
   billingUserProfiles  UserProfile[]       @relation("BillingAddress")
   shippingUserProfiles UserProfile[]       @relation("ShippingAddress")
   ApprovedTerminals    ApprovedTerminals[]
+  PurchaseRecord       PurchaseRecord[]
 }
 
 model Cart {
@@ -298,13 +304,15 @@ model CartProduct {
 }
 
 model PurchaseRecord {
-  id            String         @id @default(cuid())
-  status        Status         @default(ORDERED)
-  amount        Decimal
-  date          DateTime       @default(now())
-  userId        String
-  User          User           @relation(fields: [userId], references: [id])
-  PurchaseItems PurchaseItem[]
+  id              String         @id @default(cuid())
+  status          Status         @default(ORDERED)
+  amount          Decimal
+  shippingAddress Address        @relation(fields: [addressId], references: [id])
+  date            DateTime       @default(now())
+  userId          String
+  User            User           @relation(fields: [userId], references: [id])
+  PurchaseItems   PurchaseItem[]
+  addressId       String
 }
 
 model PurchaseItem {
@@ -325,12 +333,12 @@ model BreakCaseRequest {
   Product   Product  @relation(fields: [productId], references: [id])
 }
 
-// terminal - Address, Terminal Name, OutOfStateLicence, BusinessRequired
 model ApprovedTerminals {
-  id                      String  @id @default(cuid())
+  id                      String          @id @default(cuid())
   acceptOutOfStateLicence Boolean
   terminalName            String
   businessRequired        Boolean
-  Address                 Address @relation(fields: [addressId], references: [id])
+  Address                 Address         @relation(fields: [addressId], references: [id])
   addressId               String
+  company                 TerminalCompany
 }

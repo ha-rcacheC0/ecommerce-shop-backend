@@ -2,7 +2,7 @@ import fs from "fs";
 import csv from "csv-parser";
 import path from "path";
 import { prisma } from "./db.setup";
-import { State } from "@prisma/client";
+import { State, TerminalCompany } from "@prisma/client";
 
 interface CSVRow {
   acceptOutOfStateLicence: string;
@@ -13,6 +13,7 @@ interface CSVRow {
   city: string;
   state: State;
   postalCode: string;
+  company: TerminalCompany;
 }
 
 interface TerminalData {
@@ -28,6 +29,7 @@ interface TerminalData {
       postalCode: string;
     };
   };
+  company: TerminalCompany;
 }
 
 const trimKeys = (obj: any): any => {
@@ -65,6 +67,7 @@ const createTerminalsFromCSV = async (csvData: CSVRow[]) => {
       city,
       state,
       postalCode,
+      company,
     } = row;
 
     const terminalData: TerminalData = {
@@ -80,6 +83,7 @@ const createTerminalsFromCSV = async (csvData: CSVRow[]) => {
           postalCode,
         },
       },
+      company,
     };
 
     await prisma.approvedTerminals.create({ data: terminalData });
