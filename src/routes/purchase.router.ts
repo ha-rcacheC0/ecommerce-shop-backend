@@ -1,12 +1,13 @@
-import express from "express";
 import { PrismaClient } from "@prisma/client";
-import { sendEmail, generateEmailHtml } from "../utils/email-utils";
+import express from "express";
+import { connect } from "http2";
+import { generateEmailHtml, sendEmail } from "../utils/email-utils";
 
 const prisma = new PrismaClient();
 const purchaseRouter = express.Router();
 
 purchaseRouter.post("/", async (req, res) => {
-  const { userId } = req.body;
+  const { userId, shippingAddressId } = req.body;
 
   if (!userId) {
     return res.status(400).send({ message: "User ID is required" });
@@ -92,6 +93,16 @@ purchaseRouter.post("/", async (req, res) => {
       amount,
       PurchaseItems: {
         create: purchaseItems,
+      },
+      shippingAddress: {
+        connect: {
+          id: shippingAddressId,
+        },
+      },
+      User: {
+        connect: {
+          id: userId,
+        },
       },
     },
     include: {
