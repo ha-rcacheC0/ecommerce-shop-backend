@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "helcimdevdocs",
+      "source": "@helcimdevdocs/v2.1#1hqqtljsu6loz",
+      "integrity": "sha512-19/oq7C9zftUUWUnaY8RDXbBfvLM8F4+gchSNoAUlR2oma3Wiv+77oeLt08S3LuczUi5oYRz2R+c8F4EIm9wTQ==",
+      "installerVersion": "6.1.1"
+    }
+  ]
+}

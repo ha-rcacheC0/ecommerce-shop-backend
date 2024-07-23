@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
-
+import sdk from "@api/helcimdevdocs";
 const cartRouter = Router();
 
 cartRouter.get("/:cartId", async (req, res) => {
@@ -18,21 +18,27 @@ cartRouter.get("/:cartId", async (req, res) => {
               Categories: true,
               ColorStrings: true,
               EffectStrings: true,
+              UnitProduct: true,
             },
           },
+        },
+        orderBy: {
+          productId: "asc",
         },
       },
     },
   });
-  if (!cart)
+
+  if (!cart) {
     return res.status(404).send({ message: "Cannot find cart with that id" });
+  }
 
   return res.status(200).send(cart);
 });
 
 cartRouter.post("/:cartId/add", async (req, res) => {
   const cartId = req.params.cartId;
-  const { productId } = req.body;
+  const { productId, isUnit } = req.body;
 
   const cart = await prisma.cart.findFirst({
     where: {
@@ -41,7 +47,30 @@ cartRouter.post("/:cartId/add", async (req, res) => {
   });
   if (!cart)
     return res.status(404).send({ message: "Cannot find cart with that id" });
+  let createData;
+  let updateData;
 
+  if (isUnit) {
+    createData = {
+      unitQuantity: 1,
+      Product: { connect: { id: productId } },
+    };
+    updateData = {
+      unitQuantity: {
+        increment: 1,
+      },
+    };
+  } else {
+    createData = {
+      caseQuantity: 1,
+      Product: { connect: { id: productId } },
+    };
+    updateData = {
+      caseQuantity: {
+        increment: 1,
+      },
+    };
+  }
   const updatedCart = await prisma.cart.update({
     where: {
       id: cartId,
@@ -53,15 +82,8 @@ cartRouter.post("/:cartId/add", async (req, res) => {
             productId: productId,
             cartId: cartId,
           },
-          create: {
-            quantity: 1,
-            Product: { connect: { id: productId } },
-          },
-          update: {
-            quantity: {
-              increment: 1,
-            },
-          },
+          create: createData,
+          update: updateData,
         },
       },
     },
@@ -120,11 +142,7 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
 });
 
 cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
-  const { cartId, productId, quantity } = req.body;
-
-  if (quantity < 1) {
-    return res.status(400).send({ message: "Quantity must be at least 1" });
-  }
+  const { cartId, productId, quantity, isUnit } = req.body;
 
   const cartProduct = await prisma.cartProduct.findUnique({
     where: {
@@ -139,6 +157,18 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
     return res.status(404).send({ message: "Product not found in cart" });
   }
 
+  let updateData;
+
+  if (isUnit) {
+    updateData = {
+      unitQuantity: quantity,
+    };
+  } else {
+    updateData = {
+      caseQuantity: quantity,
+    };
+  }
+
   const updatedCartProduct = await prisma.cartProduct.update({
     where: {
       cartId_productId: {
@@ -146,11 +176,29 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
         productId,
       },
     },
-    data: {
-      quantity,
-    },
+    data: updateData,
   });
 
   return res.status(200).send(updatedCartProduct);
 });
+
+cartRouter.post("/:cartId/purchase", async (req, res) => {
+  const { amount, CartProducts } = req.body;
+
+  sdk
+    .checkoutInit(
+      {
+        paymentType: "purchase",
+        amount: amount,
+        currency: "USD",
+        paymentMethod: "cc-ach",
+      },
+      {
+        "api-token": process.env.TEMP_HELCIM_API_TOKEN!,
+      }
+    )
+    .then(({ data }) => res.status(200).send(data))
+    .catch((err) => console.error("Fetch Error ", err));
+});
+
 export { cartRouter };

@@ -113,56 +113,56 @@ enum Brand {
 }
 
 enum State {
-  Alabama
-  Alaska
-  Arizona
-  Arkansas
-  California
-  Colorado
-  Connecticut
-  Delaware
-  Florida
-  Georgia
-  Hawaii
-  Idaho
-  Illinois
-  Indiana
-  Iowa
-  Kansas
-  Kentucky
-  Louisiana
-  Maine
-  Maryland
-  Massachusetts
-  Michigan
-  Minnesota
-  Mississippi
-  Missouri
-  Montana
-  Nebraska
-  Nevada
-  New_Hampshire
-  New_Jersey
-  New_Mexico
-  New_York
-  North_Carolina
-  North_Dakota
-  Ohio
-  Oklahoma
-  Oregon
-  Pennsylvania
-  Rhode_Island
-  South_Carolina
-  South_Dakota
-  Tennessee
-  Texas
-  Utah
-  Vermont
-  Virginia
-  Washington
-  West_Virginia
-  Wisconsin
-  Wyoming
+  AL
+  AK
+  AZ
+  AR
+  CA
+  CO
+  CT
+  DE
+  FL
+  GA
+  HI
+  ID
+  IL
+  IN
+  IA
+  KS
+  KY
+  LA
+  ME
+  MD
+  MA
+  MI
+  MN
+  MS
+  MO
+  MT
+  NE
+  NV
+  NH
+  NJ
+  NM
+  NY
+  NC
+  ND
+  OH
+  OK
+  OR
+  PA
+  RI
+  SC
+  SD
+  TN
+  TX
+  UT
+  VT
+  VA
+  WA
+  WV
+  WI
+  WY
 }
 
 enum Role {
@@ -171,26 +171,51 @@ enum Role {
   ADMIN
 }
 
+enum Status {
+  ORDERED
+  PENDING
+  COMPLETED
+}
+
+enum TerminalCompany {
+  FEDEX
+  DHL
+}
+
 model Product {
-  id              Int             @id
-  title           String
-  description     String?
-  image           String          @default("placeholder")
-  videoURL        String?
-  casePrice       Decimal
-  unitPrice       Decimal?
-  isCaseBreakable Boolean         @default(true)
-  inStock         Boolean
-  package         Int[]
-  categoriesId    String
-  brandsId        String
-  Brands          Brands          @relation(fields: [brandsId], references: [id])
-  Categories      Categories      @relation(fields: [categoriesId], references: [id])
-  ColorStrings    ColorStrings[]  @relation("ColorStringsToProduct")
-  EffectStrings   EffectStrings[] @relation("EffectStringsToProduct")
-  CartProduct     CartProduct[]
+  id               String             @id @default(cuid())
+  sku              Int                @unique
+  title            String
+  description      String?
+  image            String             @default("placeholder")
+  videoURL         String?
+  casePrice        Decimal
+  isCaseBreakable  Boolean            @default(true)
+  inStock          Boolean
+  package          Int[]
+  categoriesId     String
+  brandsId         String
+  Brands           Brands             @relation(fields: [brandsId], references: [id])
+  Categories       Categories         @relation(fields: [categoriesId], references: [id])
+  ColorStrings     ColorStrings[]     @relation("ColorStringsToProduct")
+  EffectStrings    EffectStrings[]    @relation("EffectStringsToProduct")
+  CartProduct      CartProduct[]
+  UnitProduct      UnitProduct?
+  UnitProductId    Int?               @unique
+  PurchaseItem     PurchaseItem[]
+  BreakCaseRequest BreakCaseRequest[]
 
   @@unique([id, categoriesId])
+}
+
+model UnitProduct {
+  id             String  @id @default(cuid())
+  sku            String  @unique
+  productId      String  @unique
+  Product        Product @relation(fields: [productId], references: [id])
+  unitPrice      Decimal
+  package        Int[]
+  availableStock Int
 }
 
 model EffectStrings {
@@ -218,14 +243,15 @@ model Brands {
 }
 
 model User {
-  id             String       @id @default(cuid())
-  role           Role         @default(USER)
-  email          String       @unique
+  id             String           @id @default(cuid())
+  role           Role             @default(USER)
+  email          String           @unique
   hashedPassword String
-  createdOn      DateTime?    @default(now())
+  createdOn      DateTime?        @default(now())
   lastLogin      DateTime?
   profiles       UserProfile?
   Cart           Cart?
+  PurchaseRecord PurchaseRecord[]
 }
 
 model UserProfile {
@@ -244,14 +270,16 @@ model UserProfile {
 }
 
 model Address {
-  id                   String        @id @default(cuid())
+  id                   String              @id @default(cuid())
   street1              String
   street2              String?
   city                 String
   state                State
   postalCode           String
-  billingUserProfiles  UserProfile[] @relation("BillingAddress")
-  shippingUserProfiles UserProfile[] @relation("ShippingAddress")
+  billingUserProfiles  UserProfile[]       @relation("BillingAddress")
+  shippingUserProfiles UserProfile[]       @relation("ShippingAddress")
+  ApprovedTerminals    ApprovedTerminals[]
+  PurchaseRecord       PurchaseRecord[]
 }
 
 model Cart {
@@ -264,12 +292,53 @@ model Cart {
 }
 
 model CartProduct {
-  id        String  @id @default(cuid())
-  quantity  Int
-  cartId    String
-  productId Int     @unique
-  Cart      Cart    @relation(fields: [cartId], references: [id])
-  Product   Product @relation(fields: [productId], references: [id])
+  id           String  @id @default(cuid())
+  caseQuantity Int     @default(0)
+  cartId       String
+  productId    String  @unique
+  unitQuantity Int     @default(0)
+  Cart         Cart    @relation(fields: [cartId], references: [id])
+  Product      Product @relation(fields: [productId], references: [id])
 
   @@unique([cartId, productId])
+}
+
+model PurchaseRecord {
+  id              String         @id @default(cuid())
+  status          Status         @default(ORDERED)
+  amount          Decimal
+  shippingAddress Address        @relation(fields: [addressId], references: [id])
+  date            DateTime       @default(now())
+  userId          String
+  User            User           @relation(fields: [userId], references: [id])
+  PurchaseItems   PurchaseItem[]
+  addressId       String
+}
+
+model PurchaseItem {
+  id             String         @id @default(cuid())
+  purchaseId     String
+  productId      String
+  quantity       Int
+  isUnit         Boolean
+  PurchaseRecord PurchaseRecord @relation(fields: [purchaseId], references: [id])
+  Product        Product        @relation(fields: [productId], references: [id])
+}
+
+model BreakCaseRequest {
+  id        String   @id @default(cuid())
+  productId String
+  quantity  Int
+  createdAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id])
+}
+
+model ApprovedTerminals {
+  id                      String          @id @default(cuid())
+  acceptOutOfStateLicence Boolean
+  terminalName            String
+  businessRequired        Boolean
+  Address                 Address         @relation(fields: [addressId], references: [id])
+  addressId               String
+  company                 TerminalCompany
 }
