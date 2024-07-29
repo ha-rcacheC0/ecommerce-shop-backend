@@ -87,9 +87,10 @@ purchaseRouter.post("/", async (req, res) => {
     }
   }
 
+  console.log("shippingAddressId", shippingAddressId);
+
   const purchase = await prisma.purchaseRecord.create({
     data: {
-      userId,
       amount,
       PurchaseItems: {
         create: purchaseItems,
@@ -115,7 +116,7 @@ purchaseRouter.post("/", async (req, res) => {
   });
 
   // Sending email logic
-  const staffEmail = "staff@example.com"; // Replace with actual staff email
+  const staffEmail = process.env.SEND_EMAIL_TO_EMAIL!; // Replace with actual staff email
 
   if (!hasUnits) {
     // Send email immediately for case-only orders
