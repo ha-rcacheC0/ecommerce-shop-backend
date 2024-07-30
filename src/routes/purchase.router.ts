@@ -1,7 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
-import { connect } from "http2";
-import { generateEmailHtml, sendEmail } from "../utils/email-utils";
+
+import {
+  generateCaseBreakEmailHtml,
+  generateEmailHtml,
+  generateInventoryEmailHtml,
+  sendEmail,
+} from "../utils/email-utils";
+import { PurchaseItem, PurchaseRecord } from "../utils/types";
 
 const prisma = new PrismaClient();
 const purchaseRouter = express.Router();
@@ -24,8 +30,11 @@ purchaseRouter.post("/", async (req, res) => {
   }
 
   let amount = 0;
-  const purchaseItems = [];
+  const purchaseItems: PurchaseItem[] = [];
   let hasUnits = false;
+  let newBreakOrder = false;
+  const newBreakOrders = [];
+  const inventoryItems: PurchaseItem[] = [];
 
   for (const item of cart.CartProducts) {
     const product = await prisma.product.findUnique({
@@ -45,6 +54,8 @@ purchaseRouter.post("/", async (req, res) => {
         productId: item.productId,
         quantity: item.caseQuantity,
         isUnit: false,
+        id: item.id,
+        Product: product,
       });
     }
 
@@ -54,20 +65,33 @@ purchaseRouter.post("/", async (req, res) => {
 
       if (availableStock < item.unitQuantity) {
         const neededStock = item.unitQuantity - availableStock;
-        await prisma.breakCaseRequest.create({
+        const newOrder = await prisma.breakCaseRequest.create({
           data: {
             productId: item.productId,
             quantity: neededStock,
+          },
+          include: {
+            Product: true,
           },
         });
 
         amount += unitPrice * availableStock;
         purchaseItems.push({
           productId: item.productId,
+          quantity: item.unitQuantity,
+          isUnit: true,
+          id: item.id,
+          Product: product,
+        });
+        newBreakOrders.push(newOrder);
+        inventoryItems.push({
+          productId: item.productId,
           quantity: availableStock,
           isUnit: true,
+          id: item.id,
+          Product: product,
         });
-
+        newBreakOrder = true;
         hasUnits = true;
       } else {
         amount += unitPrice * item.unitQuantity;
@@ -75,6 +99,8 @@ purchaseRouter.post("/", async (req, res) => {
           productId: item.productId,
           quantity: item.unitQuantity,
           isUnit: true,
+          id: item.id,
+          Product: product,
         });
 
         await prisma.unitProduct.update({
@@ -83,16 +109,26 @@ purchaseRouter.post("/", async (req, res) => {
         });
 
         hasUnits = true;
+        inventoryItems.push({
+          productId: item.productId,
+          quantity: item.unitQuantity,
+          isUnit: true,
+          id: item.id,
+          Product: product,
+        });
       }
     }
   }
-
   const purchase = await prisma.purchaseRecord.create({
     data: {
-      userId,
       amount,
       PurchaseItems: {
-        create: purchaseItems,
+        create: purchaseItems.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          isUnit: item.isUnit,
+          id: item.id,
+        })),
       },
       shippingAddress: {
         connect: {
@@ -106,7 +142,17 @@ purchaseRouter.post("/", async (req, res) => {
       },
     },
     include: {
-      PurchaseItems: true,
+      PurchaseItems: {
+        include: {
+          Product: true,
+        },
+      },
+      User: {
+        include: {
+          profiles: true,
+        },
+      },
+      shippingAddress: true,
     },
   });
 
@@ -114,18 +160,42 @@ purchaseRouter.post("/", async (req, res) => {
     where: { cartId: cart.id },
   });
 
-  // Sending email logic
-  const staffEmail = "staff@example.com"; // Replace with actual staff email
+  const warehouseEmail = process.env.SEND_EMAIL_WAREHOUSE_EMAIL!;
+  const inventoryManagerEmail = process.env.SEND_EMAIL_INVENTORY_EMAIL!; // Replace with actual email
 
-  if (!hasUnits) {
-    // Send email immediately for case-only orders
+  // Email to inventory manager
+  if (inventoryItems.length > 0) {
     await sendEmail(
-      staffEmail,
-      "New Order for Shipping",
-      generateEmailHtml(purchase)
+      inventoryManagerEmail,
+      `Inventory Request - Order : ${purchase.id}`,
+      generateInventoryEmailHtml(purchase, inventoryItems, newBreakOrders)
     );
   }
 
+  // Email to warehouse for case break request
+  if (newBreakOrder) {
+    await sendEmail(
+      warehouseEmail,
+      `Crew Fireworks - Case Break - Order : ${purchase.id}`,
+      generateCaseBreakEmailHtml(purchase, newBreakOrders)
+    );
+  }
+
+  // Email to warehouse for holding order
+  if (hasUnits) {
+    await sendEmail(
+      warehouseEmail,
+      `Crew Fireworks - Order : ${purchase.id} - ON HOLD for UNITS`,
+      generateEmailHtml({ ...purchase, hasUnits: true })
+    );
+  } else {
+    // No units, send order directly to warehouse
+    await sendEmail(
+      warehouseEmail,
+      `Crew Fireworks  - Order : ${purchase.id} `,
+      generateEmailHtml(purchase)
+    );
+  }
   return res.status(201).send(purchase);
 });
 
