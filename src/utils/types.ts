@@ -44,7 +44,7 @@ type PurchaseRecord = {
   PurchaseItems: PurchaseItem[];
   User: User;
   shippingAddress: Address;
-  // Other fields as necessary
+  hasUnits?: boolean;
 };
 
 export { PurchaseRecord, PurchaseItem };

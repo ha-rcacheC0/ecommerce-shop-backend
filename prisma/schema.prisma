@@ -295,7 +295,7 @@ model CartProduct {
   id           String  @id @default(cuid())
   caseQuantity Int     @default(0)
   cartId       String
-  productId    String  @unique
+  productId    String
   unitQuantity Int     @default(0)
   Cart         Cart    @relation(fields: [cartId], references: [id])
   Product      Product @relation(fields: [productId], references: [id])

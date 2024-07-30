@@ -37,23 +37,24 @@ cartRouter.get("/:cartId", async (req, res) => {
 });
 
 cartRouter.post("/:cartId/add", async (req, res) => {
-  const cartId = req.params.cartId;
+  const { cartId } = req.params;
   const { productId, isUnit } = req.body;
 
   const cart = await prisma.cart.findFirst({
-    where: {
-      id: cartId,
-    },
+    where: { id: cartId },
   });
-  if (!cart)
+
+  if (!cart) {
     return res.status(404).send({ message: "Cannot find cart with that id" });
+  }
+
   let createData;
   let updateData;
 
   if (isUnit) {
     createData = {
       unitQuantity: 1,
-      Product: { connect: { id: productId } },
+      productId, // Use productId directly, Prisma will link the Product based on this ID
     };
     updateData = {
       unitQuantity: {
@@ -63,7 +64,7 @@ cartRouter.post("/:cartId/add", async (req, res) => {
   } else {
     createData = {
       caseQuantity: 1,
-      Product: { connect: { id: productId } },
+      productId, // Similar here, use the productId for linking
     };
     updateData = {
       caseQuantity: {
@@ -71,29 +72,34 @@ cartRouter.post("/:cartId/add", async (req, res) => {
       },
     };
   }
-  const updatedCart = await prisma.cart.update({
-    where: {
-      id: cartId,
-    },
-    data: {
-      CartProducts: {
-        upsert: {
-          where: {
-            productId: productId,
-            cartId: cartId,
+
+  try {
+    const updatedCart = await prisma.cart.update({
+      where: { id: cartId },
+      data: {
+        CartProducts: {
+          upsert: {
+            where: {
+              cartId_productId: {
+                // Use the composite unique identifier
+                cartId,
+                productId,
+              },
+            },
+            create: createData,
+            update: updateData,
           },
-          create: createData,
-          update: updateData,
         },
       },
-    },
-  });
+    });
 
-  if (!updatedCart)
+    return res.status(201).send(updatedCart);
+  } catch (error) {
+    console.error("Error updating cart:", error);
     return res
       .status(400)
-      .send({ message: "Unable to add product to cart. Please try again" });
-  return res.status(201).send(updatedCart);
+      .send({ message: "Unable to add product to cart. Please try again." });
+  }
 });
 
 cartRouter.post("/:cartId/remove", async (req, res) => {

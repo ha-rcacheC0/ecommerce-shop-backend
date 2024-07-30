@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import cron from "node-cron";
-import { PrismaClient } from "@prisma/client";
+import { BreakCaseRequest, PrismaClient } from "@prisma/client";
 import { PurchaseItem, PurchaseRecord } from "./types";
 
 const prisma = new PrismaClient();
@@ -25,13 +25,17 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
   console.log("Email sent successfully.");
 };
 
-// Function to generate the email HTML content
-export const generateEmailHtml = (purchase: PurchaseRecord) => {
-  const formattedAmount = new Intl.NumberFormat("en-US", {
+// Utility function to format currency
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-  }).format(purchase.amount.toNumber());
+  }).format(amount);
+};
 
+// Standard email template function
+export const generateEmailHtml = (purchase: PurchaseRecord): string => {
+  const formattedAmount = formatCurrency(purchase.amount.toNumber());
   return `
     <div style="font-family: Arial, sans-serif; color: #333; width:80%; margin:5% auto;">
       <h1 style="color: #007BFF;">New Order for Shipping</h1>
@@ -85,7 +89,16 @@ export const generateEmailHtml = (purchase: PurchaseRecord) => {
     purchase.shippingAddress.state
   }<br> ${purchase.shippingAddress.postalCode}</p>
 
-      <h2 style="border-bottom: 1px solid #eee; padding-bottom: 10px; text-align:center;">Purchase Items</h3>
+      ${
+        purchase.hasUnits
+          ? `
+      <div style="padding: 1rem; margin-bottom: 20px; border: 2px solid #FFA500; background-color: #FFF3CD; color: #856404; border-radius: 5px;">
+        <strong>Attention:</strong> This order includes units to be added later. Please hold the order until all units are added.
+      </div>`
+          : ""
+      }
+
+      <h2 style="border-bottom: 1px solid #eee; padding-bottom: 10px; text-align:center;">Purchase Items</h2>
       <table style="width: 100%; border-collapse: collapse;">
         <thead>
           <tr>
@@ -112,47 +125,116 @@ export const generateEmailHtml = (purchase: PurchaseRecord) => {
                 item.Product.title
               }</td>
             </tr>
-            `
+          `
           ).join("")}
         </tbody>
       </table>
     </div>
   `;
 };
-const sendDailyUnitBreakEmail = async () => {
-  const breakRequests = await prisma.breakCaseRequest.findMany({
-    include: { Product: true },
-  });
 
-  if (breakRequests.length > 0) {
-    const emailContent = `
-      <h1>Daily Unit Break Requests</h1>
-      <ul>
-        ${breakRequests
-          .map(
-            (request) => `
-          <li>${request.quantity} units of Product ID: ${request.Product.sku}</li>
-        `
-          )
-          .join("")}
-      </ul>
-    `;
+// Function to generate the inventory request email
+export const generateInventoryEmailHtml = (
+  purchase: PurchaseRecord,
+  inventoryItems: PurchaseItem[],
+  caseBreakRequests: any
+): string => {
+  return `
+    <div style="font-family: Arial, sans-serif; color: #333; width:80%; margin:5% auto;">
+      <h1 style="color: #007BFF;">Inventory Request - Order ${purchase.id}</h1>
 
-    const staffEmail = process.env.SEND_EMAIL_TO_EMAIL || ""; // Replace with actual staff email
-    await sendEmail(staffEmail, "Daily Unit Break Requests", emailContent);
+      <h2 style="border-bottom: 1px solid #eee; padding-bottom: 10px;">Items from Inventory</h2>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+          <tr>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">SKU</th>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Title</th>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Quantity from Inventory</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${inventoryItems
+            .map(
+              (item) => `
+            <tr>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.Product.sku}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.Product.title}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.quantity}</td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
 
-    // Clear the break requests after sending the email
-    await prisma.breakCaseRequest.deleteMany();
-  }
+      ${
+        caseBreakRequests.length > 0
+          ? `
+      <h2 style="border-bottom: 1px solid #eee; padding-bottom: 10px;">New Case Break Requests</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Product Sku</th>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Product Title</th>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${caseBreakRequests
+            .map(
+              (request: any) => `
+            <tr>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.sku}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.title}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.quantity}</td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+      `
+          : ""
+      }
+    </div>
+  `;
 };
 
-transporter.verify(function (error, success) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log("Server is ready to take our messages");
-  }
-});
+// Function to generate the case break request email template
+export const generateCaseBreakEmailHtml = (
+  purchase: PurchaseRecord,
+  caseBreakRequests: any
+): string => {
+  return `
+    <div style="font-family: Arial, sans-serif; color: #333; width:80%; margin:5% auto;">
+      <h1 style="color: #007BFF;"> Case Break Request - Order ${
+        purchase.id
+      }</h1>
+      <p> Cases to be purchased by Crew Fireworks for this order.</p> 
 
-// Schedule the cron job to run at 5 PM every day
-cron.schedule("0 17 * * *", sendDailyUnitBreakEmail);
+      <h2 style="border-bottom: 1px solid #eee; padding-bottom: 10px;">Products Requiring Case Breaks</h2>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+          <tr>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Product Sku</th>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Product Title</th>
+            <th style="border-bottom: 1px solid #eee; padding: 8px;">Quantity for Order</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${caseBreakRequests
+            .map(
+              (request: any) => `
+            <tr>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.sku}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.title}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.quantity}</td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+};
