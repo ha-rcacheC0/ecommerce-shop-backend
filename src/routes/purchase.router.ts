@@ -107,7 +107,17 @@ purchaseRouter.post("/", async (req, res) => {
       },
     },
     include: {
-      PurchaseItems: true,
+      PurchaseItems: {
+        include: {
+          Product: true,
+        },
+      },
+      User: {
+        include: {
+          profiles: true,
+        },
+      },
+      shippingAddress: true,
     },
   });
 
@@ -122,10 +132,21 @@ purchaseRouter.post("/", async (req, res) => {
     // Send email immediately for case-only orders
     await sendEmail(
       staffEmail,
-      "New Order for Shipping",
+      `Crew Fireworks- Order : ${purchase.id}`,
       generateEmailHtml(purchase)
     );
   }
+
+  // FOR orders that have units but not case break requests
+
+  // 1. Send Email to Lucas - what items from inventory
+  // 2. Send Email to Starr - cases that are included + hold until units come
+
+  // MIXED Break Cases + inventory units
+
+  // 1. Send Email to Lucas - what items from inventory + new break case requests
+  // 2. Send Email to Starr - Case break email => Purchaser is Crew Fireworks
+  // 3. Send Email to Starr - Cases with hold until units added
 
   return res.status(201).send(purchase);
 });
