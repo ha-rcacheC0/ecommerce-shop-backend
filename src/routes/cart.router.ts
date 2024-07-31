@@ -199,7 +199,7 @@ cartRouter.post("/:cartId/purchase", async (req, res) => {
         paymentMethod: "cc-ach",
       },
       {
-        "api-token": process.env.TEMP_HELCIM_API_TOKEN!,
+        "api-token": process.env.HELCIM_API_TOKEN!,
       }
     )
     .then(({ data }) => res.status(200).send(data))
