@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import express from "express";
+import { Router } from "express";
 
 import {
   generateCaseBreakEmailHtml,
@@ -7,10 +6,10 @@ import {
   generateInventoryEmailHtml,
   sendEmail,
 } from "../utils/email-utils";
-import { PurchaseItem, PurchaseRecord } from "../utils/types";
+import { PurchaseItem } from "../utils/types";
+import { prisma } from "../../prisma/db.setup";
 
-const prisma = new PrismaClient();
-const purchaseRouter = express.Router();
+const purchaseRouter = Router();
 
 purchaseRouter.post("/", async (req, res) => {
   const { userId, shippingAddressId } = req.body;
@@ -30,11 +29,11 @@ purchaseRouter.post("/", async (req, res) => {
   }
 
   let amount = 0;
-  const purchaseItems: PurchaseItem[] = [];
+  const purchaseItems = [];
   let hasUnits = false;
   let newBreakOrder = false;
   const newBreakOrders = [];
-  const inventoryItems: PurchaseItem[] = [];
+  const inventoryItems = [];
 
   for (const item of cart.CartProducts) {
     const product = await prisma.product.findUnique({
@@ -51,10 +50,8 @@ purchaseRouter.post("/", async (req, res) => {
     if (item.caseQuantity > 0) {
       amount += product.casePrice.toNumber() * item.caseQuantity;
       purchaseItems.push({
-        productId: item.productId,
         quantity: item.caseQuantity,
         isUnit: false,
-        id: item.id,
         Product: product,
       });
     }
@@ -124,10 +121,13 @@ purchaseRouter.post("/", async (req, res) => {
       amount,
       PurchaseItems: {
         create: purchaseItems.map((item) => ({
-          productId: item.productId,
-          quantity: item.quantity,
+          Product: {
+            connect: {
+              id: item.Product.id,
+            },
+          },
           isUnit: item.isUnit,
-          id: item.id,
+          quantity: item.quantity,
         })),
       },
       shippingAddress: {
@@ -161,7 +161,7 @@ purchaseRouter.post("/", async (req, res) => {
   });
 
   const warehouseEmail = process.env.SEND_EMAIL_WAREHOUSE_EMAIL!;
-  const inventoryManagerEmail = process.env.SEND_EMAIL_INVENTORY_EMAIL!; // Replace with actual email
+  const inventoryManagerEmail = process.env.SEND_EMAIL_INVENTORY_EMAIL!;
 
   // Email to inventory manager
   if (inventoryItems.length > 0) {

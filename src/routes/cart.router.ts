@@ -81,7 +81,6 @@ cartRouter.post("/:cartId/add", async (req, res) => {
           upsert: {
             where: {
               cartId_productId: {
-                // Use the composite unique identifier
                 cartId,
                 productId,
               },
