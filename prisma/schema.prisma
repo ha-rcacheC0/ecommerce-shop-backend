@@ -14,7 +14,7 @@ enum Effects {
   SNAPS
   LOUD_BANG
   WHISTLE
-  FAN_EFFECTS
+  FAN_EFFECT
   WILLOWS
   SMOKE
   BROCADE
@@ -32,6 +32,8 @@ enum Effects {
   GLOW
   NISHIKI_KAMURO
   GLITTER
+  CONFETTI
+  SNAKE
 }
 
 enum Colors {
@@ -110,6 +112,8 @@ enum Brand {
   MUSCLE_PACK
   SKIES_THE_LIMIT
   DUCK
+  PYRO_PIRATE
+  IRONMAN
 }
 
 enum State {
