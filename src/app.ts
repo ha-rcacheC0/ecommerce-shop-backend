@@ -4,19 +4,13 @@ import { User } from "@prisma/client";
 import { adminRouter } from "./routes/admin.router";
 import { productRouter } from "./routes/product.router";
 import { purchaseRouter } from "./routes/purchase.router";
-import { configDotenv } from "dotenv";
-import path from "path";
-import { userRouter } from "./routes/user.router";
 
-import session from "express-session";
+import { userRouter } from "./routes/user.router";
 
 import { cartRouter } from "./routes/cart.router";
 import { terminalRouter } from "./routes/terminal.router";
 
-configDotenv();
-
 const app = express();
-app.use(cors());
 declare global {
   namespace Express {
     interface Request {
@@ -24,17 +18,9 @@ declare global {
     }
   }
 }
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "SECRET_MISSING",
-    saveUninitialized: false,
-    resave: false,
-  })
-);
-
 const port = normalizePort(process.env.PORT || "3000");
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // Set up Routes as needed
 
