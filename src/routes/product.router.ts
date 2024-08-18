@@ -5,55 +5,101 @@ import { Decimal } from "decimal.js";
 import { validateRequestQuery } from "zod-express-middleware";
 import { z } from "zod";
 import { productSchema } from "../utils/validation-utils";
-import { Prisma } from "@prisma/client";
+import { Brand, Category, Colors, Effects, Prisma } from "@prisma/client";
 import { calcUnitPrice } from "../utils/creation-utils";
 
 const productRouter = Router();
 type ProductCreateInput = Prisma.ProductCreateInput;
+const filterSchema = z.object({
+  page: z.coerce.number().positive(),
+  pageSize: z.coerce.number().positive(),
+  searchTitle: z.string().optional(),
+  brands: z.array(z.nativeEnum(Brand)).optional(),
+  categories: z.array(z.nativeEnum(Category)).optional(),
+  colors: z.array(z.nativeEnum(Colors)).optional(),
+  effects: z.array(z.nativeEnum(Effects)).optional(),
+});
 
 /* GET ALL. */
-productRouter.get(
-  "/",
-  validateRequestQuery(
-    z.object({ page: z.coerce.number(), pageSize: z.coerce.number() })
-  ),
-  async function (req, res) {
-    const page = req.query.page;
-    const pageSize = +req.query.pageSize;
-    const offset = (page - 1) * pageSize;
-    const allProducts = await prisma.product.findMany({
+productRouter.get("/", async function (req, res) {
+  try {
+    const { page, pageSize, searchTitle, brands, categories, colors, effects } =
+      filterSchema.parse({
+        ...req.query,
+        brands: Array.isArray(req.query.brands)
+          ? req.query.brands
+          : req.query.brands
+          ? [req.query.brands]
+          : undefined,
+        categories: Array.isArray(req.query.categories)
+          ? req.query.categories
+          : req.query.categories
+          ? [req.query.categories]
+          : undefined,
+        colors: Array.isArray(req.query.colors)
+          ? req.query.colors
+          : req.query.colors
+          ? [req.query.colors]
+          : undefined,
+        effects: Array.isArray(req.query.effects)
+          ? req.query.effects
+          : req.query.effects
+          ? [req.query.effects]
+          : undefined,
+      });
+    const whereClause: Prisma.ProductWhereInput = {};
+
+    if (searchTitle) {
+      whereClause.title = {
+        contains: searchTitle,
+        mode: "insensitive" as Prisma.QueryMode,
+      };
+    }
+
+    if (brands?.length) {
+      whereClause.Brands = { name: { in: brands } };
+    }
+
+    if (categories?.length) {
+      whereClause.Categories = { name: { in: categories } };
+    }
+
+    if (colors?.length) {
+      whereClause.ColorStrings = { some: { name: { in: colors } } };
+    }
+
+    if (effects?.length) {
+      whereClause.EffectStrings = { some: { name: { in: effects } } };
+    }
+
+    const totalCount = await prisma.product.count({ where: whereClause });
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const products = await prisma.product.findMany({
+      where: whereClause,
       include: {
-        Brands: {
-          select: { name: true },
-        },
-        Categories: {
-          select: {
-            name: true,
-          },
-        },
-        ColorStrings: {
-          select: { name: true },
-        },
-        EffectStrings: {
-          select: { name: true },
-        },
+        Brands: { select: { name: true } },
+        Categories: { select: { name: true } },
+        ColorStrings: { select: { name: true } },
+        EffectStrings: { select: { name: true } },
         UnitProduct: true,
       },
-      orderBy: {
-        id: "asc",
-      },
+      orderBy: { id: "asc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
-    const totalPages = Math.ceil(allProducts.length / pageSize);
 
-    if (!allProducts)
-      return res.status(400).send({ message: "Unable to find products" });
-
-    return res.status(200).send({
-      contents: allProducts.slice(offset, offset + pageSize),
+    return res.status(200).json({
+      contents: products,
       hasMore: page < totalPages,
+      totalPages,
+      currentPage: page,
     });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ message: "Invalid request parameters" });
   }
-);
+});
 
 // GET ONE  - ID // ANY UNIQUE VALUE
 
