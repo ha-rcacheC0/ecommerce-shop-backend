@@ -191,7 +191,7 @@ async function seedDb() {
     data: effectsData,
     skipDuplicates: true,
   });
-  createProducts();
+  // createProducts();
 }
 
 //
