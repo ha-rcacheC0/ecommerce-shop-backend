@@ -25,7 +25,7 @@ app.use(cors());
 // Set up Routes as needed
 
 app.use("/user", userRouter);
-app.use("/api/admin", adminRouter);
+app.use("/admin", adminRouter);
 app.use("/api/purchase", purchaseRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
