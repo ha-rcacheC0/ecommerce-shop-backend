@@ -28,7 +28,6 @@ type UserWithCart = {
 };
 
 export const createTokenUserInfo = (user: UserWithCart) => {
-  console.log(user);
   return {
     email: user.email,
     role: user.role,
@@ -41,10 +40,14 @@ const jwtInfoSchema = z.object({
   email: z.string().email(),
   role: z.string(),
   iat: z.number(),
+  exp: z.number(),
 });
 
 export const createUserJwtToken = (user: UserWithCart) => {
-  return jwt.sign(createTokenUserInfo(user), process.env.JWT_SECRET!);
+  const expiresIn = "24h";
+  return jwt.sign(createTokenUserInfo(user), process.env.JWT_SECRET!, {
+    expiresIn,
+  });
 };
 
 export const getDataFromAuthToken = (token?: string) => {

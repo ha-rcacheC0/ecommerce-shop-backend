@@ -5,9 +5,6 @@ const adminRouter = Router();
 /* GET home page. */
 adminRouter.get("/inventory", async (req, res) => {
   const inventory = await prisma.unitProduct.findMany({
-    where: {
-      availableStock: { gt: 0 },
-    },
     include: {
       Product: true,
     },
