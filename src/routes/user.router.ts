@@ -8,6 +8,7 @@ import {
   createUserJwtToken,
   createTokenUserInfo,
   authenticationMiddleware,
+  authenticationAdminMiddleware,
 } from "../utils/auth-utils";
 import { z } from "zod";
 
@@ -217,6 +218,17 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
   } catch (error) {
     return res.status(500).send({ message: "Internal Server Error" });
   }
+});
+
+userRouter.get("/getAll", authenticationAdminMiddleware, async (req, res) => {
+  const allUsers = await prisma.user.findMany({
+    include: {
+      profiles: true,
+    },
+  });
+  if (!allUsers) res.status(500).send({ message: "Internal Server Error" });
+
+  return res.status(200).send(allUsers);
 });
 
 export { userRouter };

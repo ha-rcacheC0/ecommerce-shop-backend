@@ -39,6 +39,7 @@ export const createTokenUserInfo = (user: UserWithCart) => {
 
 const jwtInfoSchema = z.object({
   email: z.string().email(),
+  role: z.string(),
   iat: z.number(),
 });
 
@@ -65,6 +66,26 @@ export const authenticationMiddleware = async (
   const userJWTData = getDataFromAuthToken(token);
   if (!userJWTData) return res.status(401).send({ message: "Invalid token" });
 
+  const user = await prisma.user.findFirst({
+    where: {
+      email: userJWTData.email,
+    },
+  });
+  if (!user) return res.status(401).send({ message: "User not Found" });
+
+  req.user = user;
+  next();
+};
+export const authenticationAdminMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const [, token] = req.headers.authorization?.split?.(" ") || [];
+  const userJWTData = getDataFromAuthToken(token);
+  if (!userJWTData) return res.status(401).send({ message: "Invalid token" });
+  if (userJWTData.role === "USER")
+    return res.status(401).send({ message: "Users are not allowed here" });
   const user = await prisma.user.findFirst({
     where: {
       email: userJWTData.email,
