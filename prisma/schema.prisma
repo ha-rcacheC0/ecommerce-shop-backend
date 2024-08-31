@@ -168,6 +168,7 @@ enum State {
 enum Role {
   USER
   MANAGER
+  MEMBER
   ADMIN
 }
 
