@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "description": "This API covers publicly accessible merchant actions",
-    "title": "The Helcim API",
+    "title": "HelcimPay.js",
     "version": "2.0.0"
   },
   "servers": [
@@ -42,7 +42,7 @@
                     "type": "string"
                   },
                   "amount": {
-                    "description": "The amount of the transaction to be processed",
+                    "description": "The amount of the transaction to be processed.",
                     "example": 100,
                     "type": "number"
                   },
@@ -52,12 +52,12 @@
                     "type": "string"
                   },
                   "customerCode": {
-                    "description": "This is the code of an existing customer in Helcim associated with this checkout",
+                    "description": "This is the code of an existing customer in Helcim associated with this checkout.",
                     "example": "CST1000",
                     "type": "string"
                   },
                   "invoiceNumber": {
-                    "description": "This is the number of an existing invoice in Helcim associated with this checkout",
+                    "description": "This is the number of an existing invoice in Helcim associated with this checkout.",
                     "example": "INV1000",
                     "type": "string"
                   },
@@ -67,12 +67,12 @@
                     "type": "string"
                   },
                   "allowPartial": {
-                    "description": "This is used to determine whether the partial payment UI will be displayed to the customer",
+                    "description": "This is used to determine whether the partial payment UI will be displayed to the customer.",
                     "example": 1,
                     "type": "number"
                   },
                   "hasConvenienceFee": {
-                    "description": "This is used to apply the convenience fee rate to credit card transaction should customer chooses this payment method",
+                    "description": "This is used to apply the convenience fee rate to credit card transaction should customer chooses this payment method.",
                     "example": 1,
                     "type": "number"
                   },
@@ -80,6 +80,383 @@
                     "description": "This is used to enable level 2 processing lower rates. The value should be the dollar amount of the tax to 2 decimal places.",
                     "example": 3.67,
                     "type": "number"
+                  },
+                  "hideExistingPaymentDetails": {
+                    "description": "This is used to hide the existing payment information of the customer.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "setAsDefaultPaymentMethod": {
+                    "description": "This is used to set the payment method of the transaction to default for that customer.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "terminalId": {
+                    "description": "This is used to process the card transaction on the specified terminal.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "confirmationScreen": {
+                    "description": "This is used to display transaction information such as the amount paid and invoice number to the user after a successful transaction.\n\nIf `true`, a confirmation screen will be displayed after a successful transaction.\n\nIf `false`, no confirmation screen will be displayed.\n",
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "digitalWallet": {
+                    "description": "This is used to enable digital wallets as payment methods, currently Google Pay is available.\n\nIf a given digital wallet is set to `1` it will be enabled, if it is set to `0` it will not be enabled.\n\nBy default, no digital wallets are enabled.\n",
+                    "example": "{\"google-pay\": 1}",
+                    "type": "string"
+                  },
+                  "customStyling": {
+                    "description": "Applies custom styling to the Helcim Pay instance.",
+                    "properties": {
+                      "appearance": {
+                        "description": "Specifies the appearance of Helcim Pay.\n* `dark` - Renders Helcim Pay in dark mode\n* `light` - Renders Helcim Pay in light mode\n* `system` - Renders Helcim Pay based on the client's system theme\n\nThe default appearance is `light`.\n",
+                        "example": "light",
+                        "type": "string"
+                      },
+                      "brandColor": {
+                        "description": "A hex code which defines the brand color that Helcim Pay is rendered with.\n\nThe default color is `815AF0`.\n",
+                        "example": "815AF0",
+                        "type": "string"
+                      },
+                      "cornerRadius": {
+                        "description": "Controls how corners are rendered on Helcim Pay.\n* `pill`\n* `rectangular` \n* `rounded`\n\nThe default corner radius is `rounded`.\n",
+                        "example": "rounded",
+                        "type": "string"
+                      },
+                      "ctaButtonText": {
+                        "description": "Overrides the text of the payment button.\n* `book`\n* `buy`\n* `checkout` \n* `donate`\n* `order` \n* `pay`\n* `subscribe`\n\nThe button text will always display \"Save\" for verify transactions.\n\nThe default button text is `pay`.",
+                        "example": "pay",
+                        "type": "string"
+                      }
+                    },
+                    "title": "Custom Styling",
+                    "type": "object"
+                  },
+                  "customerRequest": {
+                    "description": "This is used to create a new customer based on the given information.",
+                    "properties": {
+                      "customerCode": {
+                        "description": "The unique customer code. If blank, it will be automatically generated.",
+                        "example": "CST1000",
+                        "type": "string"
+                      },
+                      "contactName": {
+                        "description": "The primary contact name (full name) of the customer.",
+                        "example": "John Smith",
+                        "type": "string"
+                      },
+                      "businessName": {
+                        "description": "The business name of the customer. There must be either a contact name or business name present.",
+                        "example": "Best Company",
+                        "type": "string"
+                      },
+                      "cellPhone": {
+                        "description": "The cell phone number of the customer.",
+                        "example": "123-456-7890",
+                        "type": "string"
+                      },
+                      "billingAddress": {
+                        "properties": {
+                          "name": {
+                            "description": "Contact Name or Business Name",
+                            "example": "John Smith/Helcim",
+                            "type": "string"
+                          },
+                          "street1": {
+                            "example": "123 Street",
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "example": "Calgary",
+                            "type": "string"
+                          },
+                          "province": {
+                            "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                            "example": "AB",
+                            "type": "string"
+                          },
+                          "country": {
+                            "description": "3-letter abbreviation of the country (CAN, USA)",
+                            "example": "CAN",
+                            "type": "string"
+                          },
+                          "postalCode": {
+                            "example": "H0H0H0",
+                            "type": "string"
+                          },
+                          "phone": {
+                            "description": "10 to 15 digits phone number.",
+                            "example": "1234567890",
+                            "type": "string"
+                          },
+                          "email": {
+                            "example": "john@example.com",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "postalCode",
+                          "street1"
+                        ],
+                        "title": "Address",
+                        "type": "object"
+                      },
+                      "shippingAddress": {
+                        "properties": {
+                          "name": {
+                            "description": "Contact Name or Business Name",
+                            "example": "John Smith/Helcim",
+                            "type": "string"
+                          },
+                          "street1": {
+                            "example": "123 Street",
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "example": "Calgary",
+                            "type": "string"
+                          },
+                          "province": {
+                            "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                            "example": "AB",
+                            "type": "string"
+                          },
+                          "country": {
+                            "description": "3-letter abbreviation of the country (CAN, USA)",
+                            "example": "CAN",
+                            "type": "string"
+                          },
+                          "postalCode": {
+                            "example": "H0H0H0",
+                            "type": "string"
+                          },
+                          "phone": {
+                            "description": "10 to 15 digits phone number.",
+                            "example": "1234567890",
+                            "type": "string"
+                          },
+                          "email": {
+                            "example": "john@example.com",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "postalCode",
+                          "street1"
+                        ],
+                        "title": "Address",
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "contactName"
+                    ],
+                    "title": "Customer Request",
+                    "type": "object"
+                  },
+                  "invoiceRequest": {
+                    "description": "This is used to create a new invoice based on the given information.",
+                    "properties": {
+                      "invoiceNumber": {
+                        "description": "The unique invoice number. If blank, it will be automatically generated.",
+                        "example": "INV1000",
+                        "type": "string"
+                      },
+                      "tipAmount": {
+                        "example": 0,
+                        "type": "number"
+                      },
+                      "depositAmount": {
+                        "example": 0,
+                        "type": "number"
+                      },
+                      "notes": {
+                        "description": "The content that would be displayed under comment section of the invoice.",
+                        "type": "string"
+                      },
+                      "shipping": {
+                        "properties": {
+                          "amount": {
+                            "example": 0,
+                            "type": "number"
+                          },
+                          "details": {
+                            "example": "Standard Shipping",
+                            "type": "string"
+                          },
+                          "address": {
+                            "properties": {
+                              "name": {
+                                "description": "Contact Name or Business Name",
+                                "example": "John Smith/Helcim",
+                                "type": "string"
+                              },
+                              "street1": {
+                                "example": "123 Street",
+                                "type": "string"
+                              },
+                              "street2": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "example": "Calgary",
+                                "type": "string"
+                              },
+                              "province": {
+                                "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                                "example": "AB",
+                                "type": "string"
+                              },
+                              "country": {
+                                "description": "3-letter abbreviation of the country (CAN, USA)",
+                                "example": "CAN",
+                                "type": "string"
+                              },
+                              "postalCode": {
+                                "example": "H0H0H0",
+                                "type": "string"
+                              },
+                              "phone": {
+                                "description": "10 to 15 digits phone number.",
+                                "example": "1234567890",
+                                "type": "string"
+                              },
+                              "email": {
+                                "example": "john@example.com",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "postalCode",
+                              "street1"
+                            ],
+                            "title": "Address",
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "amount",
+                          "details"
+                        ],
+                        "type": "object"
+                      },
+                      "pickup": {
+                        "properties": {
+                          "date": {
+                            "description": "The date for the pickup.",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "The name of the person who would pickup the item.",
+                            "example": "John Smith",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "date"
+                        ],
+                        "type": "object"
+                      },
+                      "tax": {
+                        "properties": {
+                          "amount": {
+                            "example": 1.25,
+                            "type": "number"
+                          },
+                          "details": {
+                            "example": "GST",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "amount",
+                          "details"
+                        ],
+                        "type": "object"
+                      },
+                      "discount": {
+                        "properties": {
+                          "amount": {
+                            "example": 5.25,
+                            "type": "number"
+                          },
+                          "details": {
+                            "example": "Spring Sale",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "amount",
+                          "details"
+                        ],
+                        "type": "object"
+                      },
+                      "lineItems": {
+                        "description": "Array of invoice items.",
+                        "items": {
+                          "properties": {
+                            "sku": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "description": "The description of the item or product.",
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "description": "Quantity of the item.",
+                              "example": 0,
+                              "type": "number"
+                            },
+                            "price": {
+                              "description": "Unit price of the item.",
+                              "example": 0,
+                              "type": "number"
+                            },
+                            "total": {
+                              "description": "Total amount based on quantity and price of the item.",
+                              "example": 0,
+                              "type": "number"
+                            },
+                            "taxAmount": {
+                              "description": "Tax amount on the item.",
+                              "example": 0,
+                              "type": "number"
+                            },
+                            "discountAmount": {
+                              "description": "Discount amount on the item.",
+                              "example": 0,
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "description",
+                            "price",
+                            "quantity",
+                            "total"
+                          ],
+                          "title": "Line Item",
+                          "type": "object"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "contactName",
+                      "lineItems"
+                    ],
+                    "title": "Invoice Request",
+                    "type": "object"
                   }
                 },
                 "required": [
@@ -139,6 +516,79 @@
           "Helcim Pay"
         ]
       }
+    },
+    "/branding/logo": {
+      "post": {
+        "operationId": "helcim-pay-logo-upload",
+        "parameters": [
+          {
+            "description": "API Access Token",
+            "in": "header",
+            "name": "api-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "logo": {
+                    "description": "The image file to be uploaded",
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "An image file which meets the following requirements:\n1. A maximum file size of 2MB.\n2. One of the following formats: jpg, jpeg, or png.\n"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "description": "A message indicating a successful upload.",
+                      "example": "Logo is uploaded successfully.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "errors": {
+                      "description": "An error message indicating the issue.",
+                      "example": "No logo file uploaded.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Failed"
+          }
+        },
+        "summary": "Uploads the logo to be displayed on the HelcimPay.js modal",
+        "tags": [
+          "Helcim Pay"
+        ]
+      }
     }
   },
   "components": {
@@ -151,7 +601,7 @@
             "type": "string"
           },
           "amount": {
-            "description": "The amount of the transaction to be processed",
+            "description": "The amount of the transaction to be processed.",
             "example": 100,
             "type": "number"
           },
@@ -161,12 +611,12 @@
             "type": "string"
           },
           "customerCode": {
-            "description": "This is the code of an existing customer in Helcim associated with this checkout",
+            "description": "This is the code of an existing customer in Helcim associated with this checkout.",
             "example": "CST1000",
             "type": "string"
           },
           "invoiceNumber": {
-            "description": "This is the number of an existing invoice in Helcim associated with this checkout",
+            "description": "This is the number of an existing invoice in Helcim associated with this checkout.",
             "example": "INV1000",
             "type": "string"
           },
@@ -176,12 +626,12 @@
             "type": "string"
           },
           "allowPartial": {
-            "description": "This is used to determine whether the partial payment UI will be displayed to the customer",
+            "description": "This is used to determine whether the partial payment UI will be displayed to the customer.",
             "example": 1,
             "type": "number"
           },
           "hasConvenienceFee": {
-            "description": "This is used to apply the convenience fee rate to credit card transaction should customer chooses this payment method",
+            "description": "This is used to apply the convenience fee rate to credit card transaction should customer chooses this payment method.",
             "example": 1,
             "type": "number"
           },
@@ -189,6 +639,383 @@
             "description": "This is used to enable level 2 processing lower rates. The value should be the dollar amount of the tax to 2 decimal places.",
             "example": 3.67,
             "type": "number"
+          },
+          "hideExistingPaymentDetails": {
+            "description": "This is used to hide the existing payment information of the customer.",
+            "example": 1,
+            "type": "number"
+          },
+          "setAsDefaultPaymentMethod": {
+            "description": "This is used to set the payment method of the transaction to default for that customer.",
+            "example": 1,
+            "type": "number"
+          },
+          "terminalId": {
+            "description": "This is used to process the card transaction on the specified terminal.",
+            "example": 1,
+            "type": "number"
+          },
+          "confirmationScreen": {
+            "description": "This is used to display transaction information such as the amount paid and invoice number to the user after a successful transaction.\n\nIf `true`, a confirmation screen will be displayed after a successful transaction.\n\nIf `false`, no confirmation screen will be displayed.\n",
+            "example": true,
+            "type": "boolean"
+          },
+          "digitalWallet": {
+            "description": "This is used to enable digital wallets as payment methods, currently Google Pay is available.\n\nIf a given digital wallet is set to `1` it will be enabled, if it is set to `0` it will not be enabled.\n\nBy default, no digital wallets are enabled.\n",
+            "example": "{\"google-pay\": 1}",
+            "type": "string"
+          },
+          "customStyling": {
+            "description": "Applies custom styling to the Helcim Pay instance.",
+            "properties": {
+              "appearance": {
+                "description": "Specifies the appearance of Helcim Pay.\n* `dark` - Renders Helcim Pay in dark mode\n* `light` - Renders Helcim Pay in light mode\n* `system` - Renders Helcim Pay based on the client's system theme\n\nThe default appearance is `light`.\n",
+                "example": "light",
+                "type": "string"
+              },
+              "brandColor": {
+                "description": "A hex code which defines the brand color that Helcim Pay is rendered with.\n\nThe default color is `815AF0`.\n",
+                "example": "815AF0",
+                "type": "string"
+              },
+              "cornerRadius": {
+                "description": "Controls how corners are rendered on Helcim Pay.\n* `pill`\n* `rectangular` \n* `rounded`\n\nThe default corner radius is `rounded`.\n",
+                "example": "rounded",
+                "type": "string"
+              },
+              "ctaButtonText": {
+                "description": "Overrides the text of the payment button.\n* `book`\n* `buy`\n* `checkout` \n* `donate`\n* `order` \n* `pay`\n* `subscribe`\n\nThe button text will always display \"Save\" for verify transactions.\n\nThe default button text is `pay`.",
+                "example": "pay",
+                "type": "string"
+              }
+            },
+            "title": "Custom Styling",
+            "type": "object"
+          },
+          "customerRequest": {
+            "description": "This is used to create a new customer based on the given information.",
+            "properties": {
+              "customerCode": {
+                "description": "The unique customer code. If blank, it will be automatically generated.",
+                "example": "CST1000",
+                "type": "string"
+              },
+              "contactName": {
+                "description": "The primary contact name (full name) of the customer.",
+                "example": "John Smith",
+                "type": "string"
+              },
+              "businessName": {
+                "description": "The business name of the customer. There must be either a contact name or business name present.",
+                "example": "Best Company",
+                "type": "string"
+              },
+              "cellPhone": {
+                "description": "The cell phone number of the customer.",
+                "example": "123-456-7890",
+                "type": "string"
+              },
+              "billingAddress": {
+                "properties": {
+                  "name": {
+                    "description": "Contact Name or Business Name",
+                    "example": "John Smith/Helcim",
+                    "type": "string"
+                  },
+                  "street1": {
+                    "example": "123 Street",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "example": "Calgary",
+                    "type": "string"
+                  },
+                  "province": {
+                    "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                    "example": "AB",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "3-letter abbreviation of the country (CAN, USA)",
+                    "example": "CAN",
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "example": "H0H0H0",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "description": "10 to 15 digits phone number.",
+                    "example": "1234567890",
+                    "type": "string"
+                  },
+                  "email": {
+                    "example": "john@example.com",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "postalCode",
+                  "street1"
+                ],
+                "title": "Address",
+                "type": "object"
+              },
+              "shippingAddress": {
+                "properties": {
+                  "name": {
+                    "description": "Contact Name or Business Name",
+                    "example": "John Smith/Helcim",
+                    "type": "string"
+                  },
+                  "street1": {
+                    "example": "123 Street",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "example": "Calgary",
+                    "type": "string"
+                  },
+                  "province": {
+                    "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                    "example": "AB",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "3-letter abbreviation of the country (CAN, USA)",
+                    "example": "CAN",
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "example": "H0H0H0",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "description": "10 to 15 digits phone number.",
+                    "example": "1234567890",
+                    "type": "string"
+                  },
+                  "email": {
+                    "example": "john@example.com",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "postalCode",
+                  "street1"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            },
+            "required": [
+              "contactName"
+            ],
+            "title": "Customer Request",
+            "type": "object"
+          },
+          "invoiceRequest": {
+            "description": "This is used to create a new invoice based on the given information.",
+            "properties": {
+              "invoiceNumber": {
+                "description": "The unique invoice number. If blank, it will be automatically generated.",
+                "example": "INV1000",
+                "type": "string"
+              },
+              "tipAmount": {
+                "example": 0,
+                "type": "number"
+              },
+              "depositAmount": {
+                "example": 0,
+                "type": "number"
+              },
+              "notes": {
+                "description": "The content that would be displayed under comment section of the invoice.",
+                "type": "string"
+              },
+              "shipping": {
+                "properties": {
+                  "amount": {
+                    "example": 0,
+                    "type": "number"
+                  },
+                  "details": {
+                    "example": "Standard Shipping",
+                    "type": "string"
+                  },
+                  "address": {
+                    "properties": {
+                      "name": {
+                        "description": "Contact Name or Business Name",
+                        "example": "John Smith/Helcim",
+                        "type": "string"
+                      },
+                      "street1": {
+                        "example": "123 Street",
+                        "type": "string"
+                      },
+                      "street2": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "example": "Calgary",
+                        "type": "string"
+                      },
+                      "province": {
+                        "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                        "example": "AB",
+                        "type": "string"
+                      },
+                      "country": {
+                        "description": "3-letter abbreviation of the country (CAN, USA)",
+                        "example": "CAN",
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "example": "H0H0H0",
+                        "type": "string"
+                      },
+                      "phone": {
+                        "description": "10 to 15 digits phone number.",
+                        "example": "1234567890",
+                        "type": "string"
+                      },
+                      "email": {
+                        "example": "john@example.com",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "postalCode",
+                      "street1"
+                    ],
+                    "title": "Address",
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "address",
+                  "amount",
+                  "details"
+                ],
+                "type": "object"
+              },
+              "pickup": {
+                "properties": {
+                  "date": {
+                    "description": "The date for the pickup.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The name of the person who would pickup the item.",
+                    "example": "John Smith",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "date"
+                ],
+                "type": "object"
+              },
+              "tax": {
+                "properties": {
+                  "amount": {
+                    "example": 1.25,
+                    "type": "number"
+                  },
+                  "details": {
+                    "example": "GST",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "details"
+                ],
+                "type": "object"
+              },
+              "discount": {
+                "properties": {
+                  "amount": {
+                    "example": 5.25,
+                    "type": "number"
+                  },
+                  "details": {
+                    "example": "Spring Sale",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "details"
+                ],
+                "type": "object"
+              },
+              "lineItems": {
+                "description": "Array of invoice items.",
+                "items": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "description": "The description of the item or product.",
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "description": "Quantity of the item.",
+                      "example": 0,
+                      "type": "number"
+                    },
+                    "price": {
+                      "description": "Unit price of the item.",
+                      "example": 0,
+                      "type": "number"
+                    },
+                    "total": {
+                      "description": "Total amount based on quantity and price of the item.",
+                      "example": 0,
+                      "type": "number"
+                    },
+                    "taxAmount": {
+                      "description": "Tax amount on the item.",
+                      "example": 0,
+                      "type": "number"
+                    },
+                    "discountAmount": {
+                      "description": "Discount amount on the item.",
+                      "example": 0,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "description",
+                    "price",
+                    "quantity",
+                    "total"
+                  ],
+                  "title": "Line Item",
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "contactName",
+              "lineItems"
+            ],
+            "title": "Invoice Request",
+            "type": "object"
           }
         },
         "required": [
@@ -197,6 +1024,452 @@
           "paymentType"
         ],
         "title": "Helcim Pay Initialize",
+        "type": "object"
+      },
+      "CustomStyling": {
+        "description": "Applies custom styling to the Helcim Pay instance.",
+        "properties": {
+          "appearance": {
+            "description": "Specifies the appearance of Helcim Pay.\n* `dark` - Renders Helcim Pay in dark mode\n* `light` - Renders Helcim Pay in light mode\n* `system` - Renders Helcim Pay based on the client's system theme\n\nThe default appearance is `light`.\n",
+            "example": "light",
+            "type": "string"
+          },
+          "brandColor": {
+            "description": "A hex code which defines the brand color that Helcim Pay is rendered with.\n\nThe default color is `815AF0`.\n",
+            "example": "815AF0",
+            "type": "string"
+          },
+          "cornerRadius": {
+            "description": "Controls how corners are rendered on Helcim Pay.\n* `pill`\n* `rectangular` \n* `rounded`\n\nThe default corner radius is `rounded`.\n",
+            "example": "rounded",
+            "type": "string"
+          },
+          "ctaButtonText": {
+            "description": "Overrides the text of the payment button.\n* `book`\n* `buy`\n* `checkout` \n* `donate`\n* `order` \n* `pay`\n* `subscribe`\n\nThe button text will always display \"Save\" for verify transactions.\n\nThe default button text is `pay`.",
+            "example": "pay",
+            "type": "string"
+          }
+        },
+        "title": "Custom Styling",
+        "type": "object"
+      },
+      "CustomerRequest": {
+        "description": "This is used to create a new customer based on the given information.",
+        "properties": {
+          "customerCode": {
+            "description": "The unique customer code. If blank, it will be automatically generated.",
+            "example": "CST1000",
+            "type": "string"
+          },
+          "contactName": {
+            "description": "The primary contact name (full name) of the customer.",
+            "example": "John Smith",
+            "type": "string"
+          },
+          "businessName": {
+            "description": "The business name of the customer. There must be either a contact name or business name present.",
+            "example": "Best Company",
+            "type": "string"
+          },
+          "cellPhone": {
+            "description": "The cell phone number of the customer.",
+            "example": "123-456-7890",
+            "type": "string"
+          },
+          "billingAddress": {
+            "properties": {
+              "name": {
+                "description": "Contact Name or Business Name",
+                "example": "John Smith/Helcim",
+                "type": "string"
+              },
+              "street1": {
+                "example": "123 Street",
+                "type": "string"
+              },
+              "street2": {
+                "type": "string"
+              },
+              "city": {
+                "example": "Calgary",
+                "type": "string"
+              },
+              "province": {
+                "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                "example": "AB",
+                "type": "string"
+              },
+              "country": {
+                "description": "3-letter abbreviation of the country (CAN, USA)",
+                "example": "CAN",
+                "type": "string"
+              },
+              "postalCode": {
+                "example": "H0H0H0",
+                "type": "string"
+              },
+              "phone": {
+                "description": "10 to 15 digits phone number.",
+                "example": "1234567890",
+                "type": "string"
+              },
+              "email": {
+                "example": "john@example.com",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "postalCode",
+              "street1"
+            ],
+            "title": "Address",
+            "type": "object"
+          },
+          "shippingAddress": {
+            "properties": {
+              "name": {
+                "description": "Contact Name or Business Name",
+                "example": "John Smith/Helcim",
+                "type": "string"
+              },
+              "street1": {
+                "example": "123 Street",
+                "type": "string"
+              },
+              "street2": {
+                "type": "string"
+              },
+              "city": {
+                "example": "Calgary",
+                "type": "string"
+              },
+              "province": {
+                "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                "example": "AB",
+                "type": "string"
+              },
+              "country": {
+                "description": "3-letter abbreviation of the country (CAN, USA)",
+                "example": "CAN",
+                "type": "string"
+              },
+              "postalCode": {
+                "example": "H0H0H0",
+                "type": "string"
+              },
+              "phone": {
+                "description": "10 to 15 digits phone number.",
+                "example": "1234567890",
+                "type": "string"
+              },
+              "email": {
+                "example": "john@example.com",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "postalCode",
+              "street1"
+            ],
+            "title": "Address",
+            "type": "object"
+          }
+        },
+        "required": [
+          "contactName"
+        ],
+        "title": "Customer Request",
+        "type": "object"
+      },
+      "InvoiceRequest": {
+        "description": "This is used to create a new invoice based on the given information.",
+        "properties": {
+          "invoiceNumber": {
+            "description": "The unique invoice number. If blank, it will be automatically generated.",
+            "example": "INV1000",
+            "type": "string"
+          },
+          "tipAmount": {
+            "example": 0,
+            "type": "number"
+          },
+          "depositAmount": {
+            "example": 0,
+            "type": "number"
+          },
+          "notes": {
+            "description": "The content that would be displayed under comment section of the invoice.",
+            "type": "string"
+          },
+          "shipping": {
+            "properties": {
+              "amount": {
+                "example": 0,
+                "type": "number"
+              },
+              "details": {
+                "example": "Standard Shipping",
+                "type": "string"
+              },
+              "address": {
+                "properties": {
+                  "name": {
+                    "description": "Contact Name or Business Name",
+                    "example": "John Smith/Helcim",
+                    "type": "string"
+                  },
+                  "street1": {
+                    "example": "123 Street",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "example": "Calgary",
+                    "type": "string"
+                  },
+                  "province": {
+                    "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                    "example": "AB",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "3-letter abbreviation of the country (CAN, USA)",
+                    "example": "CAN",
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "example": "H0H0H0",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "description": "10 to 15 digits phone number.",
+                    "example": "1234567890",
+                    "type": "string"
+                  },
+                  "email": {
+                    "example": "john@example.com",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "postalCode",
+                  "street1"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            },
+            "required": [
+              "address",
+              "amount",
+              "details"
+            ],
+            "type": "object"
+          },
+          "pickup": {
+            "properties": {
+              "date": {
+                "description": "The date for the pickup.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name of the person who would pickup the item.",
+                "example": "John Smith",
+                "type": "string"
+              }
+            },
+            "required": [
+              "date"
+            ],
+            "type": "object"
+          },
+          "tax": {
+            "properties": {
+              "amount": {
+                "example": 1.25,
+                "type": "number"
+              },
+              "details": {
+                "example": "GST",
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "details"
+            ],
+            "type": "object"
+          },
+          "discount": {
+            "properties": {
+              "amount": {
+                "example": 5.25,
+                "type": "number"
+              },
+              "details": {
+                "example": "Spring Sale",
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "details"
+            ],
+            "type": "object"
+          },
+          "lineItems": {
+            "description": "Array of invoice items.",
+            "items": {
+              "properties": {
+                "sku": {
+                  "type": "string"
+                },
+                "description": {
+                  "description": "The description of the item or product.",
+                  "type": "string"
+                },
+                "quantity": {
+                  "description": "Quantity of the item.",
+                  "example": 0,
+                  "type": "number"
+                },
+                "price": {
+                  "description": "Unit price of the item.",
+                  "example": 0,
+                  "type": "number"
+                },
+                "total": {
+                  "description": "Total amount based on quantity and price of the item.",
+                  "example": 0,
+                  "type": "number"
+                },
+                "taxAmount": {
+                  "description": "Tax amount on the item.",
+                  "example": 0,
+                  "type": "number"
+                },
+                "discountAmount": {
+                  "description": "Discount amount on the item.",
+                  "example": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "description",
+                "price",
+                "quantity",
+                "total"
+              ],
+              "title": "Line Item",
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "contactName",
+          "lineItems"
+        ],
+        "title": "Invoice Request",
+        "type": "object"
+      },
+      "Address": {
+        "properties": {
+          "name": {
+            "description": "Contact Name or Business Name",
+            "example": "John Smith/Helcim",
+            "type": "string"
+          },
+          "street1": {
+            "example": "123 Street",
+            "type": "string"
+          },
+          "street2": {
+            "type": "string"
+          },
+          "city": {
+            "example": "Calgary",
+            "type": "string"
+          },
+          "province": {
+            "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+            "example": "AB",
+            "type": "string"
+          },
+          "country": {
+            "description": "3-letter abbreviation of the country (CAN, USA)",
+            "example": "CAN",
+            "type": "string"
+          },
+          "postalCode": {
+            "example": "H0H0H0",
+            "type": "string"
+          },
+          "phone": {
+            "description": "10 to 15 digits phone number.",
+            "example": "1234567890",
+            "type": "string"
+          },
+          "email": {
+            "example": "john@example.com",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "postalCode",
+          "street1"
+        ],
+        "title": "Address",
+        "type": "object"
+      },
+      "LineItem": {
+        "properties": {
+          "sku": {
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the item or product.",
+            "type": "string"
+          },
+          "quantity": {
+            "description": "Quantity of the item.",
+            "example": 0,
+            "type": "number"
+          },
+          "price": {
+            "description": "Unit price of the item.",
+            "example": 0,
+            "type": "number"
+          },
+          "total": {
+            "description": "Total amount based on quantity and price of the item.",
+            "example": 0,
+            "type": "number"
+          },
+          "taxAmount": {
+            "description": "Tax amount on the item.",
+            "example": 0,
+            "type": "number"
+          },
+          "discountAmount": {
+            "description": "Discount amount on the item.",
+            "example": 0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "description",
+          "price",
+          "quantity",
+          "total"
+        ],
+        "title": "Line Item",
         "type": "object"
       },
       "checkout_init_200_response": {
@@ -222,6 +1495,155 @@
             "type": "array"
           }
         },
+        "type": "object"
+      },
+      "helcim_pay_logo_upload_request": {
+        "properties": {
+          "logo": {
+            "description": "The image file to be uploaded",
+            "format": "binary",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "helcim_pay_logo_upload_200_response": {
+        "properties": {
+          "message": {
+            "description": "A message indicating a successful upload.",
+            "example": "Logo is uploaded successfully.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "helcim_pay_logo_upload_400_response": {
+        "properties": {
+          "errors": {
+            "description": "An error message indicating the issue.",
+            "example": "No logo file uploaded.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "InvoiceRequest_shipping": {
+        "properties": {
+          "amount": {
+            "example": 0,
+            "type": "number"
+          },
+          "details": {
+            "example": "Standard Shipping",
+            "type": "string"
+          },
+          "address": {
+            "properties": {
+              "name": {
+                "description": "Contact Name or Business Name",
+                "example": "John Smith/Helcim",
+                "type": "string"
+              },
+              "street1": {
+                "example": "123 Street",
+                "type": "string"
+              },
+              "street2": {
+                "type": "string"
+              },
+              "city": {
+                "example": "Calgary",
+                "type": "string"
+              },
+              "province": {
+                "description": "2 letter abbreviation of the province (AB, BC, CA). Required field if country is CAN or USA.",
+                "example": "AB",
+                "type": "string"
+              },
+              "country": {
+                "description": "3-letter abbreviation of the country (CAN, USA)",
+                "example": "CAN",
+                "type": "string"
+              },
+              "postalCode": {
+                "example": "H0H0H0",
+                "type": "string"
+              },
+              "phone": {
+                "description": "10 to 15 digits phone number.",
+                "example": "1234567890",
+                "type": "string"
+              },
+              "email": {
+                "example": "john@example.com",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "postalCode",
+              "street1"
+            ],
+            "title": "Address",
+            "type": "object"
+          }
+        },
+        "required": [
+          "address",
+          "amount",
+          "details"
+        ],
+        "type": "object"
+      },
+      "InvoiceRequest_pickup": {
+        "properties": {
+          "date": {
+            "description": "The date for the pickup.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the person who would pickup the item.",
+            "example": "John Smith",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date"
+        ],
+        "type": "object"
+      },
+      "InvoiceRequest_tax": {
+        "properties": {
+          "amount": {
+            "example": 1.25,
+            "type": "number"
+          },
+          "details": {
+            "example": "GST",
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount",
+          "details"
+        ],
+        "type": "object"
+      },
+      "InvoiceRequest_discount": {
+        "properties": {
+          "amount": {
+            "example": 5.25,
+            "type": "number"
+          },
+          "details": {
+            "example": "Spring Sale",
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount",
+          "details"
+        ],
         "type": "object"
       }
     },

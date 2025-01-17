@@ -3,9 +3,9 @@
   "apis": [
     {
       "identifier": "helcimdevdocs",
-      "source": "@helcimdevdocs/v2.1#1hqqtljsu6loz",
-      "integrity": "sha512-19/oq7C9zftUUWUnaY8RDXbBfvLM8F4+gchSNoAUlR2oma3Wiv+77oeLt08S3LuczUi5oYRz2R+c8F4EIm9wTQ==",
-      "installerVersion": "6.1.1"
+      "source": "@helcimdevdocs/v2.1#1cln13zm5murm5b",
+      "integrity": "sha512-Qh3QH/2blhbXMSSJmMkGzx1m1bdBZZYV95UNB/4JqH+Auc9f6FO/8IVqEnhVy++QtvJGrSkFIYd1CvLV+XJ3hA==",
+      "installerVersion": "6.1.2"
     }
   ]
 }

@@ -1,8 +1,8 @@
-import type * as types from "./types";
-import type { ConfigOptions, FetchResponse } from "api/dist/core";
-import Oas from "oas";
-import APICore from "api/dist/core";
-import definition from "./openapi.json";
+import type * as types from './types';
+import type { ConfigOptions, FetchResponse } from 'api/dist/core'
+import Oas from 'oas';
+import APICore from 'api/dist/core';
+import definition from './openapi.json';
 
 class SDK {
   spec: Oas;
@@ -10,7 +10,7 @@ class SDK {
 
   constructor() {
     this.spec = Oas.init(definition);
-    this.core = new APICore(this.spec, "helcimdevdocs/2.0.0 (api/6.1.1)");
+    this.core = new APICore(this.spec, 'helcimdevdocs/2.0.0 (api/6.1.2)');
   }
 
   /**
@@ -77,25 +77,25 @@ class SDK {
    * Creates a HelcimPay.js Checkout Session
    *
    */
-  checkoutInit(
-    body: types.CheckoutInitBodyParam,
-    metadata: types.CheckoutInitMetadataParam
-  ): Promise<
-    | FetchResponse<200, types.CheckoutInitResponse200>
-    | FetchResponse<number, types.CheckoutInitResponseDefault>
-  > {
-    return this.core.fetch("/helcim-pay/initialize", "post", body, metadata);
+  checkoutInit(body: types.CheckoutInitBodyParam, metadata: types.CheckoutInitMetadataParam): Promise<FetchResponse<200, types.CheckoutInitResponse200> | FetchResponse<number, types.CheckoutInitResponseDefault>> {
+    return this.core.fetch('/helcim-pay/initialize', 'post', body, metadata);
+  }
+
+  /**
+   * Uploads the logo to be displayed on the HelcimPay.js modal
+   *
+   * @throws FetchError<400, types.HelcimPayLogoUploadResponse400> Failed
+   */
+  helcimPayLogoUpload(body: types.HelcimPayLogoUploadBodyParam, metadata: types.HelcimPayLogoUploadMetadataParam): Promise<FetchResponse<200, types.HelcimPayLogoUploadResponse200>>;
+  helcimPayLogoUpload(metadata: types.HelcimPayLogoUploadMetadataParam): Promise<FetchResponse<200, types.HelcimPayLogoUploadResponse200>>;
+  helcimPayLogoUpload(body?: types.HelcimPayLogoUploadBodyParam | types.HelcimPayLogoUploadMetadataParam, metadata?: types.HelcimPayLogoUploadMetadataParam): Promise<FetchResponse<200, types.HelcimPayLogoUploadResponse200>> {
+    return this.core.fetch('/branding/logo', 'post', body, metadata);
   }
 }
 
-const createSDK = (() => {
-  return new SDK();
-})();
+const createSDK = (() => { return new SDK(); })()
+;
+
 export default createSDK;
 
-export type {
-  CheckoutInitBodyParam,
-  CheckoutInitMetadataParam,
-  CheckoutInitResponse200,
-  CheckoutInitResponseDefault,
-} from "./types";
+export type { CheckoutInitBodyParam, CheckoutInitMetadataParam, CheckoutInitResponse200, CheckoutInitResponseDefault, HelcimPayLogoUploadBodyParam, HelcimPayLogoUploadMetadataParam, HelcimPayLogoUploadResponse200, HelcimPayLogoUploadResponse400 } from './types';
