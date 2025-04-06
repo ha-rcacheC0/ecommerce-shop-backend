@@ -6,7 +6,7 @@ const adminRouter = Router();
 adminRouter.get("/inventory", async (req, res) => {
   const inventory = await prisma.unitProduct.findMany({
     include: {
-      Product: true,
+      product: true,
     },
     orderBy: {
       productId: "asc",

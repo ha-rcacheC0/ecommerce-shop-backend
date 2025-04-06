@@ -1,207 +1,196 @@
-import { Brand, Category, Colors, Effects } from "@prisma/client";
 import { prisma } from "./db.setup";
-import { calcUnitPrice } from "../src/utils/creation-utils";
 
-const getEnumValues = (enumObj: any) => {
-  return Object.keys(enumObj).map((enumVal) => ({
-    name: enumObj[enumVal],
-  }));
-};
+async function main() {
+  const environment = process.env.NODE_ENV || "development";
+  console.log(`Seeding database for environment: ${environment}`);
 
-async function createProducts() {
-  await prisma.unitProduct.deleteMany();
-  await prisma.product.deleteMany();
+  // Create base categories
+  const categories = [
+    "REPEATERS_200_GRAM",
+    "REPEATERS_500_GRAM",
+    "ASSORTMENT",
+    "BOTTLE_ROCKETS",
+    "CONE_FLORAL",
+    "CONFETTI_SHOOTERS_AIR_COMPRESSED",
+    "FIRECRACKERS",
+    "FLYING_HELICOPTERS",
+    "FOUNTAINS",
+    "FUSE",
+    "GENDER_REVEAL",
+    "GROUND",
+    "PARACHUTES",
+    "PINWHEELS",
+    "RELOADABLES",
+    "ROCKETS_MISSLES",
+    "ROMAN_CANDLES",
+    "SHELLS_MINES",
+    "SNAKE_SMOKE",
+    "SPARKLERS",
+    "SUPPLIES_VISIBILITY",
+    "TOY_NOVELTIES_STROBES",
+    "TUBES",
+  ];
 
-  const prod1 = await prisma.product.create({
-    data: {
-      sku: 1041,
-      title: "Container Load Blue",
-      inStock: true,
-      Categories: {
-        connect: { name: "ASSORTMENT" },
-      },
-      Brands: {
-        connect: { name: "WINDA" },
-      },
-      package: [1, 4],
-      casePrice: 184.99,
-      EffectStrings: {
-        connect: [{ name: "STROBES" }, { name: "CRACKLES" }],
-      },
-      ColorStrings: {
-        connect: [
-          { name: "RED" },
-          { name: "BLUE" },
-          { name: "PURPLE" },
-          { name: "PINK" },
-        ],
-      },
-      description:
-        "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-      image: "/product-imgs/pro-id-1001.png",
-      videoURL: "https://www.youtube.com/watch?v=Mk1oUvHlJCM",
-      isCaseBreakable: false,
-    },
-  });
+  const effects = [
+    "BROCAD",
+    "CHRYSANTHEMUM",
+    "COMET",
+    "CONFETTI",
+    "CRACKLES",
+    "CROSSETTE",
+    "FAN_EFFECTS",
+    "FLYING_FISH",
+    "GLITTER",
+    "GLOW",
+    "HELICOPTER",
+    "LOUD_BANG",
+    "NISHIKI_KAMURO",
+    "PALM_TREE",
+    "PARACHUTE",
+    "PEARLS",
+    "PEONY",
+    "PISTIL",
+    "REVEAL",
+    "RISING_TAIL",
+    "SIZZLES",
+    "SMOKE",
+    "SNAKE",
+    "SNAPS",
+    "SPARKLES",
+    "SPINS",
+    "STROBES",
+    "TOURBILLION",
+    "WATERFALL",
+    "WHISTLE",
+    "WILLOW",
+  ];
 
-  const prod2 = await prisma.product.create({
-    data: {
-      sku: 1023,
-      title: "Wise Guy Assortment Box",
-      inStock: false,
-      Categories: {
-        connect: { name: "ASSORTMENT" },
-      },
-      Brands: {
-        connect: {
-          name: "WISE_GUY",
-        },
-      },
-      package: [4, 1],
-      casePrice: 229.99,
-      EffectStrings: {
-        connect: [{ name: "STROBES" }, { name: "CRACKLES" }],
-      },
-      ColorStrings: {
-        connect: [
-          { name: "RED" },
-          { name: "BLUE" },
-          { name: "PURPLE" },
-          { name: "PINK" },
-        ],
-      },
-      description:
-        "This is an amazing assortment with top notch effects in every single fuse. Get a prepackaged assortment and get on with the show now.",
-      image: "/product-imgs/pro-id-1001.png",
-      videoURL: "https://www.youtube.com/watch?v=8Fe2-y-MQzs",
-      isCaseBreakable: false,
-      UnitProduct: {
+  const colors = [
+    "BLACK",
+    "BLUE",
+    "BROWN",
+    "GOLD",
+    "GREEN",
+    "ORANGE",
+    "PINK",
+    "PURPLE",
+    "RED",
+    "SILVER",
+    "WHITE",
+    "YELLOW",
+  ];
+
+  const brands = [
+    "ALPHA_FIREWORKS",
+    "BLACK_SCORPION",
+    "BLUE_DRAGON",
+    "BOOM_WOW",
+    "BOOMER",
+    "BROTHERS",
+    "BUM_BUM",
+    "CRZ",
+    "CSS",
+    "DFS",
+    "DEMON_PYRO",
+    "DOMINATOR",
+    "DUCK",
+    "FIREHAWK",
+    "FISHERMAN",
+    "FOX_FIREWORKS",
+    "GALAXY_FIREWORKS",
+    "GENERIC",
+    "HAPPY_FAMILY",
+    "HOP_KEE",
+    "IRONMAN",
+    "KRIPTON_FIREWORKS",
+    "LEGEND",
+    "MAD_OX",
+    "MC_FIREWORKS",
+    "MIGHTY_MAX",
+    "MIRACLE",
+    "MUSCLE_PACK",
+    "PYRO_DIABLO",
+    "PYRO_MOOI",
+    "PYRO_PIRATE",
+    "RACCOON",
+    "RED_LANTERN",
+    "SHOGUN",
+    "SIN_CITY",
+    "SKY_EAGLE",
+    "SKY_SLAM",
+    "SKY_PAINTER",
+    "SKY_PIONEER",
+    "STARGET",
+    "SUNS_FIREWORKS",
+    "T_SKY",
+    "TOPGUN",
+    "WINDA",
+    "WISE_GUY",
+  ];
+
+  for (const name of categories) {
+    await prisma.category.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+  for (const name of brands) {
+    await prisma.brand.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+  for (const name of colors) {
+    await prisma.color.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+  for (const name of effects) {
+    await prisma.effect.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+  if (environment === "development") {
+    // Getting references to categories and brands
+    const assortment = await prisma.category.findUnique({
+      where: { name: "ASSORTMENT" },
+    });
+    const winda = await prisma.brand.findUnique({ where: { name: "WINDA" } });
+
+    if (assortment && winda) {
+      // Create a test product
+      await prisma.product.upsert({
+        where: { sku: 1041 },
+        update: {},
         create: {
-          sku: "1023-u",
-          availableStock: 0,
-          unitPrice: calcUnitPrice(229.99, 4),
-          package: [1, 1],
+          sku: 1041,
+          title: "Container Load Blue",
+          inStock: true,
+          categoryId: assortment.id,
+          brandId: winda.id,
+          package: [1, 4],
+          casePrice: 184.99,
+          description: "This is a test product for development",
+          image: "/product-imgs/pro-id-1001.png",
+          isCaseBreakable: false,
         },
-      },
-    },
-    include: { UnitProduct: true },
-  });
-  const prod3 = await prisma.product.create({
-    data: {
-      sku: 1044,
-      title: "Most Wanted",
-      image: "/product-imgs/pro-id-1044.jpeg",
-      casePrice: 154.99,
-      inStock: true,
-      package: [1, 1],
-      Categories: {
-        connect: { name: "ASSORTMENT" },
-      },
-      Brands: {
-        connect: {
-          name: "TOPGUN",
-        },
-      },
-      videoURL: "https://www.youtube.com/watch?v=FpXuD2E1O8E",
-    },
-  });
-  const prod4 = await prisma.product.create({
-    data: {
-      sku: 1049,
-      title: "League of Legends #5",
-      image: "/product-imgs/pro-id-1049.jpeg",
-      casePrice: 149.99,
-      inStock: true,
-      package: [2, 1],
-      Categories: {
-        connect: { name: "ASSORTMENT" },
-      },
-      Brands: {
-        connect: {
-          name: "LEGEND",
-        },
-      },
-      UnitProduct: {
-        create: {
-          sku: "1049-u",
-          unitPrice: calcUnitPrice(149.99, 2),
-          package: [1, 1],
-          availableStock: 0,
-        },
-      },
-    },
-    include: { UnitProduct: true },
-  });
-  const prod5 = await prisma.product.create({
-    data: {
-      sku: 1047,
-      title: "Kids Assortment Car (S & S)",
-      image: "/product-imgs/pro-id-1047.jpeg",
-      casePrice: 84.99,
-      inStock: true,
-      package: [8, 1],
-      Categories: {
-        connect: { name: "ASSORTMENT" },
-      },
-      Brands: {
-        connect: {
-          name: "STARGET",
-        },
-      },
-      UnitProduct: {
-        create: {
-          sku: "1047-u",
-          unitPrice: calcUnitPrice(84.99, 8),
-          availableStock: 0,
-          package: [1, 1],
-        },
-      },
-    },
-    include: { UnitProduct: true },
-  });
+      });
+    }
+  }
+
+  console.log(`Database has been seeded for ${environment} environment`);
 }
 
-async function seedDb() {
-  console.log("Starting DB Seeding ");
-
-  const brandsData = getEnumValues(Brand);
-  const colorsData = getEnumValues(Colors);
-  const categoriesData = getEnumValues(Category);
-  const effectsData = getEnumValues(Effects);
-  // Create Brand
-
-  const brands = await prisma.brands.createMany({
-    data: brandsData,
-    skipDuplicates: true,
-  });
-
-  // Create Categories
-  const categories = await prisma.categories.createMany({
-    data: categoriesData,
-    skipDuplicates: true,
-  });
-
-  // Create Colors
-  const colors = await prisma.colorStrings.createMany({
-    data: colorsData,
-    skipDuplicates: true,
-  });
-
-  const effects = await prisma.effectStrings.createManyAndReturn({
-    data: effectsData,
-    skipDuplicates: true,
-  });
-  // createProducts();
-}
-
-//
-
-seedDb()
-  .then(() => {
-    console.log("Seeding Complete");
-  })
+main()
   .catch((e) => {
     console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

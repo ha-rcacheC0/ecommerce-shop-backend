@@ -42,7 +42,7 @@ terminalRouter.get("/:id", async (req, res) => {
         id: id,
       },
       include: {
-        Address: true,
+        address: true,
       },
     });
     res.status(200).send(terminal);

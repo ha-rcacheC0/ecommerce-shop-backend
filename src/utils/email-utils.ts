@@ -45,25 +45,25 @@ export const generateEmailHtml = (purchase: PurchaseRecord): string => {
         <tr>
           <td style="border-bottom: 1px solid #eee; padding: 8px;"><strong>First Name:</strong></td>
           <td style="border-bottom: 1px solid #eee; padding: 8px;">${
-            purchase.User.profiles?.firstName
+            purchase.user.profile?.firstName
           }</td>
         </tr>
         <tr>
           <td style="border-bottom: 1px solid #eee; padding: 8px;"><strong>Last Name:</strong></td>
           <td style="border-bottom: 1px solid #eee; padding: 8px;">${
-            purchase.User.profiles?.lastName
+            purchase.user.profile?.lastName
           }</td>
         </tr>
         <tr>
           <td style="border-bottom: 1px solid #eee; padding: 8px;"><strong>Phone Number:</strong></td>
           <td style="border-bottom: 1px solid #eee; padding: 8px;">${
-            purchase.User.profiles?.phoneNumber
+            purchase.user.profile?.phoneNumber
           }</td>
         </tr>
         <tr>
           <td style="border-bottom: 1px solid #eee; padding: 8px;"><strong>Email Address:</strong></td>
           <td style="border-bottom: 1px solid #eee; padding: 8px;">${
-            purchase.User.email
+            purchase.user.email
           }</td>
         </tr>
       </table>
@@ -109,11 +109,12 @@ export const generateEmailHtml = (purchase: PurchaseRecord): string => {
           </tr>
         </thead>
         <tbody>
-          ${purchase.PurchaseItems.map(
-            (item: PurchaseItem) => `
+          ${purchase.purchaseItems
+            .map(
+              (item: PurchaseItem) => `
             <tr>
               <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${
-                item.Product.sku
+                item.product.sku
               }</td>
               <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${
                 item.quantity
@@ -122,11 +123,12 @@ export const generateEmailHtml = (purchase: PurchaseRecord): string => {
                 item.isUnit ? "Unit" : "Case"
               }</td>
               <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${
-                item.Product.title
+                item.product.title
               }</td>
             </tr>
           `
-          ).join("")}
+            )
+            .join("")}
         </tbody>
       </table>
     </div>
@@ -157,8 +159,8 @@ export const generateInventoryEmailHtml = (
             .map(
               (item) => `
             <tr>
-              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.Product.sku}</td>
-              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.Product.title}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.product.sku}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.product.title}</td>
               <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${item.quantity}</td>
             </tr>
           `
@@ -184,8 +186,8 @@ export const generateInventoryEmailHtml = (
             .map(
               (request: any) => `
             <tr>
-              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.sku}</td>
-              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.title}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.product.sku}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.product.title}</td>
               <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.quantity}</td>
             </tr>
           `
@@ -226,8 +228,8 @@ export const generateCaseBreakEmailHtml = (
             .map(
               (request: any) => `
             <tr>
-              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.sku}</td>
-              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.Product.title}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.product.sku}</td>
+              <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.product.title}</td>
               <td style="border-bottom: 1px solid #eee; padding: 8px; text-align:center;">${request.quantity}</td>
             </tr>
           `

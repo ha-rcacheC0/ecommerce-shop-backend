@@ -10,15 +10,15 @@ cartRouter.get("/:cartId", async (req, res) => {
       id: cartId,
     },
     include: {
-      CartProducts: {
+      cartProducts: {
         include: {
-          Product: {
+          product: {
             include: {
-              Brands: true,
-              Categories: true,
-              ColorStrings: true,
-              EffectStrings: true,
-              UnitProduct: true,
+              brand: true,
+              category: true,
+              colors: true,
+              effects: true,
+              unitProduct: true,
             },
           },
         },
@@ -54,7 +54,7 @@ cartRouter.post("/:cartId/add", async (req, res) => {
   if (isUnit) {
     createData = {
       unitQuantity: 1,
-      productId, // Use productId directly, Prisma will link the Product based on this ID
+      productId,
     };
     updateData = {
       unitQuantity: {
@@ -64,7 +64,7 @@ cartRouter.post("/:cartId/add", async (req, res) => {
   } else {
     createData = {
       caseQuantity: 1,
-      productId, // Similar here, use the productId for linking
+      productId,
     };
     updateData = {
       caseQuantity: {
@@ -77,7 +77,7 @@ cartRouter.post("/:cartId/add", async (req, res) => {
     const updatedCart = await prisma.cart.update({
       where: { id: cartId },
       data: {
-        CartProducts: {
+        cartProducts: {
           upsert: {
             where: {
               cartId_productId: {
@@ -110,14 +110,14 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
       id: cartId,
     },
     include: {
-      CartProducts: true, // Include the CartProducts to check if the product is in the cart
+      cartProducts: true,
     },
   });
 
   if (!cart)
     return res.status(404).send({ message: "Cannot find cart with that id" });
 
-  const cartProduct = cart.CartProducts.find(
+  const cartProduct = cart.cartProducts.find(
     (cp) => cp.productId === productId
   );
 
@@ -129,7 +129,7 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
       id: cartId,
     },
     data: {
-      CartProducts: {
+      cartProducts: {
         deleteMany: {
           cartId: cartId,
           productId: productId,

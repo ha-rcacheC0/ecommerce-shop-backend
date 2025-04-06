@@ -2,22 +2,21 @@ import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
 import { Decimal } from "decimal.js";
 
-import { validateRequestQuery } from "zod-express-middleware";
 import { z } from "zod";
-import { productSchema } from "../utils/validation-utils";
-import { Brand, Category, Colors, Effects, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { calcUnitPrice } from "../utils/creation-utils";
 
 const productRouter = Router();
 type ProductCreateInput = Prisma.ProductCreateInput;
+type ProductUpdateInput = Prisma.ProductUpdateInput;
 const filterSchema = z.object({
   page: z.coerce.number().positive(),
   pageSize: z.coerce.number().positive(),
   searchTitle: z.string().optional(),
-  brands: z.array(z.nativeEnum(Brand)).optional(),
-  categories: z.array(z.nativeEnum(Category)).optional(),
-  colors: z.array(z.nativeEnum(Colors)).optional(),
-  effects: z.array(z.nativeEnum(Effects)).optional(),
+  brands: z.array(z.string()).optional(),
+  categories: z.array(z.string()).optional(),
+  colors: z.array(z.string()).optional(),
+  effects: z.array(z.string()).optional(),
 });
 
 /* GET ALL. */
@@ -57,19 +56,19 @@ productRouter.get("/", async function (req, res) {
     }
 
     if (brands?.length) {
-      whereClause.Brands = { name: { in: brands } };
+      whereClause.brand = { name: { in: brands } };
     }
 
     if (categories?.length) {
-      whereClause.Categories = { name: { in: categories } };
+      whereClause.category = { name: { in: categories } };
     }
 
     if (colors?.length) {
-      whereClause.ColorStrings = { some: { name: { in: colors } } };
+      whereClause.colors = { some: { name: { in: colors } } };
     }
 
     if (effects?.length) {
-      whereClause.EffectStrings = { some: { name: { in: effects } } };
+      whereClause.effects = { some: { name: { in: effects } } };
     }
 
     const totalCount = await prisma.product.count({ where: whereClause });
@@ -78,11 +77,11 @@ productRouter.get("/", async function (req, res) {
     const products = await prisma.product.findMany({
       where: whereClause,
       include: {
-        Brands: { select: { name: true } },
-        Categories: { select: { name: true } },
-        ColorStrings: { select: { name: true } },
-        EffectStrings: { select: { name: true } },
-        UnitProduct: true,
+        brand: { select: { name: true } },
+        category: { select: { name: true } },
+        colors: { select: { name: true } },
+        effects: { select: { name: true } },
+        unitProduct: true,
       },
       orderBy: { id: "asc" },
       skip: (page - 1) * pageSize,
@@ -111,21 +110,21 @@ productRouter.get("/:id", async function (req, res) {
       id: id,
     },
     include: {
-      Brands: {
+      brand: {
         select: { name: true },
       },
-      Categories: {
+      category: {
         select: {
           name: true,
         },
       },
-      ColorStrings: {
+      colors: {
         select: { name: true, id: true },
       },
-      EffectStrings: {
+      effects: {
         select: { name: true, id: true },
       },
-      UnitProduct: true,
+      unitProduct: true,
     },
   });
   if (!product)
@@ -133,8 +132,6 @@ productRouter.get("/:id", async function (req, res) {
 
   return res.status(200).send(product);
 });
-
-// POST - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO ADD THERE OWN PRODUCTS
 
 // TODO: ADD MIDDLEWARES TO :  VALIDATE USER MAKING REQUEST,VALIDATE REQUEST BODY
 
@@ -164,7 +161,7 @@ productRouter.post("/create", async function (req, res) {
     description: productDescription,
     image: productImageURL || "placeholder", // Default to 'placeholder' if image is not provided
     videoURL: productVideoURL,
-    EffectStrings: {
+    effects: {
       connect:
         productEffects.length > 0
           ? productEffects.map((effectName: string) => ({
@@ -172,13 +169,13 @@ productRouter.post("/create", async function (req, res) {
             }))
           : undefined,
     },
-    ColorStrings: {
+    colors: {
       connect:
         productColors.length > 0
           ? productColors.map((colorName: string) => ({ name: colorName }))
           : undefined,
     },
-    Brands: {
+    brand: {
       connectOrCreate: {
         where: {
           name: productBrand,
@@ -188,7 +185,7 @@ productRouter.post("/create", async function (req, res) {
         },
       },
     },
-    Categories: {
+    category: {
       connect: { name: productCategory },
     },
   };
@@ -198,7 +195,7 @@ productRouter.post("/create", async function (req, res) {
     const newProduct = await prisma.product.create({
       data: {
         ...newProductData,
-        UnitProduct: {
+        unitProduct: {
           create: {
             unitPrice: calcUnitPrice(productCasePrice, packageIntArray[0]),
             sku: productID + "-u",
@@ -209,10 +206,10 @@ productRouter.post("/create", async function (req, res) {
       },
 
       include: {
-        Brands: true,
-        Categories: true,
-        EffectStrings: true,
-        ColorStrings: true,
+        brand: true,
+        category: true,
+        effects: true,
+        colors: true,
       },
     });
 
@@ -256,7 +253,7 @@ productRouter.post("/:id", async function (req, res) {
     productVideoURL,
   } = req.body;
 
-  const updateData: any = {
+  const updateData: ProductUpdateInput = {
     sku: +productID,
     title: productTitle,
     description: productDescription,
@@ -266,13 +263,13 @@ productRouter.post("/:id", async function (req, res) {
     package: productPackage.split(",").map(Number), // Convert package to array of integers
     videoURL: productVideoURL,
     isCaseBreakable: productCaseBreakable === "on",
-    EffectStrings: {
+    effects: {
       connect:
         productEffects.length > 0
           ? productEffects.map((effectName: string) => ({ name: effectName }))
           : undefined,
     },
-    ColorStrings: {
+    colors: {
       connect:
         productColors.length > 0
           ? productColors.map((colorName: string) => ({ name: colorName }))
@@ -282,13 +279,13 @@ productRouter.post("/:id", async function (req, res) {
 
   // Conditionally add Brands and Categories only if they are provided
   if (productBrand) {
-    updateData.Brands = {
+    updateData.brand = {
       connect: { name: productBrand },
     };
   }
 
   if (productCategory) {
-    updateData.Categories = {
+    updateData.category = {
       connect: { name: productCategory },
     };
   }
