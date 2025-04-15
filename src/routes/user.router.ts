@@ -155,6 +155,7 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
   try {
     // Construct the update data object conditionally
     const updateData: any = {};
+    console.log(req.body);
 
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
@@ -215,7 +216,7 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
       return res.status(400).send({ message: "Unable to update userInfo" });
 
     return res.status(201).send(updatedUserInfo);
-  } catch (error) {
+  } catch (error: any) {
     return res.status(500).send({ message: "Internal Server Error" });
   }
 });

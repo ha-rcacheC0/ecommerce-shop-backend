@@ -78,7 +78,6 @@ enum TerminalCompany {
   DHL
 }
 
-// String-based models (renamed from "New" suffix)
 model Brand {
   id       String    @id @default(cuid())
   name     String    @unique
@@ -105,31 +104,31 @@ model Effect {
 
 model Product {
   id              String  @id @default(cuid())
-  sku             Int     @unique
+  sku             String  @unique
   title           String
   description     String?
   image           String  @default("placeholder")
   videoURL        String?
   casePrice       Decimal
   isCaseBreakable Boolean @default(true)
+  isShow          Boolean @default(false)
   inStock         Boolean
   package         Int[]
 
-  // Required fields for new relationships
   brandId    String
   categoryId String
 
-  // New relationships
   brand    Brand    @relation(fields: [brandId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
   colors   Color[]  @relation("ProductColors")
   effects  Effect[] @relation("ProductEffects")
 
-  // Other relationships
   cartProducts     CartProduct[]
   unitProduct      UnitProduct?
   purchaseItems    PurchaseItem[]
   breakCaseRequest BreakCaseRequest[]
+
+  ShowProduct ShowProduct[]
 }
 
 model UnitProduct {
@@ -140,6 +139,38 @@ model UnitProduct {
   unitPrice      Decimal
   package        Int[]
   availableStock Int
+}
+
+model Show {
+  id           String        @id @default(cuid())
+  title        String
+  description  String?
+  price        Decimal
+  image        String        @default("placeholder")
+  videoURL     String?
+  inStock      Boolean       @default(true)
+  showTypeId   String
+  ShowType     ShowType      @relation(fields: [showTypeId], references: [id])
+  ShowProducts ShowProduct[]
+}
+
+model ShowProduct {
+  id        String  @id @default(cuid())
+  showId    String
+  productId String
+  quantity  Int
+  notes     String?
+  Show      Show    @relation(fields: [showId], references: [id])
+  Product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([showId, productId])
+}
+
+model ShowType {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+  Shows       Show[]
 }
 
 model User {
