@@ -19,7 +19,7 @@ type PurchaseItem = {
   quantity: number;
   isUnit: boolean;
   product: {
-    sku: number;
+    sku: string;
     title: string;
   };
 };
