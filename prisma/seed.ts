@@ -166,10 +166,10 @@ async function main() {
     if (assortment && winda) {
       // Create a test product
       await prisma.product.upsert({
-        where: { sku: 1041 },
+        where: { sku: "1041" },
         update: {},
         create: {
-          sku: 1041,
+          sku: "1041",
           title: "Container Load Blue",
           inStock: true,
           categoryId: assortment.id,

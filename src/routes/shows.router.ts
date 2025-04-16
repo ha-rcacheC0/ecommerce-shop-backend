@@ -6,9 +6,13 @@ import { Decimal } from "@prisma/client/runtime/library";
 
 const showsRouter = Router();
 
-// GET all shows
+// GET all shows - Added sorting and pagination
 showsRouter.get("/", async (req, res) => {
   try {
+    const { page = 1, pageSize = 20 } = req.query;
+    const skip = (Number(page) - 1) * Number(pageSize);
+    const take = Number(pageSize);
+
     const shows = await prisma.product.findMany({
       where: {
         isShow: true,
@@ -28,17 +32,40 @@ showsRouter.get("/", async (req, res) => {
           },
         },
       },
+      orderBy: { title: "asc" }, // Sort by title for consistency
+      skip: isNaN(skip) ? 0 : skip,
+      take: isNaN(take) ? 20 : take,
     });
-    return res.status(200).json(shows);
+
+    // Get the total count for pagination
+    const total = await prisma.product.count({
+      where: {
+        isShow: true,
+      },
+    });
+
+    return res.status(200).json({
+      shows,
+      pagination: {
+        total,
+        page: Number(page),
+        pageSize: Number(pageSize),
+        totalPages: Math.ceil(total / Number(pageSize)),
+      },
+    });
   } catch (error) {
     console.error("Error fetching shows:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// GET shows by type
+// GET shows by type - Added sorting and pagination
 showsRouter.get("/type/:typeId", async (req, res) => {
   const { typeId } = req.params;
+  const { page = 1, pageSize = 20 } = req.query;
+  const skip = (Number(page) - 1) * Number(pageSize);
+  const take = Number(pageSize);
+
   try {
     const shows = await prisma.product.findMany({
       where: {
@@ -60,15 +87,35 @@ showsRouter.get("/type/:typeId", async (req, res) => {
           },
         },
       },
+      orderBy: { title: "asc" },
+      skip: isNaN(skip) ? 0 : skip,
+      take: isNaN(take) ? 20 : take,
     });
-    return res.status(200).json(shows);
+
+    // Get the total count for pagination
+    const total = await prisma.product.count({
+      where: {
+        isShow: true,
+        showTypeId: typeId,
+      },
+    });
+
+    return res.status(200).json({
+      shows,
+      pagination: {
+        total,
+        page: Number(page),
+        pageSize: Number(pageSize),
+        totalPages: Math.ceil(total / Number(pageSize)),
+      },
+    });
   } catch (error) {
     console.error("Error fetching shows by type:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// GET a single show
+// GET a single show - No changes needed
 showsRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -110,24 +157,26 @@ showsRouter.get("/:id", async (req, res) => {
   }
 });
 
-// Create a new show
+// Create a new show - Improved validation
 const createShowSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  price: z.number().positive(),
+  price: z.number().positive("Price must be positive"),
   image: z.string().optional(),
-  videoURL: z.string().optional(),
-  inStock: z.boolean().optional(),
+  videoURL: z.string().url().optional(),
+  inStock: z.boolean().default(true),
   showTypeId: z.string(),
   brandId: z.string(),
   categoryId: z.string(),
-  products: z.array(
-    z.object({
-      productId: z.string(),
-      quantity: z.number().int().positive(),
-      notes: z.string().optional(),
-    })
-  ),
+  products: z
+    .array(
+      z.object({
+        productId: z.string(),
+        quantity: z.number().int().positive(),
+        notes: z.string().optional(),
+      })
+    )
+    .min(1, "At least one product is required"),
 });
 
 showsRouter.post(
@@ -136,6 +185,37 @@ showsRouter.post(
   async (req, res) => {
     const { products, ...showData } = req.body;
     try {
+      // Validate that all product IDs exist and aren't already shows
+      const productIds = products.map((p) => p.productId);
+      const existingProducts = await prisma.product.findMany({
+        where: {
+          id: {
+            in: productIds,
+          },
+        },
+        select: {
+          id: true,
+          isShow: true,
+        },
+      });
+
+      // Check if all products exist
+      if (existingProducts.length !== productIds.length) {
+        return res.status(400).json({
+          message: "Some product IDs don't exist",
+        });
+      }
+
+      // Check if any products are already shows
+      const showProducts = existingProducts.filter((p) => p.isShow);
+      if (showProducts.length > 0) {
+        return res.status(400).json({
+          message: "Cannot add a show as a component of another show",
+          showProductIds: showProducts.map((p) => p.id),
+        });
+      }
+
+      // Create the show in a transaction
       const show = await prisma.$transaction(async (tx) => {
         const newShow = await tx.product.create({
           data: {
@@ -167,7 +247,12 @@ showsRouter.post(
             category: true,
             showProducts: {
               include: {
-                product: true,
+                product: {
+                  include: {
+                    brand: true,
+                    category: true,
+                  },
+                },
               },
             },
           },
@@ -184,6 +269,7 @@ showsRouter.post(
   }
 );
 
+// Helper function to generate a unique SKU for shows
 async function generateUniqueShowSku(tx: any) {
   // Find the highest show number by extracting the numeric part from existing SKUs
   const showProducts = await tx.product.findMany({
@@ -213,23 +299,69 @@ async function generateUniqueShowSku(tx: any) {
   return newSku;
 }
 
-// Update a show
+// Update a show - Improved validation
 showsRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { products, ...showData } = req.body;
 
   try {
+    // Verify this is a show
+    const existingShow = await prisma.product.findFirst({
+      where: {
+        id,
+        isShow: true,
+      },
+    });
+
+    if (!existingShow) {
+      return res.status(404).json({ message: "Show not found" });
+    }
+
+    // If updating products, validate them
+    if (products && Array.isArray(products)) {
+      // Validate that all product IDs exist and aren't already shows
+      const productIds = products.map((p) => p.productId);
+      const existingProducts = await prisma.product.findMany({
+        where: {
+          id: {
+            in: productIds,
+          },
+        },
+        select: {
+          id: true,
+          isShow: true,
+        },
+      });
+
+      // Check if all products exist
+      if (existingProducts.length !== productIds.length) {
+        return res.status(400).json({
+          message: "Some product IDs don't exist",
+        });
+      }
+
+      // Check if any products are already shows (excluding this show itself)
+      const showProducts = existingProducts.filter(
+        (p) => p.isShow && p.id !== id
+      );
+      if (showProducts.length > 0) {
+        return res.status(400).json({
+          message: "Cannot add a show as a component of another show",
+          showProductIds: showProducts.map((p) => p.id),
+        });
+      }
+    }
+
     // Start a transaction to handle the update atomically
     const updatedShow = await prisma.$transaction(async (tx) => {
       // First, update the show details
       const updatedShowData = await tx.product.update({
         where: {
           id,
-          isShow: true,
         },
         data: {
           ...showData,
-          casePrice: new Decimal(showData.price),
+          casePrice: showData.price ? new Decimal(showData.price) : undefined,
         },
       });
 
@@ -262,7 +394,12 @@ showsRouter.put("/:id", async (req, res) => {
           category: true,
           showProducts: {
             include: {
-              product: true,
+              product: {
+                include: {
+                  brand: true,
+                  category: true,
+                },
+              },
             },
           },
         },
@@ -278,7 +415,7 @@ showsRouter.put("/:id", async (req, res) => {
   }
 });
 
-// Delete a show
+// Delete a show - No changes needed
 showsRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -312,7 +449,7 @@ showsRouter.delete("/:id", async (req, res) => {
   }
 });
 
-// GET all show types
+// GET all show types - No changes needed
 showsRouter.get("/types/all", async (req, res) => {
   try {
     const types = await prisma.showType.findMany();
@@ -323,11 +460,26 @@ showsRouter.get("/types/all", async (req, res) => {
   }
 });
 
-// Create a show type
+// Create a show type - Improved validation
 showsRouter.post("/types", async (req, res) => {
   const { name, description } = req.body;
 
+  if (!name || name.trim() === "") {
+    return res.status(400).json({ message: "Name is required" });
+  }
+
   try {
+    // Check if type with this name already exists
+    const existingType = await prisma.showType.findFirst({
+      where: { name },
+    });
+
+    if (existingType) {
+      return res
+        .status(400)
+        .json({ message: "A show type with this name already exists" });
+    }
+
     const showType = await prisma.showType.create({
       data: {
         name,
@@ -341,12 +493,39 @@ showsRouter.post("/types", async (req, res) => {
   }
 });
 
-// Update a show type
+// Update a show type - Improved validation
 showsRouter.put("/types/:id", async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
 
+  if (!name || name.trim() === "") {
+    return res.status(400).json({ message: "Name is required" });
+  }
+
   try {
+    // Check if type exists
+    const existingType = await prisma.showType.findUnique({
+      where: { id },
+    });
+
+    if (!existingType) {
+      return res.status(404).json({ message: "Show type not found" });
+    }
+
+    // Check if another type has this name
+    const duplicateName = await prisma.showType.findFirst({
+      where: {
+        name,
+        id: { not: id },
+      },
+    });
+
+    if (duplicateName) {
+      return res
+        .status(400)
+        .json({ message: "A show type with this name already exists" });
+    }
+
     const showType = await prisma.showType.update({
       where: { id },
       data: {
@@ -361,7 +540,7 @@ showsRouter.put("/types/:id", async (req, res) => {
   }
 });
 
-// Delete a show type
+// Delete a show type - No changes needed
 showsRouter.delete("/types/:id", async (req, res) => {
   const { id } = req.params;
 

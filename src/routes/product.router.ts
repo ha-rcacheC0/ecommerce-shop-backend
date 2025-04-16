@@ -153,7 +153,7 @@ productRouter.post("/create", async function (req, res) {
 
   const packageIntArray: number[] = productPackage.split(",").map(Number);
   const newProductData: ProductCreateInput = {
-    sku: +productID,
+    sku: productID,
     title: productTitle,
     inStock: productInStock === "on", // Convert 'on' to boolean
     casePrice: new Decimal(productCasePrice).toFixed(2), // Ensure precision to 2 decimal places
@@ -189,7 +189,6 @@ productRouter.post("/create", async function (req, res) {
       connect: { name: productCategory },
     },
   };
-  // Conditionally add Brands and Categories only if they are provided
 
   try {
     const newProduct = await prisma.product.create({
@@ -229,13 +228,7 @@ productRouter.post("/create", async function (req, res) {
 // VALIDATE BODY TO ONLY HAVE FIELDS THAT CAN EXIST BUT DON'T NEED TO HAVE ALL FIELDS
 
 productRouter.post("/:id", async function (req, res) {
-  const idAsNum = +req.params.id;
-
-  if (isNaN(idAsNum)) {
-    return res
-      .status(503)
-      .send({ message: "Id must be a number, please try again" });
-  }
+  const idAsNum = req.params.id;
 
   const {
     productID,
@@ -254,7 +247,7 @@ productRouter.post("/:id", async function (req, res) {
   } = req.body;
 
   const updateData: ProductUpdateInput = {
-    sku: +productID,
+    sku: productID,
     title: productTitle,
     description: productDescription,
     image: productImageURL,
@@ -310,12 +303,7 @@ productRouter.post("/:id", async function (req, res) {
 // DELETE - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO DELETE THE PRODUCTS -
 
 productRouter.delete("/:id", async function (req, res) {
-  const idAsNum = +req.params.id;
-
-  if (isNaN(idAsNum))
-    return res
-      .status(503)
-      .send({ message: "Id must be a number , please try again" });
+  const idAsNum = req.params.id;
 
   const deletedProduct = await prisma.product.delete({
     where: {

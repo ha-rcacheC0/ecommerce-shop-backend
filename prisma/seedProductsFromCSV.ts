@@ -183,7 +183,7 @@ const createOrUpdateProductFromRow = async (row: CSVRow): Promise<string> => {
     const isParsedIsCaseBreakable = isCaseBreakable.toLowerCase() === "true";
 
     const productData: ProductCreateData = {
-      sku: parseInt(sku, 10),
+      sku: sku,
       title,
       inStock: inStock.toLowerCase() === "true",
       package: parsedPackage,
@@ -223,7 +223,7 @@ const createOrUpdateProductFromRow = async (row: CSVRow): Promise<string> => {
 
     // Check if product already exists
     const existingProduct = await prisma.product.findUnique({
-      where: { sku: parseInt(sku, 10) },
+      where: { sku: sku },
       include: {
         unitProduct: true,
       },
