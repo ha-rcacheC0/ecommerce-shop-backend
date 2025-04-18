@@ -120,6 +120,8 @@ enum Brand {
   GALAXY_FIREWORKS
   FOX_FIREWORKS
   SUNS_FIREWORKS
+  HONEY_BOOM
+  TWO_WINGS
 }
 
 enum State {
