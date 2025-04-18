@@ -78,7 +78,6 @@ enum TerminalCompany {
   DHL
 }
 
-// String-based models (renamed from "New" suffix)
 model Brand {
   id       String    @id @default(cuid())
   name     String    @unique
@@ -105,7 +104,7 @@ model Effect {
 
 model Product {
   id              String  @id @default(cuid())
-  sku             Int     @unique
+  sku             String  @unique
   title           String
   description     String?
   image           String  @default("placeholder")
@@ -115,21 +114,48 @@ model Product {
   inStock         Boolean
   package         Int[]
 
-  // Required fields for new relationships
+  // Show-specific fields
+  isShow     Boolean   @default(false)
+  showTypeId String?
+  showType   ShowType? @relation(fields: [showTypeId], references: [id])
+
+  // Regular product relationships
   brandId    String
   categoryId String
+  brand      Brand    @relation(fields: [brandId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+  colors     Color[]  @relation("ProductColors")
+  effects    Effect[] @relation("ProductEffects")
 
-  // New relationships
-  brand    Brand    @relation(fields: [brandId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
-  colors   Color[]  @relation("ProductColors")
-  effects  Effect[] @relation("ProductEffects")
-
-  // Other relationships
+  // Cart and purchase relationships
   cartProducts     CartProduct[]
   unitProduct      UnitProduct?
   purchaseItems    PurchaseItem[]
   breakCaseRequest BreakCaseRequest[]
+
+  // Show relationships
+  showProducts    ShowProduct[] @relation("ShowToProducts")
+  includedInShows ShowProduct[] @relation("ProductsInShow")
+}
+
+model ShowProduct {
+  id        String  @id @default(cuid())
+  showId    String
+  productId String
+  quantity  Int
+  notes     String?
+
+  show    Product @relation("ShowToProducts", fields: [showId], references: [id])
+  product Product @relation("ProductsInShow", fields: [productId], references: [id])
+
+  @@unique([showId, productId])
+}
+
+model ShowType {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  products    Product[]
 }
 
 model UnitProduct {

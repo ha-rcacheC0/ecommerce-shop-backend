@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Product" ADD COLUMN     "isShow" BOOLEAN NOT NULL DEFAULT false,
+ALTER COLUMN "sku" SET DATA TYPE TEXT;

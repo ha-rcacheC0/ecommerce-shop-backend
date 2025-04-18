@@ -166,10 +166,10 @@ async function main() {
     if (assortment && winda) {
       // Create a test product
       await prisma.product.upsert({
-        where: { sku: 1041 },
+        where: { sku: "1041" },
         update: {},
         create: {
-          sku: 1041,
+          sku: "1041",
           title: "Container Load Blue",
           inStock: true,
           categoryId: assortment.id,
@@ -184,7 +184,34 @@ async function main() {
     }
   }
 
+  seedShowTypes();
   console.log(`Database has been seeded for ${environment} environment`);
+}
+async function seedShowTypes() {
+  console.log("Seeding Show Types...");
+
+  const showTypes = [
+    { name: "WHOLESALE", description: "Bulk packages for retailers" },
+    { name: "RETAIL", description: "Individual packages for consumers" },
+    { name: "GENDER_REVEAL", description: "Gender reveal party packages" },
+    { name: "WEDDING", description: "Wedding celebration packages" },
+    { name: "FOURTH_JULY", description: "Independence Day packages" },
+    { name: "NEW_YEARS", description: "New Year's Eve celebration packages" },
+    { name: "CUSTOM", description: "Custom designed packages" },
+  ];
+
+  for (const type of showTypes) {
+    await prisma.showType.upsert({
+      where: { name: type.name },
+      update: {},
+      create: {
+        name: type.name,
+        description: type.description,
+      },
+    });
+  }
+
+  console.log("Show Types seeding complete");
 }
 
 main()
