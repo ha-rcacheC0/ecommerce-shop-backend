@@ -25,7 +25,7 @@ const showProductSchema = z.object({
 const createShowSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  price: z.number().positive("Price must be positive"),
+  casePrice: z.number().positive("Price must be positive"),
   image: z.string().optional().default("placeholder"),
   videoURL: z.string().url().optional(),
   inStock: z.boolean().default(true),
@@ -264,7 +264,7 @@ showsRouter.post("/", authenticationAdminMiddleware, async (req, res) => {
           sku: showSku,
           isShow: true,
           package: [1], // Set a default package for the show
-          casePrice: new Decimal(showData.price),
+          casePrice: new Decimal(showData.casePrice),
         },
       });
 
@@ -387,8 +387,8 @@ showsRouter.put("/:id", authenticationAdminMiddleware, async (req, res) => {
       updateData.brand = { connect: { id: showData.brandId } };
     if (showData.categoryId !== undefined)
       updateData.category = { connect: { id: showData.categoryId } };
-    if (showData.price !== undefined)
-      updateData.casePrice = new Decimal(showData.price);
+    if (showData.casePrice !== undefined)
+      updateData.casePrice = new Decimal(showData.casePrice);
 
     // Start a transaction to handle the update atomically
     const updatedShow = await prisma.$transaction(async (tx) => {
