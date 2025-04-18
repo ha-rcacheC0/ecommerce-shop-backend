@@ -5,14 +5,12 @@ type UserProfile = {
   firstName: string | null;
   lastName: string | null;
   phoneNumber: string | null;
-  // Other fields as necessary
 };
 
 type User = {
   id: string;
   email: string;
-  profiles?: UserProfile | null;
-  // Other fields as necessary
+  profile?: UserProfile | null;
 };
 
 type PurchaseItem = {
@@ -20,7 +18,7 @@ type PurchaseItem = {
   productId: string;
   quantity: number;
   isUnit: boolean;
-  Product: {
+  product: {
     sku: number;
     title: string;
   };
@@ -41,8 +39,8 @@ type PurchaseRecord = {
   date: Date;
   userId: string;
   addressId: string;
-  PurchaseItems: PurchaseItem[];
-  User: User;
+  purchaseItems: PurchaseItem[];
+  user: User;
   shippingAddress: Address;
   hasUnits?: boolean;
 };

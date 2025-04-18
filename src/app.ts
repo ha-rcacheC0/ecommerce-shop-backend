@@ -9,6 +9,7 @@ import { userRouter } from "./routes/user.router";
 
 import { cartRouter } from "./routes/cart.router";
 import { terminalRouter } from "./routes/terminal.router";
+import { metadataRouter } from "./routes/metadata.router";
 
 const app = express();
 declare global {
@@ -27,6 +28,7 @@ app.use(cors());
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/api/purchase", purchaseRouter);
+app.use("/api/metadata", metadataRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use("/api/terminal", terminalRouter);

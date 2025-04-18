@@ -15,7 +15,7 @@ export const encryptPassword = (password: string) => {
 };
 
 type UserWithCart = {
-  Cart: {
+  cart: {
     id: string;
     userId: string | null;
   } | null;
@@ -32,7 +32,7 @@ export const createTokenUserInfo = (user: UserWithCart) => {
     email: user.email,
     role: user.role,
     lastLogin: user.lastLogin,
-    Cart: user.Cart,
+    Cart: user.cart,
   };
 };
 

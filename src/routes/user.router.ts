@@ -32,15 +32,15 @@ userRouter.post(
         data: {
           email,
           hashedPassword: await encryptPassword(password),
-          profiles: {
+          profile: {
             create: {},
           },
-          Cart: {
+          cart: {
             create: {},
           },
         },
         include: {
-          Cart: true,
+          cart: true,
         },
       });
 
@@ -75,21 +75,21 @@ userRouter.post(
         email: email,
       },
       include: {
-        Cart: {
+        cart: {
           include: {
-            CartProducts: {
+            cartProducts: {
               include: {
-                Product: {
+                product: {
                   include: {
-                    Brands: true,
-                    Categories: true,
-                    ColorStrings: true,
-                    EffectStrings: true,
+                    brand: true,
+                    category: true,
+                    colors: true,
+                    effects: true,
                   },
                 },
               },
             },
-            User: true,
+            user: true,
           },
         },
       },
@@ -223,7 +223,7 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
 userRouter.get("/getAll", authenticationAdminMiddleware, async (req, res) => {
   const allUsers = await prisma.user.findMany({
     include: {
-      profiles: true,
+      profile: true,
     },
   });
   if (!allUsers) res.status(500).send({ message: "Internal Server Error" });

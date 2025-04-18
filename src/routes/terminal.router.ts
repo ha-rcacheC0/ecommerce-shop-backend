@@ -9,28 +9,28 @@ terminalRouter.get("/", async (req, res) => {
 
   const query: any = {
     where: {
-      Address: {},
+      address: {},
     },
     include: {
-      Address: true,
+      address: true,
     },
   };
 
   if (state && typeof state === "string") {
-    query.where.Address.state = state as State;
+    query.where.address.state = state as State;
   }
 
   if (zipcode && typeof zipcode === "string") {
-    query.where.Address.postalCode = {
+    query.where.address.postalCode = {
       contains: zipcode,
     };
   }
 
   try {
     const terminals = await prisma.approvedTerminals.findMany(query);
-    res.json(terminals);
+    return res.json(terminals);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching terminals" });
+    return res.status(500).json({ error: "Error fetching terminals" });
   }
 });
 
@@ -42,12 +42,14 @@ terminalRouter.get("/:id", async (req, res) => {
         id: id,
       },
       include: {
-        Address: true,
+        address: true,
       },
     });
-    res.status(200).send(terminal);
+    return res.status(200).send(terminal);
   } catch (error) {
-    res.status(500).json({ error: `Error finding the terminal : ${error}` });
+    return res
+      .status(500)
+      .json({ error: `Error finding the terminal : ${error}` });
   }
 });
 export { terminalRouter };
