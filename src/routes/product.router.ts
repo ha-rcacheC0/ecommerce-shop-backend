@@ -20,6 +20,7 @@ const filterSchema = z.object({
   colors: z.array(z.string()).optional(),
   effects: z.array(z.string()).optional(),
   isShow: z.boolean().optional(),
+  inStock: z.boolean().optional(),
 });
 
 // Schema for creating/updating products
@@ -81,6 +82,10 @@ productRouter.get("/", async function (req, res) {
         ? [req.query.effects]
         : undefined,
       isShow: req.query.isShow === "true",
+      inStock:
+        req.query.inStock === undefined
+          ? undefined
+          : req.query.inStock === "true",
     });
 
     if (!validatedQuery.success) {
@@ -99,6 +104,7 @@ productRouter.get("/", async function (req, res) {
       colors,
       effects,
       isShow,
+      inStock,
     } = validatedQuery.data;
 
     // Build where clause for filtering
@@ -106,6 +112,9 @@ productRouter.get("/", async function (req, res) {
 
     if (isShow !== undefined) {
       whereClause.isShow = isShow;
+    }
+    if (inStock !== undefined) {
+      whereClause.inStock = inStock;
     }
 
     if (searchTitle) {

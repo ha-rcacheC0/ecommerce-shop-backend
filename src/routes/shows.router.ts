@@ -382,7 +382,7 @@ showsRouter.put("/:id", authenticationAdminMiddleware, async (req, res) => {
       updateData.videoURL = showData.videoURL;
     if (showData.inStock !== undefined) updateData.inStock = showData.inStock;
     if (showData.showTypeId !== undefined)
-      updateData.showTypeId = showData.showTypeId;
+      updateData.showType = { connect: { id: showData.showTypeId } };
     if (showData.brandId !== undefined)
       updateData.brand = { connect: { id: showData.brandId } };
     if (showData.categoryId !== undefined)

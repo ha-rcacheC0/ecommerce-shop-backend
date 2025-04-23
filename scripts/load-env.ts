@@ -2,23 +2,31 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 
-// Load base .env file
-dotenv.config();
+// Clear any existing env vars that might be cached
+// This is important to prevent conflicts
+delete process.env.DATABASE_URL;
 
 // Determine which environment to use (default to development)
 const environment = process.env.NODE_ENV || "development";
 
-// Load environment-specific file
+// First try to load environment-specific file
 const envFile = path.resolve(process.cwd(), `.env.${environment}`);
 if (fs.existsSync(envFile)) {
-  const envConfig = dotenv.parse(fs.readFileSync(envFile));
-
-  // Add environment variables to process.env
-  for (const key in envConfig) {
-    process.env[key] = envConfig[key];
-  }
-
-  console.log(`Loaded environment: ${environment}`);
+  console.log(`Loading environment config from: ${envFile}`);
+  dotenv.config({ path: envFile });
 } else {
-  console.warn(`Warning: Environment file for ${environment} not found`);
+  // Fall back to base .env file
+  console.log(`Environment file ${envFile} not found, loading base .env`);
+  dotenv.config();
 }
+
+if (process.env.DATABASE_URL) {
+  const dbUrlParts = (process.env.DATABASE_URL as string).split("@");
+  const maskedUrl =
+    dbUrlParts.length > 1
+      ? `[credentials-hidden]@${dbUrlParts[1]}`
+      : "[formatted-db-url-hidden]";
+  console.log(`Using database: ${maskedUrl}`);
+}
+
+console.log(`Environment '${environment}' loaded successfully`);
