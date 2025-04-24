@@ -15,7 +15,7 @@ export const encryptPassword = (password: string) => {
 };
 
 type UserWithCart = {
-  Cart: {
+  cart: {
     id: string;
     userId: string | null;
   } | null;
@@ -32,7 +32,7 @@ export const createTokenUserInfo = (user: UserWithCart) => {
     email: user.email,
     role: user.role,
     lastLogin: user.lastLogin,
-    Cart: user.Cart,
+    Cart: user.cart,
   };
 };
 
@@ -86,9 +86,10 @@ export const authenticationAdminMiddleware = async (
 ) => {
   const [, token] = req.headers.authorization?.split?.(" ") || [];
   const userJWTData = getDataFromAuthToken(token);
+  const AuthorizedRoles = ["ADMIN", "MANAGER"];
   if (!userJWTData) return res.status(401).send({ message: "Invalid token" });
-  if (userJWTData.role === "USER")
-    return res.status(401).send({ message: "Users are not allowed here" });
+  if (!AuthorizedRoles.includes(userJWTData.role))
+    return res.status(401).send({ message: "Unauthorized" });
   const user = await prisma.user.findFirst({
     where: {
       email: userJWTData.email,

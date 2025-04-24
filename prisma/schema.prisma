@@ -7,122 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Effects {
-  STROBES
-  CRACKLES
-  SIZZLES
-  SNAPS
-  LOUD_BANG
-  WHISTLE
-  FAN_EFFECTS
-  WILLOWS
-  SMOKE
-  BROCADE
-  CHRYSANTHEMUM
-  COMET
-  CROSSETTE
-  PEARLS
-  WATERFALL
-  FLYING_FISH
-  PALM_TREE
-  PEONY
-  PISTIL
-  RISING_TAIL
-  TOURBILLION
-  GLOW
-  NISHIKI_KAMURO
-  GLITTER
-  SNAKE
-  CONFETTI
-}
-
-enum Colors {
-  GREEN
-  RED
-  BLUE
-  ORANGE
-  YELLOW
-  PURPLE
-  PINK
-  WHITE
-  SILVER
-  BLACK
-  BROWN
-  GOLD
-}
-
-enum Category {
-  ASSORTMENT
-  FIRECRACKERS
-  SNAKE_SMOKE
-  TOY_NOVELTIES_STROBES
-  CONE_FLORAL
-  GROUND
-  FLYING_HELICOPTERS
-  REPEATERS_200_GRAM
-  REPEATERS_500_GRAM
-  TUBES
-  RELOADABLES
-  PARACHUTES
-  BOTTLE_ROCKETS
-  ROCKETS_MISSLES
-  SPARKLERS
-  PINWHEELS
-  ROMAN_CANDLES
-  FOUNTAINS
-  GENDER_REVEAL
-  FUSE
-  SUPPLIES_VISIBILITY
-  CONFETTI_SHOOTERS_AIR_COMPRESSED
-}
-
-enum Brand {
-  BOOM_WOW
-  SKY_SLAM
-  STARGET
-  SKY_PIONEER
-  SKY_EAGLE
-  ALPHA_FIREWORKS
-  MIGHTY_MAX
-  MAD_OX
-  T_SKY
-  MC_FIREWORKS
-  RED_LANTERN
-  MIRACLE
-  LEGEND
-  TOPGUN
-  WINDA
-  SIN_CITY
-  HAPPY_FAMILY
-  HOP_KEE
-  PYRO_DIABLO
-  GENERIC
-  RACCOON
-  PYRO_MOOI
-  KRIPTON_FIREWORKS
-  BUM_BUM
-  SHOGUN
-  WISE_GUY
-  BLACK_SCORPION
-  CRZ
-  CSS
-  BROTHERS
-  DOMINATOR
-  MUSCLE_PACK
-  SKIES_THE_LIMIT
-  DUCK
-  PYRO_PIRATE
-  IRONMAN
-  BEIHAI_POPPOP
-  BOOMER
-  FIREHAWK
-  SKY_PAINTER
-  GALAXY_FIREWORKS
-  FOX_FIREWORKS
-  SUNS_FIREWORKS
-  HONEY_BOOM
-  TWO_WINGS
-}
 
 enum State {
   AL
@@ -195,64 +79,94 @@ enum TerminalCompany {
   DHL
 }
 
-model Product {
-  id               String             @id @default(cuid())
-  sku              Int                @unique
-  title            String
-  description      String?
-  image            String             @default("placeholder")
-  videoURL         String?
-  casePrice        Decimal
-  isCaseBreakable  Boolean            @default(true)
-  inStock          Boolean
-  package          Int[]
-  categoriesId     String
-  brandsId         String
-  Brands           Brands             @relation(fields: [brandsId], references: [id])
-  Categories       Categories         @relation(fields: [categoriesId], references: [id])
-  ColorStrings     ColorStrings[]     @relation("ColorStringsToProduct")
-  EffectStrings    EffectStrings[]    @relation("EffectStringsToProduct")
-  CartProduct      CartProduct[]
-  UnitProduct      UnitProduct?
-  UnitProductId    Int?               @unique
-  PurchaseItem     PurchaseItem[]
-  BreakCaseRequest BreakCaseRequest[]
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+}
 
-  @@unique([id, categoriesId])
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+}
+
+model Color {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[] @relation("ProductColors")
+}
+
+model Effect {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[] @relation("ProductEffects")
+}
+
+model Product {
+  id              String  @id @default(cuid())
+  sku             String  @unique
+  title           String
+  description     String?
+  image           String  @default("placeholder")
+  videoURL        String?
+  casePrice       Decimal
+  isCaseBreakable Boolean @default(true)
+  inStock         Boolean
+  package         Int[]
+
+  // Show-specific fields
+  isShow     Boolean   @default(false)
+  showTypeId String?
+  showType   ShowType? @relation(fields: [showTypeId], references: [id])
+
+  // Regular product relationships
+  brandId    String
+  categoryId String
+  brand      Brand    @relation(fields: [brandId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+  colors     Color[]  @relation("ProductColors")
+  effects    Effect[] @relation("ProductEffects")
+
+  // Cart and purchase relationships
+  cartProducts     CartProduct[]
+  unitProduct      UnitProduct?
+  purchaseItems    PurchaseItem[]
+  breakCaseRequest BreakCaseRequest[]
+
+  // Show relationships
+  showProducts    ShowProduct[] @relation("ShowToProducts")
+  includedInShows ShowProduct[] @relation("ProductsInShow")
+}
+
+model ShowProduct {
+  id        String  @id @default(cuid())
+  showId    String
+  productId String
+  quantity  Int
+  notes     String?
+
+  show    Product @relation("ShowToProducts", fields: [showId], references: [id])
+  product Product @relation("ProductsInShow", fields: [productId], references: [id])
+
+  @@unique([showId, productId])
+}
+
+model ShowType {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  products    Product[]
 }
 
 model UnitProduct {
   id             String  @id @default(cuid())
   sku            String  @unique
   productId      String  @unique
-  Product        Product @relation(fields: [productId], references: [id])
+  product        Product @relation(fields: [productId], references: [id])
   unitPrice      Decimal
   package        Int[]
   availableStock Int
-}
-
-model EffectStrings {
-  id      String    @id @default(cuid())
-  name    Effects   @unique
-  Product Product[] @relation("EffectStringsToProduct")
-}
-
-model ColorStrings {
-  id      String    @id @default(cuid())
-  name    Colors    @unique
-  Product Product[] @relation("ColorStringsToProduct")
-}
-
-model Categories {
-  id      String    @id @default(cuid())
-  name    Category  @unique
-  Product Product[]
-}
-
-model Brands {
-  id      String    @id @default(cuid())
-  name    Brand     @unique
-  Product Product[]
 }
 
 model User {
@@ -262,9 +176,9 @@ model User {
   hashedPassword String
   createdOn      DateTime?        @default(now())
   lastLogin      DateTime?
-  profiles       UserProfile?
-  Cart           Cart?
-  PurchaseRecord PurchaseRecord[]
+  profile        UserProfile?
+  cart           Cart?
+  purchaseRecord PurchaseRecord[]
 }
 
 model UserProfile {
@@ -279,7 +193,7 @@ model UserProfile {
   shippingAddress   Address?  @relation(name: "ShippingAddress", fields: [shippingAddressId], references: [id])
   canContact        Boolean   @default(false)
   userId            String    @unique
-  User              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Address {
@@ -291,15 +205,15 @@ model Address {
   postalCode           String
   billingUserProfiles  UserProfile[]       @relation("BillingAddress")
   shippingUserProfiles UserProfile[]       @relation("ShippingAddress")
-  ApprovedTerminals    ApprovedTerminals[]
-  PurchaseRecord       PurchaseRecord[]
+  approvedTerminals    ApprovedTerminals[]
+  purchaseRecords      PurchaseRecord[]
 }
 
 model Cart {
   id           String        @id @default(cuid())
   userId       String?       @unique
-  User         User?         @relation(fields: [userId], references: [id])
-  CartProducts CartProduct[]
+  user         User?         @relation(fields: [userId], references: [id])
+  cartProducts CartProduct[]
 
   @@unique([id, userId])
 }
@@ -310,8 +224,8 @@ model CartProduct {
   cartId       String
   productId    String
   unitQuantity Int     @default(0)
-  Cart         Cart    @relation(fields: [cartId], references: [id])
-  Product      Product @relation(fields: [productId], references: [id])
+  cart         Cart    @relation(fields: [cartId], references: [id])
+  product      Product @relation(fields: [productId], references: [id])
 
   @@unique([cartId, productId])
 }
@@ -323,8 +237,8 @@ model PurchaseRecord {
   shippingAddress Address        @relation(fields: [addressId], references: [id])
   date            DateTime       @default(now())
   userId          String
-  User            User           @relation(fields: [userId], references: [id])
-  PurchaseItems   PurchaseItem[]
+  user            User           @relation(fields: [userId], references: [id])
+  purchaseItems   PurchaseItem[]
   addressId       String
 }
 
@@ -334,8 +248,8 @@ model PurchaseItem {
   productId      String
   quantity       Int
   isUnit         Boolean
-  PurchaseRecord PurchaseRecord @relation(fields: [purchaseId], references: [id])
-  Product        Product        @relation(fields: [productId], references: [id])
+  purchaseRecord PurchaseRecord @relation(fields: [purchaseId], references: [id])
+  product        Product        @relation(fields: [productId], references: [id])
 }
 
 model BreakCaseRequest {
@@ -343,7 +257,7 @@ model BreakCaseRequest {
   productId String
   quantity  Int
   createdAt DateTime @default(now())
-  Product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 model ApprovedTerminals {
@@ -351,7 +265,7 @@ model ApprovedTerminals {
   acceptOutOfStateLicence Boolean
   terminalName            String
   businessRequired        Boolean
-  Address                 Address         @relation(fields: [addressId], references: [id])
+  address                 Address         @relation(fields: [addressId], references: [id])
   addressId               String
   company                 TerminalCompany
 }

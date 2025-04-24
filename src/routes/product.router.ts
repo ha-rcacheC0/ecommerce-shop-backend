@@ -1,92 +1,184 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
-import { Decimal } from "decimal.js";
-
-import { validateRequestQuery } from "zod-express-middleware";
+import { Decimal } from "@prisma/client/runtime/library";
 import { z } from "zod";
-import { productSchema } from "../utils/validation-utils";
-import { Brand, Category, Colors, Effects, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { calcUnitPrice } from "../utils/creation-utils";
+import { authenticationAdminMiddleware } from "../utils/auth-utils";
 
 const productRouter = Router();
 type ProductCreateInput = Prisma.ProductCreateInput;
+type ProductUpdateInput = Prisma.ProductUpdateInput;
+
+// Schema for filtering products
 const filterSchema = z.object({
-  page: z.coerce.number().positive(),
-  pageSize: z.coerce.number().positive(),
+  page: z.coerce.number().positive().default(1),
+  pageSize: z.coerce.number().positive().default(20),
   searchTitle: z.string().optional(),
-  brands: z.array(z.nativeEnum(Brand)).optional(),
-  categories: z.array(z.nativeEnum(Category)).optional(),
-  colors: z.array(z.nativeEnum(Colors)).optional(),
-  effects: z.array(z.nativeEnum(Effects)).optional(),
+  brands: z.array(z.string()).optional(),
+  categories: z.array(z.string()).optional(),
+  colors: z.array(z.string()).optional(),
+  effects: z.array(z.string()).optional(),
+  isShow: z.boolean().optional(),
+  inStock: z.boolean().optional(),
 });
 
-/* GET ALL. */
+// Schema for creating/updating products
+const productSchemaBase = z.object({
+  sku: z.string().min(1, "SKU is required"),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  image: z.string().default("placeholder"),
+  casePrice: z.string().refine((val) => !isNaN(parseFloat(val)), {
+    message: "Case price must be a valid number",
+  }),
+  inStock: z.boolean().default(true),
+  package: z.string().refine(
+    (val) => {
+      try {
+        const nums = val.split(",").map(Number);
+        return nums.length >= 1 && nums.every((n) => !isNaN(n) && n > 0);
+      } catch (e) {
+        return false;
+      }
+    },
+    { message: "Package must be a comma-separated list of positive numbers" }
+  ),
+  isCaseBreakable: z.boolean().default(true),
+  videoURL: z.string().optional(),
+  brandId: z.string().min(1, "Brand ID is required"),
+  categoryId: z.string().min(1, "Category ID is required"),
+  colors: z.array(z.string()).default([]),
+  effects: z.array(z.string()).default([]),
+});
+
+const productCreateSchema = productSchemaBase;
+const productUpdateSchema = productSchemaBase.partial(); // All fields optional for updates
+
+/* GET ALL PRODUCTS */
 productRouter.get("/", async function (req, res) {
   try {
-    const { page, pageSize, searchTitle, brands, categories, colors, effects } =
-      filterSchema.parse({
-        ...req.query,
-        brands: Array.isArray(req.query.brands)
-          ? req.query.brands
-          : req.query.brands
-          ? [req.query.brands]
-          : undefined,
-        categories: Array.isArray(req.query.categories)
-          ? req.query.categories
-          : req.query.categories
-          ? [req.query.categories]
-          : undefined,
-        colors: Array.isArray(req.query.colors)
-          ? req.query.colors
-          : req.query.colors
-          ? [req.query.colors]
-          : undefined,
-        effects: Array.isArray(req.query.effects)
-          ? req.query.effects
-          : req.query.effects
-          ? [req.query.effects]
-          : undefined,
+    // Parse and validate query parameters
+    const validatedQuery = filterSchema.safeParse({
+      ...req.query,
+      brands: Array.isArray(req.query.brands)
+        ? req.query.brands
+        : req.query.brands
+        ? [req.query.brands]
+        : undefined,
+      categories: Array.isArray(req.query.categories)
+        ? req.query.categories
+        : req.query.categories
+        ? [req.query.categories]
+        : undefined,
+      colors: Array.isArray(req.query.colors)
+        ? req.query.colors
+        : req.query.colors
+        ? [req.query.colors]
+        : undefined,
+      effects: Array.isArray(req.query.effects)
+        ? req.query.effects
+        : req.query.effects
+        ? [req.query.effects]
+        : undefined,
+      isShow: req.query.isShow === "true",
+      inStock:
+        req.query.inStock === undefined
+          ? undefined
+          : req.query.inStock === "true",
+    });
+
+    if (!validatedQuery.success) {
+      return res.status(400).json({
+        message: "Invalid query parameters",
+        errors: validatedQuery.error.errors,
       });
+    }
+
+    const {
+      page,
+      pageSize,
+      searchTitle,
+      brands,
+      categories,
+      colors,
+      effects,
+      isShow,
+      inStock,
+    } = validatedQuery.data;
+
+    // Build where clause for filtering
     const whereClause: Prisma.ProductWhereInput = {};
 
+    if (isShow !== undefined) {
+      whereClause.isShow = isShow;
+    }
+    if (inStock !== undefined) {
+      whereClause.inStock = inStock;
+    }
+
     if (searchTitle) {
-      whereClause.title = {
-        contains: searchTitle,
-        mode: "insensitive" as Prisma.QueryMode,
-      };
+      whereClause.OR = [
+        {
+          title: {
+            contains: searchTitle,
+            mode: "insensitive" as Prisma.QueryMode,
+          },
+        },
+        {
+          sku: {
+            contains: searchTitle,
+            mode: "insensitive" as Prisma.QueryMode,
+          },
+        },
+      ];
     }
 
     if (brands?.length) {
-      whereClause.Brands = { name: { in: brands } };
+      whereClause.brand = { name: { in: brands } };
     }
 
     if (categories?.length) {
-      whereClause.Categories = { name: { in: categories } };
+      whereClause.category = { name: { in: categories } };
     }
 
     if (colors?.length) {
-      whereClause.ColorStrings = { some: { name: { in: colors } } };
+      whereClause.colors = { some: { name: { in: colors } } };
     }
 
     if (effects?.length) {
-      whereClause.EffectStrings = { some: { name: { in: effects } } };
+      whereClause.effects = { some: { name: { in: effects } } };
     }
 
+    // Get total count for pagination
     const totalCount = await prisma.product.count({ where: whereClause });
     const totalPages = Math.ceil(totalCount / pageSize);
 
+    // Get filtered products
     const products = await prisma.product.findMany({
       where: whereClause,
       include: {
-        Brands: { select: { name: true } },
-        Categories: { select: { name: true } },
-        ColorStrings: { select: { name: true } },
-        EffectStrings: { select: { name: true } },
-        UnitProduct: true,
+        brand: true,
+        category: true,
+        colors: { select: { id: true, name: true } },
+        effects: { select: { id: true, name: true } },
+        unitProduct: true,
+        showType: isShow ? true : undefined,
       },
-      orderBy: { id: "asc" },
+      orderBy: { isShow: "asc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
+    });
+
+    products.sort((a, b) => {
+      const isShowSku = (sku: string) => sku.toUpperCase().startsWith("SHOW-");
+      const extractNumber = (sku: string) => {
+        const match = sku.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 0;
+      };
+      if (isShowSku(a.sku) && !isShowSku(b.sku)) return 1;
+      if (!isShowSku(a.sku) && isShowSku(b.sku)) return -1;
+      return extractNumber(a.sku) - extractNumber(b.sku);
     });
 
     return res.status(200).json({
@@ -94,238 +186,388 @@ productRouter.get("/", async function (req, res) {
       hasMore: page < totalPages,
       totalPages,
       currentPage: page,
+      totalItems: totalCount,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(400).json({ message: "Invalid request parameters" });
+    console.error("Error fetching products:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// GET ONE  - ID // ANY UNIQUE VALUE
-
+/* GET ONE PRODUCT BY ID */
 productRouter.get("/:id", async function (req, res) {
-  const id = req.params.id;
-
-  const product = await prisma.product.findFirst({
-    where: {
-      id: id,
-    },
-    include: {
-      Brands: {
-        select: { name: true },
-      },
-      Categories: {
-        select: {
-          name: true,
-        },
-      },
-      ColorStrings: {
-        select: { name: true, id: true },
-      },
-      EffectStrings: {
-        select: { name: true, id: true },
-      },
-      UnitProduct: true,
-    },
-  });
-  if (!product)
-    return res.status(404).send({ message: "No product was found " });
-
-  return res.status(200).send(product);
-});
-
-// POST - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO ADD THERE OWN PRODUCTS
-
-// TODO: ADD MIDDLEWARES TO :  VALIDATE USER MAKING REQUEST,VALIDATE REQUEST BODY
-
-productRouter.post("/create", async function (req, res) {
-  const {
-    productID,
-    productTitle,
-    productInStock,
-    productCategory,
-    productBrand,
-    productPackage,
-    productCasePrice,
-    productDescription,
-    productImageURL,
-    productVideoURL,
-    productColors = [], // Optional array of color IDs
-    productEffects = [], // Optional array of effect IDs
-  } = req.body;
-
-  const packageIntArray: number[] = productPackage.split(",").map(Number);
-  const newProductData: ProductCreateInput = {
-    sku: +productID,
-    title: productTitle,
-    inStock: productInStock === "on", // Convert 'on' to boolean
-    casePrice: new Decimal(productCasePrice).toFixed(2), // Ensure precision to 2 decimal places
-    package: packageIntArray,
-    description: productDescription,
-    image: productImageURL || "placeholder", // Default to 'placeholder' if image is not provided
-    videoURL: productVideoURL,
-    EffectStrings: {
-      connect:
-        productEffects.length > 0
-          ? productEffects.map((effectName: string) => ({
-              name: effectName,
-            }))
-          : undefined,
-    },
-    ColorStrings: {
-      connect:
-        productColors.length > 0
-          ? productColors.map((colorName: string) => ({ name: colorName }))
-          : undefined,
-    },
-    Brands: {
-      connectOrCreate: {
-        where: {
-          name: productBrand,
-        },
-        create: {
-          name: productBrand,
-        },
-      },
-    },
-    Categories: {
-      connect: { name: productCategory },
-    },
-  };
-  // Conditionally add Brands and Categories only if they are provided
-
   try {
-    const newProduct = await prisma.product.create({
-      data: {
-        ...newProductData,
-        UnitProduct: {
-          create: {
-            unitPrice: calcUnitPrice(productCasePrice, packageIntArray[0]),
-            sku: productID + "-u",
-            availableStock: 0,
-            package: [1, ...packageIntArray.slice(1)],
+    const { id } = req.params;
+
+    const product = await prisma.product.findFirst({
+      where: { id },
+      include: {
+        brand: true,
+        category: true,
+        colors: { select: { id: true, name: true } },
+        effects: { select: { id: true, name: true } },
+        unitProduct: true,
+        showType: true,
+        showProducts: {
+          include: {
+            product: {
+              include: {
+                brand: true,
+                category: true,
+              },
+            },
           },
         },
       },
-
-      include: {
-        Brands: true,
-        Categories: true,
-        EffectStrings: true,
-        ColorStrings: true,
-      },
     });
 
-    if (!newProduct)
-      return res
-        .status(500)
-        .send({ message: "Internal Server Error. Product not Created" });
-    console.log("Created Product successfully");
-    return res.status(201).send(newProduct);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.status(200).json(product);
   } catch (error) {
-    console.error(error);
-    return res.status(500).send({ error: "Server Error" });
+    console.error("Error fetching product:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// PATCH (or PUT) - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO EDIT THE PRODUCTS   -
-// VALIDATE BODY TO ONLY HAVE FIELDS THAT CAN EXIST BUT DON'T NEED TO HAVE ALL FIELDS
+/* CREATE NEW PRODUCT (Admin only) */
+productRouter.post(
+  "/",
+  authenticationAdminMiddleware,
+  async function (req, res) {
+    try {
+      const validatedData = productCreateSchema.safeParse(req.body);
 
-productRouter.post("/:id", async function (req, res) {
-  const idAsNum = +req.params.id;
+      if (!validatedData.success) {
+        return res.status(400).json({
+          message: "Invalid product data",
+          errors: validatedData.error.errors,
+        });
+      }
 
-  if (isNaN(idAsNum)) {
-    return res
-      .status(503)
-      .send({ message: "Id must be a number, please try again" });
+      const {
+        sku,
+        title,
+        description,
+        image,
+        casePrice,
+        inStock,
+        package: packageStr,
+        isCaseBreakable,
+        videoURL,
+        brandId,
+        categoryId,
+        colors,
+        effects,
+      } = validatedData.data;
+
+      // Parse package string to array of numbers
+      const packageArray = packageStr.split(",").map(Number);
+
+      // Create product data
+      const productData: ProductCreateInput = {
+        sku,
+        title,
+        description,
+        image: image || "placeholder",
+        casePrice: new Decimal(casePrice),
+        inStock,
+        package: packageArray,
+        isCaseBreakable,
+        videoURL,
+        brand: { connect: { id: brandId } },
+        category: { connect: { id: categoryId } },
+        colors: {
+          connect: colors.map((id) => ({ id })),
+        },
+        effects: {
+          connect: effects.map((id) => ({ id })),
+        },
+      };
+
+      // Add unit product if case is breakable
+      if (isCaseBreakable) {
+        productData.unitProduct = {
+          create: {
+            sku: `${sku}-u`,
+            unitPrice: new Decimal(
+              calcUnitPrice(parseFloat(casePrice), packageArray[0])
+            ),
+            package: [1, ...packageArray.slice(1)],
+            availableStock: 0,
+          },
+        };
+      }
+
+      // Create new product
+      const newProduct = await prisma.product.create({
+        data: productData,
+        include: {
+          brand: true,
+          category: true,
+          colors: true,
+          effects: true,
+          unitProduct: true,
+        },
+      });
+
+      return res.status(201).json(newProduct);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          return res
+            .status(409)
+            .json({ message: "A product with this SKU already exists" });
+        }
+      }
+      console.error("Error creating product:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
+);
 
-  const {
-    productID,
-    productTitle,
-    productDescription,
-    productImageURL,
-    productCasePrice,
-    productInStock,
-    productCaseBreakable,
-    productPackage,
-    productCategory,
-    productBrand,
-    productColors = [],
-    productEffects = [],
-    productVideoURL,
-  } = req.body;
+/* UPDATE PRODUCT BY ID (Admin only) */
+productRouter.put(
+  "/:id",
+  authenticationAdminMiddleware,
+  async function (req, res) {
+    try {
+      const { id } = req.params;
+      const validatedData = productUpdateSchema.safeParse(req.body);
 
-  const updateData: any = {
-    sku: +productID,
-    title: productTitle,
-    description: productDescription,
-    image: productImageURL,
-    casePrice: new Decimal(productCasePrice).toFixed(2),
-    inStock: productInStock === "on",
-    package: productPackage.split(",").map(Number), // Convert package to array of integers
-    videoURL: productVideoURL,
-    isCaseBreakable: productCaseBreakable === "on",
-    EffectStrings: {
-      connect:
-        productEffects.length > 0
-          ? productEffects.map((effectName: string) => ({ name: effectName }))
-          : undefined,
-    },
-    ColorStrings: {
-      connect:
-        productColors.length > 0
-          ? productColors.map((colorName: string) => ({ name: colorName }))
-          : undefined,
-    },
-  };
+      if (!validatedData.success) {
+        return res.status(400).json({
+          message: "Invalid product data",
+          errors: validatedData.error.errors,
+        });
+      }
 
-  // Conditionally add Brands and Categories only if they are provided
-  if (productBrand) {
-    updateData.Brands = {
-      connect: { name: productBrand },
-    };
+      // Get existing product to check if it exists
+      const existingProduct = await prisma.product.findUnique({
+        where: { id },
+        include: { unitProduct: true },
+      });
+
+      if (!existingProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      const {
+        sku,
+        title,
+        description,
+        image,
+        casePrice,
+        inStock,
+        package: packageStr,
+        isCaseBreakable,
+        videoURL,
+        brandId,
+        categoryId,
+        colors,
+        effects,
+      } = validatedData.data;
+
+      // Build update data
+      const updateData: ProductUpdateInput = {};
+
+      if (sku !== undefined) updateData.sku = sku;
+      if (title !== undefined) updateData.title = title;
+      if (description !== undefined) updateData.description = description;
+      if (image !== undefined) updateData.image = image;
+      if (casePrice !== undefined)
+        updateData.casePrice = new Decimal(casePrice);
+      if (inStock !== undefined) updateData.inStock = inStock;
+      if (videoURL !== undefined) updateData.videoURL = videoURL;
+      if (isCaseBreakable !== undefined)
+        updateData.isCaseBreakable = isCaseBreakable;
+
+      if (packageStr !== undefined) {
+        const packageArray = packageStr.split(",").map(Number);
+        updateData.package = packageArray;
+      }
+
+      if (brandId !== undefined) {
+        updateData.brand = { connect: { id: brandId } };
+      }
+
+      if (categoryId !== undefined) {
+        updateData.category = { connect: { id: categoryId } };
+      }
+
+      if (colors !== undefined) {
+        // Disconnect all existing colors and connect new ones
+        updateData.colors = {
+          set: [],
+          connect: colors.map((id) => ({ id })),
+        };
+      }
+
+      if (effects !== undefined) {
+        // Disconnect all existing effects and connect new ones
+        updateData.effects = {
+          set: [],
+          connect: effects.map((id) => ({ id })),
+        };
+      }
+
+      // Use a transaction to update product and handle unit product
+      const updatedProduct = await prisma.$transaction(async (tx) => {
+        // Update the product
+        const product = await tx.product.update({
+          where: { id },
+          data: updateData,
+          include: {
+            brand: true,
+            category: true,
+            colors: true,
+            effects: true,
+            unitProduct: true,
+          },
+        });
+
+        // Handle unit product based on isCaseBreakable flag
+        const newIsCaseBreakable =
+          isCaseBreakable !== undefined
+            ? isCaseBreakable
+            : existingProduct.isCaseBreakable;
+        const newCasePrice =
+          casePrice !== undefined
+            ? casePrice
+            : existingProduct.casePrice.toString();
+        const newPackage =
+          packageStr !== undefined
+            ? packageStr.split(",").map(Number)
+            : existingProduct.package;
+        const newSku = sku !== undefined ? sku : existingProduct.sku;
+
+        if (newIsCaseBreakable) {
+          if (existingProduct.unitProduct) {
+            // Update existing unit product
+            await tx.unitProduct.update({
+              where: { id: existingProduct.unitProduct.id },
+              data: {
+                sku: `${newSku}-u`,
+                unitPrice: new Decimal(
+                  calcUnitPrice(parseFloat(newCasePrice), newPackage[0])
+                ),
+                package: [1, ...newPackage.slice(1)],
+              },
+            });
+          } else {
+            // Create new unit product
+            await tx.unitProduct.create({
+              data: {
+                sku: `${newSku}-u`,
+                productId: id,
+                unitPrice: new Decimal(
+                  calcUnitPrice(parseFloat(newCasePrice), newPackage[0])
+                ),
+                package: [1, ...newPackage.slice(1)],
+                availableStock: 0,
+              },
+            });
+          }
+        } else if (!newIsCaseBreakable && existingProduct.unitProduct) {
+          // Delete unit product if no longer breakable
+          await tx.unitProduct.delete({
+            where: { id: existingProduct.unitProduct.id },
+          });
+        }
+
+        return product;
+      });
+
+      return res.status(200).json(updatedProduct);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          return res
+            .status(409)
+            .json({ message: "A product with this SKU already exists" });
+        }
+      }
+      console.error("Error updating product:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
+);
 
-  if (productCategory) {
-    updateData.Categories = {
-      connect: { name: productCategory },
-    };
+/* DELETE PRODUCT BY ID (Admin only) */
+productRouter.delete(
+  "/:id",
+  authenticationAdminMiddleware,
+  async function (req, res) {
+    try {
+      const { id } = req.params;
+
+      // Check if product exists
+      const existingProduct = await prisma.product.findUnique({
+        where: { id },
+        include: {
+          unitProduct: true,
+          cartProducts: true,
+          purchaseItems: true,
+          showProducts: true,
+          includedInShows: true,
+        },
+      });
+
+      if (!existingProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Check for dependencies before deleting
+      if (existingProduct.purchaseItems.length > 0) {
+        return res.status(409).json({
+          message:
+            "Cannot delete product because it's included in purchase records",
+        });
+      }
+
+      if (existingProduct.includedInShows.length > 0) {
+        return res.status(409).json({
+          message: "Cannot delete product because it's included in shows",
+        });
+      }
+
+      // Use transaction to delete product and related records
+      await prisma.$transaction(async (tx) => {
+        // Delete cart products
+        if (existingProduct.cartProducts.length > 0) {
+          await tx.cartProduct.deleteMany({
+            where: { productId: id },
+          });
+        }
+
+        // Delete unit product if exists
+        if (existingProduct.unitProduct) {
+          await tx.unitProduct.delete({
+            where: { id: existingProduct.unitProduct.id },
+          });
+        }
+
+        // Delete show products where this is the show
+        if (existingProduct.showProducts.length > 0) {
+          await tx.showProduct.deleteMany({
+            where: { showId: id },
+          });
+        }
+
+        // Delete the product
+        await tx.product.delete({
+          where: { id },
+        });
+      });
+
+      return res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
-
-  try {
-    const modifiedProduct = await prisma.product.update({
-      where: {
-        sku: idAsNum,
-      },
-      data: updateData,
-    });
-
-    if (!modifiedProduct)
-      return res.status(500).send({ error: "Unable to Modify" });
-    return res.send(201).send(modifiedProduct);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send({ error: "Server Error" });
-  }
-});
-
-// DELETE - THIS NEEDS TO BE AUTHENTICATED WE DON"T WANT RANDOMS TO BE ABLE TO DELETE THE PRODUCTS -
-
-productRouter.delete("/:id", async function (req, res) {
-  const idAsNum = +req.params.id;
-
-  if (isNaN(idAsNum))
-    return res
-      .status(503)
-      .send({ message: "Id must be a number , please try again" });
-
-  const deletedProduct = await prisma.product.delete({
-    where: {
-      sku: idAsNum,
-    },
-  });
-  return res.status(200).send(deletedProduct);
-});
+);
 
 export { productRouter };

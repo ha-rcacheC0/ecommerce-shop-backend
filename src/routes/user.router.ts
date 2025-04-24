@@ -32,15 +32,15 @@ userRouter.post(
         data: {
           email,
           hashedPassword: await encryptPassword(password),
-          profiles: {
+          profile: {
             create: {},
           },
-          Cart: {
+          cart: {
             create: {},
           },
         },
         include: {
-          Cart: true,
+          cart: true,
         },
       });
 
@@ -75,21 +75,21 @@ userRouter.post(
         email: email,
       },
       include: {
-        Cart: {
+        cart: {
           include: {
-            CartProducts: {
+            cartProducts: {
               include: {
-                Product: {
+                product: {
                   include: {
-                    Brands: true,
-                    Categories: true,
-                    ColorStrings: true,
-                    EffectStrings: true,
+                    brand: true,
+                    category: true,
+                    colors: true,
+                    effects: true,
                   },
                 },
               },
             },
-            User: true,
+            user: true,
           },
         },
       },
@@ -155,6 +155,7 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
   try {
     // Construct the update data object conditionally
     const updateData: any = {};
+    console.log(req.body);
 
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
@@ -215,20 +216,77 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
       return res.status(400).send({ message: "Unable to update userInfo" });
 
     return res.status(201).send(updatedUserInfo);
-  } catch (error) {
+  } catch (error: any) {
     return res.status(500).send({ message: "Internal Server Error" });
   }
 });
 
 userRouter.get("/getAll", authenticationAdminMiddleware, async (req, res) => {
-  const allUsers = await prisma.user.findMany({
-    include: {
-      profiles: true,
-    },
-  });
-  if (!allUsers) res.status(500).send({ message: "Internal Server Error" });
+  try {
+    // Parse pagination parameters
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+    const skip = (page - 1) * pageSize;
 
-  return res.status(200).send(allUsers);
+    const search = (req.query.search as string) || "";
+    const role = req.query.role as string;
+    const active =
+      req.query.active !== undefined ? req.query.active === "true" : undefined;
+
+    const whereConditions: any = {};
+
+    if (search) {
+      whereConditions.OR = [
+        { email: { contains: search, mode: "insensitive" } },
+        { profile: { firstName: { contains: search, mode: "insensitive" } } },
+        { profile: { lastName: { contains: search, mode: "insensitive" } } },
+      ];
+    }
+
+    if (role) {
+      whereConditions.role = role;
+    }
+
+    if (active !== undefined) {
+      whereConditions.isActive = active;
+    }
+    const totalItems = await prisma.user.count({
+      where: whereConditions,
+    });
+
+    const users = await prisma.user.findMany({
+      where: whereConditions,
+      include: {
+        profile: true,
+      },
+      orderBy: {
+        email: "asc",
+      },
+      skip,
+      take: pageSize,
+    });
+
+    if (!users) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const hasMore = page < totalPages;
+
+    return res.status(200).json({
+      items: users,
+      pagination: {
+        currentPage: page,
+        pageSize,
+        totalItems,
+        totalPages,
+        hasMore,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).send({ message: "Internal Server Error" });
+  }
 });
 
 export { userRouter };

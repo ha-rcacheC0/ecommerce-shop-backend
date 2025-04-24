@@ -4,11 +4,11 @@ import { User } from "@prisma/client";
 import { adminRouter } from "./routes/admin.router";
 import { productRouter } from "./routes/product.router";
 import { purchaseRouter } from "./routes/purchase.router";
-
 import { userRouter } from "./routes/user.router";
-
 import { cartRouter } from "./routes/cart.router";
 import { terminalRouter } from "./routes/terminal.router";
+import { metadataRouter } from "./routes/metadata.router";
+import { showsRouter } from "./routes/shows.router";
 
 const app = express();
 declare global {
@@ -27,9 +27,11 @@ app.use(cors());
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/api/purchase", purchaseRouter);
+app.use("/api/metadata", metadataRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use("/api/terminal", terminalRouter);
+app.use("/shows", showsRouter);
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {

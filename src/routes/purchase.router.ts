@@ -6,7 +6,7 @@ import {
   generateInventoryEmailHtml,
   sendEmail,
 } from "../utils/email-utils";
-import { PurchaseItem } from "../utils/types";
+
 import { prisma } from "../../prisma/db.setup";
 
 const purchaseRouter = Router();
@@ -21,10 +21,10 @@ purchaseRouter.post("/", async (req, res) => {
   // Get the user's cart
   const cart = await prisma.cart.findUnique({
     where: { userId },
-    include: { CartProducts: true },
+    include: { cartProducts: true },
   });
 
-  if (!cart || cart.CartProducts.length === 0) {
+  if (!cart || cart.cartProducts.length === 0) {
     return res.status(400).send({ message: "Cart is empty or not found" });
   }
 
@@ -35,10 +35,10 @@ purchaseRouter.post("/", async (req, res) => {
   const newBreakOrders = [];
   const inventoryItems = [];
 
-  for (const item of cart.CartProducts) {
+  for (const item of cart.cartProducts) {
     const product = await prisma.product.findUnique({
       where: { id: item.productId },
-      include: { UnitProduct: true },
+      include: { unitProduct: true },
     });
 
     if (!product) {
@@ -57,8 +57,8 @@ purchaseRouter.post("/", async (req, res) => {
     }
 
     if (item.unitQuantity > 0) {
-      const unitPrice = product.UnitProduct!.unitPrice.toNumber();
-      const availableStock = product.UnitProduct!.availableStock;
+      const unitPrice = product.unitProduct!.unitPrice.toNumber();
+      const availableStock = product.unitProduct!.availableStock;
 
       if (availableStock < item.unitQuantity) {
         const neededStock = item.unitQuantity - availableStock;
@@ -68,7 +68,7 @@ purchaseRouter.post("/", async (req, res) => {
             quantity: neededStock,
           },
           include: {
-            Product: true,
+            product: true,
           },
         });
 
@@ -119,9 +119,9 @@ purchaseRouter.post("/", async (req, res) => {
   const purchase = await prisma.purchaseRecord.create({
     data: {
       amount,
-      PurchaseItems: {
+      purchaseItems: {
         create: purchaseItems.map((item) => ({
-          Product: {
+          product: {
             connect: {
               id: item.Product.id,
             },
@@ -135,21 +135,21 @@ purchaseRouter.post("/", async (req, res) => {
           id: shippingAddressId,
         },
       },
-      User: {
+      user: {
         connect: {
           id: userId,
         },
       },
     },
     include: {
-      PurchaseItems: {
+      purchaseItems: {
         include: {
-          Product: true,
+          product: true,
         },
       },
-      User: {
+      user: {
         include: {
-          profiles: true,
+          profile: true,
         },
       },
       shippingAddress: true,
@@ -168,7 +168,11 @@ purchaseRouter.post("/", async (req, res) => {
     await sendEmail(
       inventoryManagerEmail,
       `Inventory Request - Order : ${purchase.id}`,
-      generateInventoryEmailHtml(purchase, inventoryItems, newBreakOrders)
+      generateInventoryEmailHtml(
+        purchase,
+        inventoryItems as any,
+        newBreakOrders
+      )
     );
   }
 
