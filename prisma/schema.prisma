@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum State {
   AL
   AK
@@ -145,11 +144,11 @@ model ShowProduct {
   productId String
   quantity  Int
   notes     String?
+  isUnit    Boolean @default(false)
+  show      Product @relation("ShowToProducts", fields: [showId], references: [id])
+  product   Product @relation("ProductsInShow", fields: [productId], references: [id])
 
-  show    Product @relation("ShowToProducts", fields: [showId], references: [id])
-  product Product @relation("ProductsInShow", fields: [productId], references: [id])
-
-  @@unique([showId, productId])
+  @@unique([showId, productId, isUnit])
 }
 
 model ShowType {
