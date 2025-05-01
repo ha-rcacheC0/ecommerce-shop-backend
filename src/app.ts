@@ -9,6 +9,7 @@ import { cartRouter } from "./routes/cart.router";
 import { terminalRouter } from "./routes/terminal.router";
 import { metadataRouter } from "./routes/metadata.router";
 import { showsRouter } from "./routes/shows.router";
+import path from "path";
 
 const app = express();
 declare global {
@@ -24,14 +25,22 @@ app.use(cors());
 
 // Set up Routes as needed
 
-app.use("/user", userRouter);
-app.use("/admin", adminRouter);
+app.use("/api/user", userRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/purchase", purchaseRouter);
 app.use("/api/metadata", metadataRouter);
-app.use("/products", productRouter);
-app.use("/cart", cartRouter);
+app.use("/api/products", productRouter);
+app.use("/api/cart", cartRouter);
 app.use("/api/terminal", terminalRouter);
-app.use("/shows", showsRouter);
+app.use("/api/shows", showsRouter);
+app.use(express.static(path.join(__dirname, "../public")));
+
+// This handles SPA routing - serve index.html for all non-API routes
+app.get("*", (req, res) => {
+  if (!req.path.startsWith("/api/")) {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
+  }
+});
 
 app.listen(port, () => {
   if (process.env.NODE_ENV === "development") {
