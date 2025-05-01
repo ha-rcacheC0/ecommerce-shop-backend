@@ -18,6 +18,7 @@ const showFilterSchema = z.object({
 const showProductSchema = z.object({
   productId: z.string(),
   quantity: z.number().int().positive(),
+  isUnit: z.boolean().default(false),
   notes: z.string().optional(),
 });
 
@@ -77,6 +78,7 @@ showsRouter.get("/", async (req, res) => {
               include: {
                 brand: true,
                 category: true,
+                unitProduct: true,
               },
             },
           },
@@ -141,6 +143,7 @@ showsRouter.get("/type/:typeId", async (req, res) => {
               include: {
                 brand: true,
                 category: true,
+                unitProduct: true,
               },
             },
           },
@@ -223,6 +226,21 @@ showsRouter.post("/", authenticationAdminMiddleware, async (req, res) => {
     }
 
     const { products, ...showData } = validatedData.data;
+    for (const product of products) {
+      if (product.isUnit) {
+        // Check if the product has a unit product
+        const existingProduct = await prisma.product.findUnique({
+          where: { id: product.productId },
+          include: { unitProduct: true },
+        });
+
+        if (!existingProduct || !existingProduct.unitProduct) {
+          return res.status(400).json({
+            message: `Product with ID ${product.productId} doesn't have unit products available`,
+          });
+        }
+      }
+    }
 
     // Validate that all product IDs exist and aren't already shows
     const productIds = products.map((p) => p.productId);
@@ -275,6 +293,7 @@ showsRouter.post("/", authenticationAdminMiddleware, async (req, res) => {
             showId: newShow.id,
             productId: product.productId,
             quantity: product.quantity,
+            isUnit: product.isUnit,
             notes: product.notes,
           },
         });
@@ -293,6 +312,7 @@ showsRouter.post("/", authenticationAdminMiddleware, async (req, res) => {
                 include: {
                   brand: true,
                   category: true,
+                  unitProduct: true,
                 },
               },
             },
@@ -337,9 +357,25 @@ showsRouter.put("/:id", authenticationAdminMiddleware, async (req, res) => {
     if (!existingShow) {
       return res.status(404).json({ message: "Show not found" });
     }
-
     // If updating products, validate them
     if (products && products.length > 0) {
+      // Validate unit products have corresponding unit products in the database
+      for (const product of products) {
+        if (product.isUnit) {
+          // Check if the product has a unit product
+          const existingProduct = await prisma.product.findUnique({
+            where: { id: product.productId },
+            include: { unitProduct: true },
+          });
+
+          if (!existingProduct || !existingProduct.unitProduct) {
+            return res.status(400).json({
+              message: `Product with ID ${product.productId} doesn't have unit products available`,
+            });
+          }
+        }
+      }
+
       // Validate that all product IDs exist and aren't already shows
       const productIds = products.map((p) => p.productId);
       const existingProducts = await prisma.product.findMany({
@@ -412,6 +448,7 @@ showsRouter.put("/:id", authenticationAdminMiddleware, async (req, res) => {
               showId: id,
               productId: product.productId,
               quantity: product.quantity,
+              isUnit: product.isUnit,
               notes: product.notes || null,
             },
           });
@@ -431,6 +468,7 @@ showsRouter.put("/:id", authenticationAdminMiddleware, async (req, res) => {
                 include: {
                   brand: true,
                   category: true,
+                  unitProduct: true,
                 },
               },
             },
@@ -476,14 +514,10 @@ showsRouter.delete("/:id", authenticationAdminMiddleware, async (req, res) => {
       });
     }
 
-    // Delete show and its relationships
     await prisma.$transaction(async (tx) => {
-      // Delete show products first
       await tx.showProduct.deleteMany({
         where: { showId: id },
       });
-
-      // Delete the show
       await tx.product.delete({
         where: { id },
       });
