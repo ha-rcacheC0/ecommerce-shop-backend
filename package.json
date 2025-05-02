@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "nodemon",
-    "build": "NODE_ENV=production bun scripts/load-env.ts && tsc && vite build",
+    "build": "tsc",
     "deploy": "NODE_ENV=production bun scripts/load-env.ts && prisma migrate deploy && npm run build",
     "db:migrate:dev": "bun scripts/load-env.ts && prisma migrate dev",
     "db:migrate:prod": "NODE_ENV=production bun scripts/load-env.ts && prisma migrate deploy",
