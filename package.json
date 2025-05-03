@@ -5,10 +5,11 @@
   "prisma": {
     "seed": "bun prisma/seed.ts"
   },
-  "main": "dist/src/app.js",
   "scripts": {
     "dev": "nodemon",
+    "start": "ts-node src/app.ts",
     "build": "tsc",
+    "prestart": "npm run build",
     "deploy": "NODE_ENV=production bun scripts/load-env.ts && prisma migrate deploy && npm run build",
     "db:migrate:dev": "bun scripts/load-env.ts && prisma migrate dev",
     "db:migrate:prod": "NODE_ENV=production bun scripts/load-env.ts && prisma migrate deploy",

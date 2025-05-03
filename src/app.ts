@@ -22,7 +22,13 @@ declare global {
 
 const port = parseInt(process.env.PORT || "3000", 10);
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://crew-fireworks.fly.dev",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Set up Routes as needed
 app.use("/api/user", userRouter);
