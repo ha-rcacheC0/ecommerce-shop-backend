@@ -24,7 +24,20 @@ const port = parseInt(process.env.PORT || "3000", 10);
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://crew-fireworks.fly.dev",
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "https://crew-fireworks.fly.dev",
+        "https://crewfireworks.com",
+        "https://www.crewfireworks.com",
+      ];
+
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
