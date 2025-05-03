@@ -2,17 +2,14 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "commonjs",
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "paths": {
       "*": ["./node_modules/*"]
-    },
-    "strict": false,
-    "resolveJsonModule": true,
-    "noImplicitAny": false
+    }
   },
-  "include": ["src/**/*", "prisma/**/*", ".api/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "prisma/**/*"]
 }

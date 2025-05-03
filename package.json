@@ -5,6 +5,7 @@
   "prisma": {
     "seed": "bun prisma/seed.ts"
   },
+  "main": "dist/src/app.js",
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
@@ -25,7 +26,7 @@
     "@api/helcimdevdocs": "file:.api/apis/helcimdevdocs",
     "@clerk/clerk-sdk-node": "^5.0.9",
     "@prisma/adapter-pg": "^5.14.0",
-    "@prisma/client": "^6.5.0",
+    "@prisma/client": "^6.7.0",
     "bcrypt": "^5.1.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
@@ -51,6 +52,7 @@
     "zod-express-middleware": "^1.4.0"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10",
     "@types/bcrypt": "^5.0.2",
     "@types/connect-flash": "^0.0.40",
     "@types/cors": "^2.8.17",
