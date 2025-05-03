@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
 import { z } from "zod";
-import { Decimal } from "@prisma/client/runtime/library";
+
 import { authenticationAdminMiddleware } from "../utils/auth-utils";
+import { Decimal } from "@prisma/client/runtime/library";
 
 const showsRouter = Router();
 
@@ -228,7 +229,6 @@ showsRouter.post("/", authenticationAdminMiddleware, async (req, res) => {
     const { products, ...showData } = validatedData.data;
     for (const product of products) {
       if (product.isUnit) {
-        // Check if the product has a unit product
         const existingProduct = await prisma.product.findUnique({
           where: { id: product.productId },
           include: { unitProduct: true },
@@ -278,11 +278,24 @@ showsRouter.post("/", authenticationAdminMiddleware, async (req, res) => {
       // Create the show product
       const newShow = await tx.product.create({
         data: {
-          ...showData,
+          title: showData.title,
+          description: showData.description,
+          image: showData.image,
+          videoURL: showData.videoURL,
+          inStock: showData.inStock ?? true,
           sku: showSku,
           isShow: true,
           package: [1], // Set a default package for the show
           casePrice: new Decimal(showData.casePrice),
+          showType: {
+            connect: { id: showData.showTypeId },
+          },
+          brand: {
+            connect: { id: showData.brandId },
+          },
+          category: {
+            connect: { id: showData.categoryId },
+          },
         },
       });
 
