@@ -10,6 +10,7 @@ import { terminalRouter } from "./routes/terminal.router";
 import { metadataRouter } from "./routes/metadata.router";
 import { showsRouter } from "./routes/shows.router";
 import path from "path";
+import { reportsRouter } from "./routes/reports.router";
 
 const app = express();
 declare global {
@@ -29,6 +30,7 @@ app.use(
         "https://crew-fireworks.fly.dev",
         "https://crewfireworks.com",
         "https://www.crewfireworks.com",
+        "http://localhost:5173",
       ];
 
       // Allow requests with no origin (like mobile apps or curl requests)
@@ -52,16 +54,10 @@ app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/shows", showsRouter);
+app.use("/api/reports", reportsRouter);
 
 // Add static file serving for the frontend
 app.use(express.static(path.join(__dirname, "../public")));
-
-// This handles SPA routing - serve index.html for all non-API routes
-app.get("*", (req, res) => {
-  if (!req.path.startsWith("/api/")) {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
-  }
-});
 
 // Listen on all interfaces with port as a number
 app.listen(port, "0.0.0.0", () => {

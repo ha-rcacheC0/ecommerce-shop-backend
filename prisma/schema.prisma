@@ -178,6 +178,8 @@ model User {
   profile        UserProfile?
   cart           Cart?
   purchaseRecord PurchaseRecord[]
+
+  Report Report[]
 }
 
 model UserProfile {
@@ -252,11 +254,12 @@ model PurchaseItem {
 }
 
 model BreakCaseRequest {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   productId String
   quantity  Int
-  createdAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime     @default(now())
+  product   Product      @relation(fields: [productId], references: [id])
+  status    ReportStatus @default(PENDING)
 }
 
 model ApprovedTerminals {
@@ -267,4 +270,36 @@ model ApprovedTerminals {
   address                 Address         @relation(fields: [addressId], references: [id])
   addressId               String
   company                 TerminalCompany
+}
+
+enum ReportType {
+  PURCHASE
+  INVENTORY
+  USER_ACTIVITY
+  FINANCIAL
+  PRODUCT_PERFORMANCE
+  CASE_BREAK
+}
+
+enum ReportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Report {
+  id           String       @id @default(cuid())
+  type         ReportType
+  name         String
+  description  String?
+  status       ReportStatus @default(PENDING)
+  createdAt    DateTime     @default(now())
+  completedAt  DateTime?
+  parameters   Json? // Store any parameters used to generate the report
+  createdBy    String // User ID of who created the report
+  fileUrl      String? // URL where the report file can be accessed
+  errorMessage String? // In case of failure
+
+  user User @relation(fields: [createdBy], references: [id])
 }
