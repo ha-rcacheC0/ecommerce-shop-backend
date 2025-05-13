@@ -1,9 +1,9 @@
 import fs from "fs";
 import csv from "csv-parser";
 import path from "path";
-import { prisma } from "./db.setup";
+
 import { calcUnitPrice } from "../src/utils/creation-utils";
-import { Prisma } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import {
   printProgressBar,
   startSpinner,
@@ -16,9 +16,14 @@ import {
   parseDelimitedValue,
   validatePackage,
 } from "./utils/validation-utils";
+import { env } from "../src/env";
 
 type ProductCreateData = Prisma.ProductCreateInput;
 type ProductUpdateData = Prisma.ProductUpdateInput;
+
+const prisma = new PrismaClient({
+  datasourceUrl: env.DATABASE_URL,
+});
 
 interface CSVRow {
   sku: string;
@@ -373,6 +378,13 @@ const processCSVData = async (csvData: CSVRow[]) => {
 
 const seedDbFromCSV = async (filePath: string) => {
   try {
+    printSection("Connected to DB");
+    const dbUrlParts = (process.env.DATABASE_URL as string).split("@");
+    const maskedUrl =
+      dbUrlParts.length > 1
+        ? `[credentials-hidden]@${dbUrlParts[1]}`
+        : "[formatted-db-url-hidden]";
+    console.log(`Using database: ${maskedUrl}`);
     printSection("Starting Product DB Seeding from CSV");
 
     const csvData = await parseCSV(filePath);
@@ -421,7 +433,11 @@ const seedDbFromCSV = async (filePath: string) => {
     // Log errors to a file
     if (errorCount > 0) {
       const errorLog = results.filter((r) => r.startsWith("Error")).join("\n");
-      fs.writeFileSync("seed_errors.log", errorLog);
+      const errorLogPath = path.resolve(
+        process.cwd(),
+        "error_logs/seed_products_error.log"
+      );
+      fs.writeFileSync(errorLogPath, errorLog);
       console.log("\nErrors have been logged to seed_errors.log");
     }
 
@@ -430,7 +446,11 @@ const seedDbFromCSV = async (filePath: string) => {
       const skippedLog = results
         .filter((r) => r.startsWith("Skipped"))
         .join("\n");
-      fs.writeFileSync("skipped_rows.log", skippedLog);
+      const skipLogPath = path.resolve(
+        process.cwd(),
+        "error_logs/skipped_rows.log"
+      );
+      fs.writeFileSync(skipLogPath, skippedLog);
       console.log("\nSkipped rows have been logged to skipped_rows.log");
     }
 

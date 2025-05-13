@@ -1,9 +1,7 @@
 import nodemailer from "nodemailer";
-import cron from "node-cron";
-import { BreakCaseRequest, PrismaClient } from "@prisma/client";
+
 import { PurchaseItem, PurchaseRecord } from "./types";
 
-const prisma = new PrismaClient();
 const transporter = nodemailer.createTransport({
   host: process.env.SEND_EMAIL_STMP_HOST, // Replace with your SMTP server
   port: 587,
@@ -15,14 +13,13 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
-  console.log();
   const info = await transporter.sendMail({
     from: `"Crew Fireworks" <${process.env.SEND_EMAIL_USER_EMAIL}>`, // Replace with your from email
     to,
     subject,
     html,
   });
-  console.log("Email sent successfully.");
+  console.log("Email sent successfully.", info);
 };
 
 // Utility function to format currency
