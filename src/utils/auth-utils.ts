@@ -1,7 +1,7 @@
 import { Cart, User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { z } from "zod";
+import { date, z } from "zod";
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../../prisma/db.setup";
 
@@ -23,6 +23,18 @@ type UserWithCart = {
   role: string;
   email: string;
   hashedPassword: string;
+  profile: {
+    id: string;
+    userId: string;
+    firstName: string | null;
+    lastName: string | null;
+    dateOfBirth: Date | null;
+    phoneNumber: string | null;
+    billingAddressId: string | null;
+    shippingAddressId: string | null;
+    canContact: boolean;
+    acceptedTerms: boolean;
+  };
   createdOn: Date | null;
   lastLogin: Date | null;
 };
@@ -32,6 +44,10 @@ export const createTokenUserInfo = (user: UserWithCart) => {
     email: user.email,
     role: user.role,
     lastLogin: user.lastLogin,
+    profile: {
+      ...user.profile,
+      dateOfBirth: user.profile.dateOfBirth?.toISOString(),
+    },
     Cart: user.cart,
   };
 };

@@ -12,7 +12,11 @@ import { prisma } from "../../prisma/db.setup";
 const purchaseRouter = Router();
 
 purchaseRouter.post("/", async (req, res) => {
-  const { userId, shippingAddressId } = req.body;
+  const {
+    userId,
+    shippingAddressId,
+    amounts: { grandTotal, subtotal, tax, liftGateFee, shipping },
+  } = req.body;
 
   if (!userId) {
     return res.status(400).send({ message: "User ID is required" });
@@ -28,7 +32,6 @@ purchaseRouter.post("/", async (req, res) => {
     return res.status(400).send({ message: "Cart is empty or not found" });
   }
 
-  let amount = 0;
   const purchaseItems = [];
   let hasUnits = false;
   let newBreakOrder = false;
@@ -48,10 +51,10 @@ purchaseRouter.post("/", async (req, res) => {
     }
 
     if (item.caseQuantity > 0) {
-      amount += product.casePrice.toNumber() * item.caseQuantity;
       purchaseItems.push({
         quantity: item.caseQuantity,
         isUnit: false,
+        itemSubtotal: product.casePrice.toNumber() * item.caseQuantity,
         Product: product,
       });
     }
@@ -71,11 +74,10 @@ purchaseRouter.post("/", async (req, res) => {
             product: true,
           },
         });
-
-        amount += unitPrice * availableStock;
         purchaseItems.push({
           productId: item.productId,
           quantity: item.unitQuantity,
+          itemSubtotal: unitPrice * item.unitQuantity,
           isUnit: true,
           id: item.id,
           Product: product,
@@ -91,10 +93,10 @@ purchaseRouter.post("/", async (req, res) => {
         newBreakOrder = true;
         hasUnits = true;
       } else {
-        amount += unitPrice * item.unitQuantity;
         purchaseItems.push({
           productId: item.productId,
           quantity: item.unitQuantity,
+          itemSubtotal: unitPrice * item.unitQuantity,
           isUnit: true,
           id: item.id,
           Product: product,
@@ -118,7 +120,7 @@ purchaseRouter.post("/", async (req, res) => {
   }
   const purchase = await prisma.purchaseRecord.create({
     data: {
-      amount,
+      grandTotal,
       purchaseItems: {
         create: purchaseItems.map((item) => ({
           product: {
@@ -128,8 +130,16 @@ purchaseRouter.post("/", async (req, res) => {
           },
           isUnit: item.isUnit,
           quantity: item.quantity,
+          itemSubtotal: item.itemSubtotal,
         })),
       },
+      subTotal: subtotal,
+      tax,
+      liftGateFee,
+      shippingCost: shipping,
+      discountAmount: 0,
+      discountCode: null,
+      discountType: null,
       shippingAddress: {
         connect: {
           id: shippingAddressId,
@@ -160,46 +170,6 @@ purchaseRouter.post("/", async (req, res) => {
     where: { cartId: cart.id },
   });
 
-  const warehouseEmail = process.env.SEND_EMAIL_WAREHOUSE_EMAIL!;
-  const inventoryManagerEmail = process.env.SEND_EMAIL_INVENTORY_EMAIL!;
-
-  // Email to inventory manager
-  if (inventoryItems.length > 0) {
-    await sendEmail(
-      inventoryManagerEmail,
-      `Inventory Request - Order : ${purchase.id}`,
-      generateInventoryEmailHtml(
-        purchase,
-        inventoryItems as any,
-        newBreakOrders
-      )
-    );
-  }
-
-  // Email to warehouse for case break request
-  if (newBreakOrder) {
-    await sendEmail(
-      warehouseEmail,
-      `Crew Fireworks - Case Break - Order : ${purchase.id}`,
-      generateCaseBreakEmailHtml(purchase, newBreakOrders)
-    );
-  }
-
-  // Email to warehouse for holding order
-  if (hasUnits) {
-    await sendEmail(
-      warehouseEmail,
-      `Crew Fireworks - Order : ${purchase.id} - ON HOLD for UNITS`,
-      generateEmailHtml({ ...purchase, hasUnits: true })
-    );
-  } else {
-    // No units, send order directly to warehouse
-    await sendEmail(
-      warehouseEmail,
-      `Crew Fireworks  - Order : ${purchase.id} `,
-      generateEmailHtml(purchase)
-    );
-  }
   return res.status(201).send(purchase);
 });
 

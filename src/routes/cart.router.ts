@@ -281,7 +281,7 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
 });
 
 cartRouter.post("/:cartId/purchase", async (req, res) => {
-  const { amount, CartProducts } = req.body;
+  const { amount } = req.body;
 
   sdk
     .checkoutInit(

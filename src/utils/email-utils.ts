@@ -32,7 +32,7 @@ const formatCurrency = (amount: number) => {
 
 // Standard email template function
 export const generateEmailHtml = (purchase: PurchaseRecord): string => {
-  const formattedAmount = formatCurrency(purchase.amount.toNumber());
+  const formattedAmount = formatCurrency(purchase.grandTotal.toNumber());
   return `
     <div style="font-family: Arial, sans-serif; color: #333; width:80%; margin:5% auto;">
       <h1 style="color: #007BFF;">New Order for Shipping</h1>

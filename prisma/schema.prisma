@@ -193,6 +193,7 @@ model UserProfile {
   billingAddress    Address?  @relation(name: "BillingAddress", fields: [billingAddressId], references: [id])
   shippingAddress   Address?  @relation(name: "ShippingAddress", fields: [shippingAddressId], references: [id])
   canContact        Boolean   @default(false)
+  acceptedTerms     Boolean   @default(false)
   userId            String    @unique
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -234,7 +235,14 @@ model CartProduct {
 model PurchaseRecord {
   id              String         @id @default(cuid())
   status          Status         @default(ORDERED)
-  amount          Decimal
+  subTotal        Decimal        @default(0)
+  grandTotal      Decimal        @default(0)
+  shippingCost    Decimal        @default(0)
+  tax             Decimal        @default(0)
+  liftGateFee     Decimal        @default(0)
+  discountAmount  Decimal        @default(0)
+  discountCode    String?
+  discountType    String?
   shippingAddress Address        @relation(fields: [addressId], references: [id])
   date            DateTime       @default(now())
   userId          String
@@ -249,6 +257,7 @@ model PurchaseItem {
   productId      String
   quantity       Int
   isUnit         Boolean
+  itemSubTotal   Decimal        @default(0)
   purchaseRecord PurchaseRecord @relation(fields: [purchaseId], references: [id])
   product        Product        @relation(fields: [productId], references: [id])
 }

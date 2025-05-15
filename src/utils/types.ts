@@ -18,6 +18,7 @@ type PurchaseItem = {
   productId: string;
   quantity: number;
   isUnit: boolean;
+  itemSubtotal: Decimal;
   product: {
     sku: string;
     title: string;
@@ -35,7 +36,14 @@ type Address = {
 
 type PurchaseRecord = {
   id: string;
-  amount: Decimal;
+  grandTotal: Decimal;
+  subTotal: Decimal;
+  tax: Decimal;
+  liftGateFee: Decimal;
+  shippingCost: Decimal;
+  discountAmount: Decimal;
+  discountCode: string | null;
+  discountType: string | null;
   date: Date;
   userId: string;
   addressId: string;

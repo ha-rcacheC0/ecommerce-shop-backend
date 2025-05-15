@@ -173,8 +173,15 @@ reportsRouter.get("/purchases", async (req, res) => {
       select: {
         id: true,
         date: true,
-        amount: true,
+        grandTotal: true,
+        shippingCost: true,
+        tax: true,
+        liftGateFee: true,
+        subTotal: true,
         status: true,
+        discountAmount: true,
+        discountCode: true,
+        discountType: true,
         shippingAddress: {
           select: {
             id: true,
@@ -212,6 +219,7 @@ reportsRouter.get("/purchases", async (req, res) => {
                 },
               },
             },
+            itemSubTotal: true,
             isUnit: true,
             quantity: true,
           },

@@ -92,6 +92,7 @@ userRouter.post(
             user: true,
           },
         },
+        profile: true,
       },
     });
 
@@ -150,18 +151,19 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
     billingAddress,
     shippingAddress,
     canContact,
+    acceptedTerms,
   } = req.body;
 
   try {
     // Construct the update data object conditionally
     const updateData: any = {};
-    console.log(req.body);
 
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
     if (dateOfBirth !== undefined) updateData.dateOfBirth = dateOfBirth;
     if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
     if (canContact !== undefined) updateData.canContact = canContact;
+    if (acceptedTerms !== undefined) updateData.acceptedTerms = acceptedTerms;
 
     if (billingAddress) {
       updateData.billingAddress = {
@@ -211,6 +213,7 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
       },
       data: updateData,
     });
+    console.log("Updated userInfo:", updatedUserInfo);
 
     if (!updatedUserInfo)
       return res.status(400).send({ message: "Unable to update userInfo" });
