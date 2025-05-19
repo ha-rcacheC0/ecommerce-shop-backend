@@ -54,7 +54,7 @@ purchaseRouter.post("/", async (req, res) => {
       purchaseItems.push({
         quantity: item.caseQuantity,
         isUnit: false,
-        itemSubtotal: product.casePrice.toNumber() * item.caseQuantity,
+        itemSubTotal: product.casePrice.toNumber() * item.caseQuantity,
         Product: product,
       });
     }
@@ -77,7 +77,7 @@ purchaseRouter.post("/", async (req, res) => {
         purchaseItems.push({
           productId: item.productId,
           quantity: item.unitQuantity,
-          itemSubtotal: unitPrice * item.unitQuantity,
+          itemSubTotal: unitPrice * item.unitQuantity,
           isUnit: true,
           id: item.id,
           Product: product,
@@ -96,7 +96,7 @@ purchaseRouter.post("/", async (req, res) => {
         purchaseItems.push({
           productId: item.productId,
           quantity: item.unitQuantity,
-          itemSubtotal: unitPrice * item.unitQuantity,
+          itemSubTotal: unitPrice * item.unitQuantity,
           isUnit: true,
           id: item.id,
           Product: product,
@@ -130,7 +130,7 @@ purchaseRouter.post("/", async (req, res) => {
           },
           isUnit: item.isUnit,
           quantity: item.quantity,
-          itemSubtotal: item.itemSubtotal,
+          itemSubTotal: item.itemSubTotal,
         })),
       },
       subTotal: subtotal,
@@ -162,9 +162,11 @@ purchaseRouter.post("/", async (req, res) => {
           profile: true,
         },
       },
-      shippingAddress: true,
     },
   });
+  if (!purchase) {
+    return res.status(400).send({ message: "Purchase failed" });
+  }
 
   await prisma.cartProduct.deleteMany({
     where: { cartId: cart.id },
