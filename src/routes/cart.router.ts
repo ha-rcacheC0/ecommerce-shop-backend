@@ -289,6 +289,7 @@ cartRouter.post("/:cartId/purchase", async (req, res) => {
         paymentType: "purchase",
         amount: amount,
         currency: "USD",
+        hasConvenienceFee: 1,
         paymentMethod: "cc-ach",
       },
       {
