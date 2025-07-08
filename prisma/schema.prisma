@@ -78,6 +78,12 @@ enum TerminalCompany {
   DHL
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  UNISEX
+}
+
 model Brand {
   id       String    @id @default(cuid())
   name     String    @unique
@@ -91,9 +97,11 @@ model Category {
 }
 
 model Color {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  products Product[] @relation("ProductColors")
+  id              String           @id @default(cuid())
+  name            String           @unique
+  products        Product[]        @relation("ProductColors")
+  productVariants ProductVariant[]
+  ApparelProduct  ApparelProduct[]
 }
 
 model Effect {
@@ -113,6 +121,11 @@ model Product {
   isCaseBreakable Boolean @default(true)
   inStock         Boolean
   package         Int[]
+
+  // Apparel specific fields - keeping for backward compatibility
+  isApparel     Boolean      @default(false)
+  apparelTypeId String?
+  apparelType   ApparelType? @relation(fields: [apparelTypeId], references: [id])
 
   // Show-specific fields
   isShow     Boolean   @default(false)
@@ -136,6 +149,49 @@ model Product {
   // Show relationships
   showProducts    ShowProduct[] @relation("ShowToProducts")
   includedInShows ShowProduct[] @relation("ProductsInShow")
+
+  // NEW: Product Variants for apparel handling
+  variants ProductVariant[]
+
+  // Keep existing apparel products for migration - will be deprecated
+  apparelProducts ApparelProduct[]
+}
+
+// NEW: Product Variant model for better apparel handling
+model ProductVariant {
+  id        String  @id @default(cuid())
+  sku       String  @unique
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  // Variant-specific attributes
+  size    String
+  gender  Gender
+  colorId String?
+  color   Color?  @relation(fields: [colorId], references: [id])
+
+  // Pricing and inventory
+  unitPrice      Decimal
+  availableStock Int     @default(999) // High default for print-on-demand
+
+  // Additional variant data
+  additionalSku String? // For any extra SKU requirements
+  isActive      Boolean @default(true)
+
+  // Relationships
+  cartProducts  CartProduct[]
+  purchaseItems PurchaseItem[]
+
+  @@unique([productId, size, gender, colorId])
+  @@index([productId])
+  @@index([sku])
+}
+
+model ApparelType {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  products    Product[]
 }
 
 model ShowProduct {
@@ -149,6 +205,20 @@ model ShowProduct {
   product   Product @relation("ProductsInShow", fields: [productId], references: [id])
 
   @@unique([showId, productId, isUnit])
+}
+
+// DEPRECATED: Keeping for migration purposes - will be removed later
+model ApparelProduct {
+  id             String  @id @default(cuid())
+  productId      String  @unique
+  product        Product @relation(fields: [productId], references: [id])
+  size           String
+  color          Color?  @relation(fields: [colorId], references: [id])
+  colorId        String?
+  unitPrice      Decimal
+  availableStock Int
+
+  migrated Boolean @default(false)
 }
 
 model ShowType {
@@ -221,15 +291,19 @@ model Cart {
 }
 
 model CartProduct {
-  id           String  @id @default(cuid())
-  caseQuantity Int     @default(0)
+  id           String @id @default(cuid())
+  caseQuantity Int    @default(0)
   cartId       String
   productId    String
-  unitQuantity Int     @default(0)
-  cart         Cart    @relation(fields: [cartId], references: [id])
-  product      Product @relation(fields: [productId], references: [id])
+  unitQuantity Int    @default(0)
 
-  @@unique([cartId, productId])
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId, variantId])
 }
 
 model PurchaseRecord {
@@ -252,12 +326,16 @@ model PurchaseRecord {
 }
 
 model PurchaseItem {
-  id             String         @id @default(cuid())
-  purchaseId     String
-  productId      String
-  quantity       Int
-  isUnit         Boolean
-  itemSubTotal   Decimal        @default(0)
+  id           String  @id @default(cuid())
+  purchaseId   String
+  productId    String
+  quantity     Int
+  isUnit       Boolean
+  itemSubTotal Decimal @default(0)
+
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
   purchaseRecord PurchaseRecord @relation(fields: [purchaseId], references: [id])
   product        Product        @relation(fields: [productId], references: [id])
 }
@@ -311,4 +389,11 @@ model Report {
   errorMessage String? // In case of failure
 
   user User @relation(fields: [createdBy], references: [id])
+}
+
+model SkuCounter {
+  id      String @id
+  counter Int    @default(0)
+
+  @@map("sku_counters")
 }

@@ -195,6 +195,7 @@ reportsRouter.get("/purchases", async (req, res) => {
         user: {
           select: {
             id: true,
+            email: true,
             profile: {
               select: {
                 firstName: true,
@@ -211,6 +212,7 @@ reportsRouter.get("/purchases", async (req, res) => {
                 id: true,
                 title: true,
                 sku: true,
+                isShow: true,
                 unitProduct: {
                   select: {
                     id: true,

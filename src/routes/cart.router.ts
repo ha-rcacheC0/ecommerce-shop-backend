@@ -19,6 +19,7 @@ cartRouter.get("/:cartId", async (req, res) => {
               colors: true,
               effects: true,
               unitProduct: true,
+              variants: true,
             },
           },
         },
@@ -38,7 +39,7 @@ cartRouter.get("/:cartId", async (req, res) => {
 
 cartRouter.post("/:cartId/add", async (req, res) => {
   const { cartId } = req.params;
-  const { productId, isUnit } = req.body;
+  const { productId, isUnit, variantId } = req.body;
 
   const cart = await prisma.cart.findFirst({
     where: { id: cartId },
@@ -55,6 +56,7 @@ cartRouter.post("/:cartId/add", async (req, res) => {
     createData = {
       unitQuantity: 1,
       productId,
+      variantId, // Include variantId if provided
     };
     updateData = {
       unitQuantity: {
@@ -65,6 +67,7 @@ cartRouter.post("/:cartId/add", async (req, res) => {
     createData = {
       caseQuantity: 1,
       productId,
+      variantId, // Include variantId if provided
     };
     updateData = {
       caseQuantity: {
@@ -80,9 +83,10 @@ cartRouter.post("/:cartId/add", async (req, res) => {
         cartProducts: {
           upsert: {
             where: {
-              cartId_productId: {
+              cartId_productId_variantId: {
                 cartId,
                 productId,
+                variantId,
               },
             },
             create: createData,
@@ -128,9 +132,10 @@ cartRouter.post("/:cartId/addShow", async (req, res) => {
     // Check if this show already exists in the cart
     const existingCartProduct = await prisma.cartProduct.findUnique({
       where: {
-        cartId_productId: {
+        cartId_productId_variantId: {
           cartId,
           productId: showId,
+          variantId: null, // Assuming shows do not have variants
         },
       },
     });
@@ -141,9 +146,10 @@ cartRouter.post("/:cartId/addShow", async (req, res) => {
       // Show is already in cart, increment its case quantity
       updatedCartProduct = await prisma.cartProduct.update({
         where: {
-          cartId_productId: {
+          cartId_productId_variantId: {
             cartId,
             productId: showId,
+            variantId: null, // Assuming shows do not have variants
           },
         },
         data: {
@@ -196,7 +202,7 @@ cartRouter.post("/:cartId/addShow", async (req, res) => {
 
 cartRouter.post("/:cartId/remove", async (req, res) => {
   const cartId = req.params.cartId;
-  const { productId } = req.body;
+  const { productId, variantId } = req.body;
 
   const cart = await prisma.cart.findFirst({
     where: {
@@ -226,6 +232,7 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
         deleteMany: {
           cartId: cartId,
           productId: productId,
+          variantId: variantId,
         },
       },
     },
@@ -240,13 +247,15 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
 });
 
 cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
-  const { cartId, productId, quantity, isUnit } = req.body;
+  const { cartId, productId, quantity, isUnit, variantId } = req.body;
 
   const cartProduct = await prisma.cartProduct.findUnique({
     where: {
-      cartId_productId: {
+      cartId_productId_variantId: {
         cartId,
         productId,
+
+        variantId, // Include variantId if provided
       },
     },
   });
@@ -269,9 +278,10 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
 
   const updatedCartProduct = await prisma.cartProduct.update({
     where: {
-      cartId_productId: {
+      cartId_productId_variantId: {
         cartId,
         productId,
+        variantId, // Include variantId if provided
       },
     },
     data: updateData,
