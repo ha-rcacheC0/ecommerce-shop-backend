@@ -2,6 +2,7 @@
 import { Router } from "express";
 import { prisma } from "../../prisma/db.setup";
 import { authenticationAdminMiddleware } from "../utils/auth-utils";
+import { stat } from "fs";
 
 const reportsRouter = Router();
 
@@ -12,13 +13,16 @@ reportsRouter.use(authenticationAdminMiddleware);
 reportsRouter.get("/case-break", async (req, res) => {
   try {
     // Parse query parameters for date filtering
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, status } = req.query;
 
     // Build where clause for the query
     const whereClause: any = {};
 
-    if (startDate || endDate) {
+    if (startDate || endDate || status) {
       whereClause.createdAt = {};
+      if (status) {
+        whereClause.status = status;
+      }
 
       if (startDate) {
         whereClause.createdAt.gte = new Date(startDate as string);
@@ -46,6 +50,7 @@ reportsRouter.get("/case-break", async (req, res) => {
       title: request.product.title,
       boxSize: request.product.package,
       quantity: request.quantity,
+      status: request.status,
       createdAt: request.createdAt.toISOString(),
       formattedDate: request.createdAt.toLocaleString(),
     }));
@@ -168,11 +173,29 @@ reportsRouter.get("/purchases", async (req, res) => {
       select: {
         id: true,
         date: true,
-        amount: true,
+        grandTotal: true,
+        shippingCost: true,
+        tax: true,
+        liftGateFee: true,
+        subTotal: true,
         status: true,
+        discountAmount: true,
+        discountCode: true,
+        discountType: true,
+        shippingAddress: {
+          select: {
+            id: true,
+            street1: true,
+            street2: true,
+            city: true,
+            state: true,
+            postalCode: true,
+          },
+        },
         user: {
           select: {
             id: true,
+            email: true,
             profile: {
               select: {
                 firstName: true,
@@ -189,6 +212,7 @@ reportsRouter.get("/purchases", async (req, res) => {
                 id: true,
                 title: true,
                 sku: true,
+                isShow: true,
                 unitProduct: {
                   select: {
                     id: true,
@@ -197,6 +221,7 @@ reportsRouter.get("/purchases", async (req, res) => {
                 },
               },
             },
+            itemSubTotal: true,
             isUnit: true,
             quantity: true,
           },
@@ -204,7 +229,6 @@ reportsRouter.get("/purchases", async (req, res) => {
       },
       orderBy: { date: "desc" },
     });
-
     return res.json(purchases);
   } catch (error) {
     console.error("Error fetching purchases:", error);

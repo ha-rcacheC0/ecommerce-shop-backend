@@ -45,10 +45,19 @@ const updateShowSchema = createShowSchema.partial();
 /* GET all shows */
 showsRouter.get("/", async (req, res) => {
   try {
-    const { page, pageSize, typeId, searchTitle } = showFilterSchema.parse(
-      req.query
-    );
+    const validatedQuery = showFilterSchema
+      .extend({
+        brandId: z.string().optional(), // Add brand filter
+      })
+      .parse(req.query);
+
+    const { page, pageSize, typeId, searchTitle, brandId } = validatedQuery;
     const whereClause: any = { isShow: true };
+
+    // Add brand filter if provided
+    if (brandId) {
+      whereClause.brandId = brandId;
+    }
 
     // Add type filter if provided
     if (typeId) {
@@ -101,6 +110,85 @@ showsRouter.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching shows:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+/* GET shows by brand */
+showsRouter.get("/brand/:brandId", async (req, res) => {
+  try {
+    const { brandId } = req.params;
+    const { page, pageSize, typeId, searchTitle } = showFilterSchema.parse(
+      req.query
+    );
+
+    // Verify brand exists
+    const brand = await prisma.brand.findUnique({
+      where: { name: brandId },
+    });
+    console.log(brand);
+
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
+
+    const whereClause: any = {
+      isShow: true,
+      brandId: brand.id,
+    };
+
+    // Add type filter if provided
+    if (typeId) {
+      whereClause.showTypeId = typeId;
+    }
+
+    // Add search filter if provided
+    if (searchTitle) {
+      whereClause.OR = [
+        { title: { contains: searchTitle, mode: "insensitive" } },
+        { description: { contains: searchTitle, mode: "insensitive" } },
+      ];
+    }
+
+    // Get total count for pagination
+    const total = await prisma.product.count({ where: whereClause });
+
+    // Get shows of the specified brand
+    const shows = await prisma.product.findMany({
+      where: whereClause,
+      include: {
+        showType: true,
+        brand: true,
+        category: true,
+        showProducts: {
+          include: {
+            product: {
+              include: {
+                brand: true,
+                category: true,
+                unitProduct: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { title: "asc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      shows,
+      brand, // Include brand info in response
+      pagination: {
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching shows by brand:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });

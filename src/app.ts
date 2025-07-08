@@ -11,6 +11,7 @@ import { metadataRouter } from "./routes/metadata.router";
 import { showsRouter } from "./routes/shows.router";
 import path from "path";
 import { reportsRouter } from "./routes/reports.router";
+import { apparelRouter } from "./routes/apparel.router";
 
 const app = express();
 declare global {
@@ -23,6 +24,7 @@ declare global {
 
 const port = parseInt(process.env.PORT || "3000", 10);
 app.use(express.json());
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -49,6 +51,7 @@ app.use(
 app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/purchase", purchaseRouter);
+app.use("/api/apparel", apparelRouter);
 app.use("/api/metadata", metadataRouter);
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);

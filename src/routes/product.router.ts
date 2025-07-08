@@ -218,6 +218,12 @@ productRouter.get("/:id", async function (req, res) {
             },
           },
         },
+        variants: {
+          include: {
+            color: true,
+          },
+        },
+        apparelType: true,
       },
     });
 

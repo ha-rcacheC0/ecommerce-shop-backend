@@ -40,9 +40,7 @@ adminRouter.get("/inventory", async (req, res) => {
       include: {
         product: true,
       },
-      orderBy: {
-        productId: "asc",
-      },
+      orderBy: [{ availableStock: "desc" }, { productId: "asc" }],
       skip,
       take: pageSize,
     });
