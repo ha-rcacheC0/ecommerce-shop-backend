@@ -6,7 +6,6 @@ import bcrypt from "bcrypt";
 import {
   encryptPassword,
   createUserJwtToken,
-  createTokenUserInfo,
   authenticationMiddleware,
   authenticationAdminMiddleware,
 } from "../utils/auth-utils";
@@ -119,8 +118,22 @@ userRouter.post(
       },
     });
 
-    const userInfo = createTokenUserInfo(user);
     const token = createUserJwtToken(user);
+
+    // Return full user data in response body (not in JWT to prevent 431 errors)
+    const userInfo = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      lastLogin: user.lastLogin,
+      createdOn: user.createdOn,
+      profile: {
+        ...user.profile,
+        dateOfBirth: user.profile.dateOfBirth?.toISOString(),
+      },
+      cart: user.cart,
+    };
+
     return res.status(200).send({ token, userInfo });
   }
 );

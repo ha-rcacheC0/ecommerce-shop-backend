@@ -77,23 +77,61 @@ cartRouter.post("/:cartId/add", async (req, res) => {
   }
 
   try {
-    const updatedCart = await prisma.cart.update({
-      where: { id: cartId },
-      data: {
-        cartProducts: {
-          upsert: {
-            where: {
-              cartId_productId_variantId: {
-                cartId,
-                productId,
-                variantId,
-              },
+    // Check if cart product already exists
+    // Note: Prisma doesn't allow null in compound unique keys with findUnique
+    // So we use findFirst when variantId is null
+    const normalizedVariantId = variantId || null;
+
+    const existingCartProduct = normalizedVariantId
+      ? await prisma.cartProduct.findUnique({
+          where: {
+            cartId_productId_variantId: {
+              cartId,
+              productId,
+              variantId: normalizedVariantId,
             },
-            create: createData,
-            update: updateData,
           },
+        })
+      : await prisma.cartProduct.findFirst({
+          where: {
+            cartId,
+            productId,
+            variantId: null,
+          },
+        });
+
+    if (existingCartProduct) {
+      // Update existing cart product
+      if (normalizedVariantId) {
+        await prisma.cartProduct.update({
+          where: {
+            cartId_productId_variantId: {
+              cartId,
+              productId,
+              variantId: normalizedVariantId,
+            },
+          },
+          data: updateData,
+        });
+      } else {
+        await prisma.cartProduct.update({
+          where: { id: existingCartProduct.id },
+          data: updateData,
+        });
+      }
+    } else {
+      // Create new cart product
+      await prisma.cartProduct.create({
+        data: {
+          ...createData,
+          cartId,
         },
-      },
+      });
+    }
+
+    // Return updated cart
+    const updatedCart = await prisma.cart.findUnique({
+      where: { id: cartId },
     });
 
     return res.status(201).send(updatedCart);
@@ -232,7 +270,7 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
         deleteMany: {
           cartId: cartId,
           productId: productId,
-          variantId: variantId,
+          variantId: variantId || null, // Convert empty string/undefined to null
         },
       },
     },
@@ -249,16 +287,26 @@ cartRouter.post("/:cartId/remove", async (req, res) => {
 cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
   const { cartId, productId, quantity, isUnit, variantId } = req.body;
 
-  const cartProduct = await prisma.cartProduct.findUnique({
-    where: {
-      cartId_productId_variantId: {
-        cartId,
-        productId,
+  const normalizedVariantId = variantId || null;
 
-        variantId, // Include variantId if provided
-      },
-    },
-  });
+  // Prisma doesn't allow null in compound unique keys with findUnique
+  const cartProduct = normalizedVariantId
+    ? await prisma.cartProduct.findUnique({
+        where: {
+          cartId_productId_variantId: {
+            cartId,
+            productId,
+            variantId: normalizedVariantId,
+          },
+        },
+      })
+    : await prisma.cartProduct.findFirst({
+        where: {
+          cartId,
+          productId,
+          variantId: null,
+        },
+      });
 
   if (!cartProduct) {
     return res.status(404).send({ message: "Product not found in cart" });
@@ -277,13 +325,7 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
   }
 
   const updatedCartProduct = await prisma.cartProduct.update({
-    where: {
-      cartId_productId_variantId: {
-        cartId,
-        productId,
-        variantId, // Include variantId if provided
-      },
-    },
+    where: { id: cartProduct.id },
     data: updateData,
   });
 

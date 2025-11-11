@@ -41,18 +41,14 @@ type UserWithCart = {
 
 export const createTokenUserInfo = (user: UserWithCart) => {
   return {
+    id: user.id,
     email: user.email,
     role: user.role,
-    lastLogin: user.lastLogin,
-    profile: {
-      ...user.profile,
-      dateOfBirth: user.profile.dateOfBirth?.toISOString(),
-    },
-    Cart: user.cart,
   };
 };
 
 const jwtInfoSchema = z.object({
+  id: z.string(),
   email: z.string().email(),
   role: z.string(),
   iat: z.number(),
