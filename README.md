@@ -220,7 +220,61 @@ npm run db:generate
 
 # Deploy migrations to production
 npm run db:migrate:deploy
+
+# Code quality commands
+npm run lint           # Check for linting errors
+npm run lint:fix       # Auto-fix linting errors
+npm run type-check     # Run TypeScript type checking
 ```
+
+### Code Quality & Pre-Commit Hooks
+
+This project uses **Husky** and **lint-staged** to automatically enforce code quality standards.
+
+#### What Runs Automatically
+
+Every time you commit code, the following checks run automatically:
+
+1. **ESLint** - Lints all staged `.ts` files and auto-fixes issues
+   - Warns about `any` types, unused variables, and console.logs
+   - Enforces consistent code style
+   - Auto-fixes formatting where possible
+
+If the linting fails, your commit will be blocked until you fix the errors.
+
+#### Manual Code Quality Checks
+
+```bash
+# Check for linting errors
+npm run lint
+
+# Auto-fix linting errors
+npm run lint:fix
+
+# Run TypeScript type checking
+npm run type-check
+```
+
+#### Bypassing Pre-Commit Hooks
+
+**⚠️ Not recommended**, but if you absolutely need to bypass the hooks:
+
+```bash
+git commit --no-verify -m "your message"
+```
+
+Only use this in emergencies. Your code should pass all checks before committing.
+
+#### ESLint Configuration
+
+The ESLint configuration is in [`.eslintrc.json`](./.eslintrc.json). Key rules:
+- Warns on `any` types and non-null assertions
+- Allows `console.warn`, `console.error`, `console.info`
+- Enforces `===` over `==`
+- Requires curly braces for all control statements
+- Allows `declare global` namespace for Express type augmentation
+
+See [ESLINT_SETUP.md](./ESLINT_SETUP.md) for detailed ESLint documentation.
 
 ### Development Workflow
 
