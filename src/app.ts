@@ -1,3 +1,7 @@
+// Validate environment variables on startup
+import { validateEnvironment } from "./utils/env-validation";
+validateEnvironment();
+
 import express from "express";
 import cors from "cors";
 import { User } from "@prisma/client";

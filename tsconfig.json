@@ -2,14 +2,37 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
+    "lib": ["ES2020"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
+
+    // Gradual Strict Type-Checking (Phase 1)
+    // Full strict mode causes 44+ errors. Enable gradually:
+    // "strict": true,  // TODO: Enable after fixing existing issues
+    "noImplicitAny": false,        // TODO: Set to true and fix any types
+    "strictNullChecks": false,     // TODO: Set to true and fix null checks
+    "strictFunctionTypes": true,   // ✓ Enabled - low impact
+    "strictBindCallApply": true,   // ✓ Enabled - low impact
+    "noImplicitThis": true,        // ✓ Enabled - prevents this errors
+    "alwaysStrict": true,          // ✓ Enabled - use strict mode
+
+    // Additional Checks (Warnings only for now)
+    "noUnusedLocals": false,       // TODO: Enable to catch unused variables
+    "noUnusedParameters": false,   // TODO: Enable to catch unused parameters
+    "noImplicitReturns": false,    // TODO: Enable to ensure all paths return
+    "noFallthroughCasesInSwitch": true,  // ✓ Enabled - prevents switch bugs
+
+    // Module Resolution
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+
     "paths": {
       "*": ["./node_modules/*"]
     }
   },
-  "include": ["src/**/*", "prisma/**/*", ".api/**/*"]
+  "include": ["src/**/*", "prisma/**/*", ".api/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
