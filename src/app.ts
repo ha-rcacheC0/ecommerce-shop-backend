@@ -5,6 +5,7 @@ validateEnvironment();
 import express from "express";
 import cors from "cors";
 import { User } from "@prisma/client";
+import { logger } from "./utils/logger";
 import { adminRouter } from "./routes/admin.router";
 import { productRouter } from "./routes/product.router";
 import { purchaseRouter } from "./routes/purchase.router";
@@ -71,5 +72,5 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 // Listen on all interfaces with port as a number
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port ${port} and listening on all interfaces`);
+  logger.info(`Server running on port ${port} and listening on all interfaces`);
 });

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { calcUnitPrice } from "../utils/creation-utils";
 import { authenticationAdminMiddleware } from "../utils/auth-utils";
+import { logger } from "../utils/logger";
 
 const apparelRouter = Router();
 
@@ -335,7 +336,7 @@ apparelRouter.post(
       const result = await prisma.$transaction(async (tx) => {
         // Generate next serial SKU
         const baseSku = await generateNextApparelSku(tx);
-        console.log("Generated base SKU:", baseSku);
+        logger.debug({ baseSku }, "Generated base SKU");
 
         // Fetch color objects for variant SKU generation
         const colorMap = new Map<string, string>();
@@ -359,7 +360,7 @@ apparelRouter.post(
           generateVariantSku(baseSku, variant, colorMap)
         );
 
-        console.log("Generated variant SKUs:", variantSkus);
+        logger.debug({ variantSkus }, "Generated variant SKUs");
 
         // Check if any variant SKUs already exist
         const existingVariants = await tx.productVariant.findMany({

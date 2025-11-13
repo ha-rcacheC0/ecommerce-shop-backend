@@ -10,6 +10,7 @@ import {
   authenticationAdminMiddleware,
 } from "../utils/auth-utils";
 import { z } from "zod";
+import { logger } from "../utils/logger";
 
 const userRouter = Router();
 
@@ -226,7 +227,7 @@ userRouter.post("/userInfo", authenticationMiddleware, async (req, res) => {
       },
       data: updateData,
     });
-    console.log("Updated userInfo:", updatedUserInfo);
+    logger.debug({ userId: id, updatedUserInfo }, "Updated user profile");
 
     if (!updatedUserInfo)
       return res.status(400).send({ message: "Unable to update userInfo" });

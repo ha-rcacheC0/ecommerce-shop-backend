@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { authenticationAdminMiddleware } from "../utils/auth-utils";
 import { Decimal } from "@prisma/client/runtime/library";
+import { logger } from "../utils/logger";
 
 const showsRouter = Router();
 
@@ -126,7 +127,7 @@ showsRouter.get("/brand/:brandId", async (req, res) => {
     const brand = await prisma.brand.findUnique({
       where: { name: brandId },
     });
-    console.log(brand);
+    logger.debug({ brandId, brand }, "Fetched brand for shows");
 
     if (!brand) {
       return res.status(404).json({ message: "Brand not found" });

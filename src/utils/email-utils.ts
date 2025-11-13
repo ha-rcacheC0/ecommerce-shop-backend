@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 
 import { PurchaseItem, PurchaseRecord } from "./types";
+import { logger } from "./logger";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SEND_EMAIL_STMP_HOST, // Replace with your SMTP server
@@ -19,7 +20,7 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     subject,
     html,
   });
-  console.log("Email sent successfully.", info);
+  logger.info({ to, subject, messageId: info.messageId }, "Email sent successfully");
 };
 
 // Utility function to format currency

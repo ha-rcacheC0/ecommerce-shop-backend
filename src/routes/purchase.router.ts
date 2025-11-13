@@ -60,8 +60,14 @@ purchaseRouter.post("/", async (req, res) => {
     }
 
     if (item.unitQuantity > 0) {
-      const unitPrice = product.unitProduct!.unitPrice.toNumber();
-      const availableStock = product.unitProduct!.availableStock;
+      if (!product.unitProduct) {
+        return res.status(400).send({
+          message: `Product ${product.name} does not have unit pricing available`,
+        });
+      }
+
+      const unitPrice = product.unitProduct.unitPrice.toNumber();
+      const availableStock = product.unitProduct.availableStock;
 
       if (availableStock < item.unitQuantity) {
         const neededStock = item.unitQuantity - availableStock;

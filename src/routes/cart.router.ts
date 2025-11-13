@@ -334,6 +334,12 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
 
 cartRouter.post("/:cartId/purchase", async (req, res) => {
   const { amount } = req.body;
+
+  const helcimToken = process.env.HELCIM_API_TOKEN;
+  if (!helcimToken) {
+    return res.status(500).send({ message: "Payment service not configured" });
+  }
+
   sdk
     .checkoutInit(
       {
@@ -344,7 +350,7 @@ cartRouter.post("/:cartId/purchase", async (req, res) => {
         paymentMethod: "cc-ach",
       },
       {
-        "api-token": process.env.HELCIM_API_TOKEN!,
+        "api-token": helcimToken,
       }
     )
     .then(({ data }) => res.status(200).send(data))

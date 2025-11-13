@@ -110,10 +110,11 @@ reportsRouter.post("/case-break/:id/process", async (req, res) => {
     }
 
     // Update inventory in a transaction
+    const unitProductId = caseBreakRequest.product.unitProduct.id;
     const result = await prisma.$transaction(async (tx) => {
       // Update the unit product inventory
       const updatedUnitProduct = await tx.unitProduct.update({
-        where: { id: caseBreakRequest.product.unitProduct!.id },
+        where: { id: unitProductId },
         data: {
           availableStock: {
             increment: parseInt(quantityAdded),
