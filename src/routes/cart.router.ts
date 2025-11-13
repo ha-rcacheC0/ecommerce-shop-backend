@@ -334,7 +334,6 @@ cartRouter.post("/:cartId/updateQuantity", async (req, res) => {
 
 cartRouter.post("/:cartId/purchase", async (req, res) => {
   const { amount } = req.body;
-
   sdk
     .checkoutInit(
       {
@@ -349,7 +348,7 @@ cartRouter.post("/:cartId/purchase", async (req, res) => {
       }
     )
     .then(({ data }) => res.status(200).send(data))
-    .catch((err) => console.error("Fetch Error ", err));
+    .catch((err) => console.error("[Backend] Helcim Fetch Error", err));
 });
 
 export { cartRouter };
