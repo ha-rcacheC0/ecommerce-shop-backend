@@ -21,7 +21,7 @@ validateEnvironment();
 
 import express from "express";
 import cors from "cors";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { logger } from "./utils/logger";
 import { adminRouter } from "./routes/admin.router";
 import { productRouter } from "./routes/product.router";
@@ -48,7 +48,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       const allowedOrigins = [
         "https://crew-fireworks.fly.dev",
         "https://crewfireworks.com",
