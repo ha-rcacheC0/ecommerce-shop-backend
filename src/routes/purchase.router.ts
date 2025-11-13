@@ -62,7 +62,7 @@ purchaseRouter.post("/", async (req, res) => {
     if (item.unitQuantity > 0) {
       if (!product.unitProduct) {
         return res.status(400).send({
-          message: `Product ${product.name} does not have unit pricing available`,
+          message: `Product with SKU ${product.sku} does not have unit pricing available`,
         });
       }
 

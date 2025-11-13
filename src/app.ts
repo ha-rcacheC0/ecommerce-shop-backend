@@ -1,3 +1,20 @@
+// Load environment variables from .env file
+import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
+
+// Determine which environment to use (default to development)
+const environment = process.env.NODE_ENV || "development";
+
+// First try to load environment-specific file
+const envFile = path.resolve(process.cwd(), `.env.${environment}`);
+if (fs.existsSync(envFile)) {
+  dotenv.config({ path: envFile });
+} else {
+  // Fall back to base .env file
+  dotenv.config();
+}
+
 // Validate environment variables on startup
 import { validateEnvironment } from "./utils/env-validation";
 validateEnvironment();
@@ -14,7 +31,6 @@ import { cartRouter } from "./routes/cart.router";
 import { terminalRouter } from "./routes/terminal.router";
 import { metadataRouter } from "./routes/metadata.router";
 import { showsRouter } from "./routes/shows.router";
-import path from "path";
 import { reportsRouter } from "./routes/reports.router";
 import { apparelRouter } from "./routes/apparel.router";
 
